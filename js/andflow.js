@@ -1,3 +1,13 @@
+/*!
+ * andflow.js v1.0.0
+ * @url https://github.com/zone-7/andflow_js
+ * @date 2021-11-17
+ * @author zone-7
+ * @email 502782757@qq.com
+ *
+ * Released under the MIT License
+ *
+ */
 var andflow={
     containerId:null, //DOM
 

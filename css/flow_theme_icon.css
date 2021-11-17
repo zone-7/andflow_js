@@ -1,0 +1,437 @@
+
+.flow_theme_icon .action-drag {
+    color: #434343;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 55;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    background-color: white;
+    font-size: 10px;
+    padding: 2px;
+}
+.flow_theme_icon .action-drag .action-header{
+    position: absolute;
+    z-index: 5;
+    left:0px;
+    top: 100%;
+    text-align: center;
+    background-color: transparent;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom:5px ;
+    width: 100%;
+    height: 20px;
+    overflow: visible;
+    font-weight: bold;
+    font-size: 10px;
+    color: #6c757d;
+    margin: 0 auto;
+    background-color: transparent;
+    white-space:nowrap;
+}
+
+
+.flow_theme_icon .action-drag .action-icon{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    text-align: center;
+}
+.flow_theme_icon .action-drag .action-icon img{
+    width: auto;
+    height: 100%;
+}
+
+.flow_theme_icon .action-container {
+    color: #434343;
+    min-width: 32px;
+    min-height: 32px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 4;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+    cursor: move;
+    font-size: 10px;
+    padding: 2px;
+}
+
+.flow_theme_icon .action-main{
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border-radius: 5px;
+    /*border:1px solid #d3d3d3;*/
+}
+
+.flow_theme_icon .action-main:hover{
+
+}
+
+.flow_theme_icon .action-main:hover .ep{
+    display: inline-block;
+}
+
+.flow_theme_icon .action-main:hover .btn-remove{
+    display: block;
+}
+.flow_theme_icon .action-main:hover .btn-remove{
+    display: block;
+}
+.flow_theme_icon .action-main:hover .action-resize{
+    display: block;
+}
+
+.flow_theme_icon .action-main:hover .body-resize{
+    display: block;
+}
+.flow_theme_icon .action-main:hover .action-body{
+    border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+
+/* selected */
+.flow_theme_icon .action-main.selected{
+
+    /*box-shadow: 2px 2px 10px #444;*/
+    /*-o-box-shadow: 2px 2px 10px #444;*/
+    /*-webkit-box-shadow: 2px 2px 10px #444;*/
+    /*-moz-box-shadow: 2px 2px 10px #444;*/
+}
+.flow_theme_icon .action-main.selected .action-icon>img {
+    box-shadow: 2px 2px 10px #444;
+    -o-box-shadow: 2px 2px 10px #444;
+    -webkit-box-shadow: 2px 2px 10px #444;
+    -moz-box-shadow: 2px 2px 10px #444;
+    border-radius: 5px;
+}
+.flow_theme_icon .action-header{
+    position: absolute;
+    z-index: 5;
+    left:0px;
+    top: 100%;
+    text-align: center;
+    background-color: transparent;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom:5px ;
+    width: 100%;
+    height: 20px;
+    overflow: visible;
+    font-weight: bold;
+    font-size: 10px;
+    color: #007bff;
+    margin: 0 auto;
+    background-color: transparent;
+    white-space:nowrap;
+}
+
+
+
+.flow_theme_icon  .btn-remove{
+    display: inline-block;
+    position: absolute;
+    z-index: 21;
+    right: -5px;
+    top:-5px;
+    width: 15px;
+    height: 15px;
+    font-family: normal;
+    font-size: 14px;
+    color: #007bff;
+    display: none;
+    text-decoration:none;
+    border-radius: 5px;
+}
+
+.flow_theme_icon .action-body{
+    position: absolute;
+    min-height: 20px;
+    min-width: 32px;
+    z-index: 5;
+    left: 0px;
+    top: calc(100% + 25px);
+    padding: 0px;
+    width: 100%;
+    height: 10px;
+    background-color: transparent;
+    overflow: hidden;
+
+}
+
+
+.flow_theme_icon .action-content{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    color: #808080;
+}
+.flow_theme_icon .action-content .action-html{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+.flow_theme_icon .action-msg{
+    width: 100%;
+    text-align: center;
+    color: #808080;
+    font-size: 12px;
+}
+
+.flow_theme_icon .action-icon{
+
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    text-align: center;
+}
+.flow_theme_icon .action-icon img{
+    width: auto;
+    height: 100%;
+}
+
+.flow_theme_icon .action-resize{
+    display: none;
+    position: absolute;
+    z-index: 20;
+    right: 0px;
+    bottom: 0px;
+    width: 0px;
+    height: 0px;
+    cursor: nwse-resize;
+    border-left:5px solid transparent;
+    border-top:5px solid transparent;
+    border-right: 5px solid #007bff;
+    border-bottom: 5px solid #007bff;
+}
+.flow_theme_icon .body-resize{
+    display: none;
+    position: absolute;
+    z-index: 20;
+    right: 0px;
+    bottom: 0px;
+    width: 0px;
+    height: 0px;
+    cursor: nwse-resize;
+    border-left:5px solid transparent;
+    border-top:5px solid transparent;
+    border-right: 5px solid #808080;
+    border-bottom: 5px solid #808080;
+}
+
+.flow_theme_icon .action .ep {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    top:  calc(50% - 8px);
+
+    left: calc(50% - 8px);
+    border-radius: 8px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    text-align: center;
+    padding: 0px;
+    font-size: 12px;
+    cursor: crosshair;
+
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+
+.flow_theme_icon .action.end .ep{
+    display: none;
+}
+
+
+/*各类状态*/
+/*begin*/
+.flow_theme_icon .action.begin .action-main{
+    /*border: 1px solid #17a2b8;*/
+}
+.flow_theme_icon .action.begin .action-header{
+    color:  #17a2b8;
+}
+
+.flow_theme_icon .action.begin .action-resize{
+    border-right-color: #17a2b8;
+    border-bottom-color:  #17a2b8;
+}
+.flow_theme_icon .action.begin .action-icon{
+    /*display: none;*/
+}
+.flow_theme_icon .action.begin .btn-remove{
+
+    color: #17a2b8;
+}
+
+/*end */
+.flow_theme_icon .action.end .action-main{
+
+}
+.flow_theme_icon .action.end .action-header{
+    color:  #17a2b8;
+}
+
+.flow_theme_icon .action.end .action-resize{
+    border-right-color: #17a2b8;
+    border-bottom-color: #17a2b8;
+}
+.flow_theme_icon .action.end .action-icon{
+
+}
+.flow_theme_icon .action.end .btn-remove{
+
+    color: #17a2b8;
+}
+
+/*external*/
+.flow_theme_icon .action.external .action-main{
+
+}
+.flow_theme_icon .action.external .action-header{
+    color:  #a7a2ff;
+}
+
+.flow_theme_icon .action.external .action-resize{
+    border-right-color: #a7a2ff;
+    border-bottom-color: #a7a2ff;
+}
+.flow_theme_icon .action.external .action-icon{
+
+}
+.flow_theme_icon .action.external .btn-remove{
+
+    color: #a7a2ff;
+}
+
+/* custom */
+.flow_theme_icon .action.custom .action-main{
+
+}
+.flow_theme_icon .action.custom .action-header{
+    color:  #b67fb6;
+}
+
+.flow_theme_icon .action.custom .action-resize{
+    border-right-color: #b67fb6;
+    border-bottom-color: #b67fb6;
+}
+.flow_theme_icon .action.custom .action-icon{
+
+}
+.flow_theme_icon .action.custom .btn-remove{
+
+    color: #b67fb6;
+}
+
+
+
+/*execute*/
+
+.flow_theme_icon .action.execute .action-icon img{
+    background: repeating-linear-gradient(135deg,transparent,transparent 3px,#7AB02C, #7AB02C 6px);
+    animation: flow_theme_icon_shine 2s infinite linear;
+}
+@keyframes flow_theme_icon_shine {
+    0% {
+        background-position: -1px -1px;
+    }
+    100% {
+        background-position: -2px -2px;
+    }
+}
+
+/*error*/
+.flow_theme_icon .action.error .action-main{
+
+}
+.flow_theme_icon .action.error .action-header{
+    color:  #b0413f;
+}
+
+.flow_theme_icon .action.error .action-resize{
+    border-right-color: #b0413f;
+    border-bottom-color: #b0413f;
+}
+.flow_theme_icon .action.error .action-icon{
+
+}
+
+.flow_theme_icon .action.error .btn-remove{
+
+    color: #b0413f;
+}
+
+
+/*success*/
+.flow_theme_icon .action.success .action-main{
+
+}
+
+.flow_theme_icon .action.success .action-header{
+    color:  #7AB02C;
+
+}
+
+.flow_theme_icon .action.success .action-resize{
+    border-right-color:  #7AB02C;
+    border-bottom-color:  #7AB02C;
+}
+.flow_theme_icon .action.success .action-icon{
+
+}
+
+.flow_theme_icon .action.success .btn-remove{
+
+    color: #7AB02C;
+}
+
+/*action reject*/
+.flow_theme_icon .action.reject .action-main{
+
+}
+
+.flow_theme_icon .action.reject .action-header{
+    color:  #fdcf7c;
+}
+
+
+.flow_theme_icon .action.reject .action-resize{
+    border-right-color: #fdcf7c;
+    border-bottom-color: #fdcf7c;
+}
+.flow_theme_icon .action.reject .action-icon{
+
+}
+.flow_theme_icon .action.reject .btn-remove{
+
+    color: #fdcf7c;
+}
+/*link label*/
+.flow_theme_icon .linkLabel {
+    background-color: white;
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21;
+    border: 1px dotted gray;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.flow_theme_icon .linkLabel.jtk-hover {
+    background-color: #ffc107;
+}
+

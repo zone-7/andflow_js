@@ -74,16 +74,13 @@ andflow_js流程设计框架，是一个H5流程设计框架。可以快速实�
 
 ### 3.2.2引用andflow_js相关css、js
 
-```html
-<link rel="stylesheet" href="/static/flow/css/andflow.css">
-<link rel="stylesheet" href="/static/flow/css/flow_theme_default.css">
-<link rel="stylesheet" href="/static/flow/css/flow_theme_icon.css">
-<link rel="stylesheet" href="/static/flow/css/flow_theme_zone.css">
+```html 
+    <link rel="stylesheet" href="/static/flow/css/andflow.css">
+    <link rel="stylesheet" href="/static/flow/css/andflow_themes.css">
 
-<script src="/static/flow/js/andflow.js"></script>
-<script src="/static/flow/js/flow_themes_default.js"></script>
-<script src="/static/flow/js/flow_themes_icon.js"></script>
-<script src="/static/flow/js/flow_themes_zone.js"></script>
+    <script src="/static/flow/js/andflow.js"></script>
+    <script src="/static/flow/js/andflow_themes.js"></script>
+
 ```
 
 ### 3.2.3定义流程设计器的DOM

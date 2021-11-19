@@ -4,9 +4,12 @@ andflow_js流程设计框架，是一个H5流程设计框架。可以快速实�
 
 # 2.DEMO
 
+![流程DEMO](./img/demo1.png)
+![流程DEMO](./img/demo2.png)
+
 <table>
 <tr>
-<td>
+<td> 
 
 ![流程DEMO](./img/flow1.png)
 </td>
@@ -94,7 +97,7 @@ andflow_js流程设计框架，是一个H5流程设计框架。可以快速实�
 ```js
 
 //流程组件过滤标签
-var tags=['', '通用', '系统'];
+var tags=['通用', '系统'];
 
 //流程组件定义
 var metadata=[
@@ -203,10 +206,18 @@ var flowModel= {
 
 
 var options={
-    tags:tags,            //组件过滤标签列表
-    metadata:metadata,    //组件元素
-    flowModel:flowModel,  //流程模型
-    editable:true,   //是否可编辑，默认true
+    //组件过滤标签列表
+    tags:tags,            
+    //组件元素
+    metadata:metadata,    
+    //流程模型
+    flowModel:flowModel,  
+    //是否可编辑，默认true
+    editable:true,        
+    //是否显示工具栏，默认true 
+    show_toolbar:true,    
+    //组件栏样式，可选项：固定左边metadata_fix_left、浮在左边metadata_float_left、浮在顶部metadata_float_top
+    metadata_style:"",
     render_action:function(metadata,action,html){ return html; },//节点渲染
     render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
     render_state_list: function(datas){return null},             //流程状态列表渲染
@@ -280,6 +291,12 @@ andflow.showFlow();
 </tr>
 <tr>
 <td>render_action_helper</td><td>组件节点拖拉过程渲染函数</td><td>function(metadata,html){ return null; }</td><td>null</td>
+</tr>
+<tr>
+<td>render_endpoint</td><td>组件节点拖拉点渲染函数</td><td>function(metadata,action,html){ return null; }</td><td>null</td>
+</tr>
+<tr>
+<td>render_removebtn</td><td>组件节点拖拉点渲染函数</td><td>function(metadata,action,html){ return null; }</td><td>null</td>
 </tr>
 <tr>
 <td>render_link</td><td>组件节点连线渲染函数</td><td>function(conn,linktype,linkdata){return null}</td><td>null</td>
@@ -365,6 +382,12 @@ var metadata=[
 <td>组件标签，用于过滤</td>
 <td>中英文名称</td>  
 </tr>
+<tr>
+<td>css</td>
+<td>组件样式</td>
+<td>CSS样式名称</td>  
+</tr>
+
 <tr>
 <td>icon</td>
 <td>组件图标</td>

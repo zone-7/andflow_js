@@ -8,6 +8,7 @@
  * Released under the MIT License
  *
  */
+
 var andflow={
     containerId:null, //DOM
 
@@ -17,28 +18,35 @@ var andflow={
     metadata:null,  //控件信息
     flowModel:null, //流程数据
 
+    show_toolbar:true,//是否显示工具栏
 
-    show_action_body:true,
-    show_action_content:true,
-    show_action_state_list:false,
+    metadata_style:"",
 
     //渲染器
     render_action:null,
     render_action_helper:null,
     render_link:null,
     render_state_list:null,
+    render_endpoint:null,
+    render_btn_resize:null,
+    render_btn_remove:null,
 
     //事件
     event_action_click:null,
     event_action_dblclick:null,
+    event_action_remove:null,
+
     event_link_click:null,
     event_link_dblclick:null,
+    event_link_remove:null,
+
     event_canvas_click:null,
 
+    event_canvas_changed:null,
 
     //语言
     lang:{
-        metadata_tag_title:"组件",
+        metadata_tag_all:"所有组件",
         flow_state_list_title:"执行记录",
         delete_action_confirm:"确定删除该节点?",
     },
@@ -51,11 +59,20 @@ var andflow={
     _link_states:[],
     _actionInfos:{},
     _actionCharts:{},
-    _actionContents:{},
     _action_states:[],
 
+    _actionContents:{},
 
-    _timer:null,
+
+    _timer_link:null,
+    _timer_action:null,
+    _timer_thumbnail:null,
+    _timeout_thumbnail:true,
+
+    _icon_nav:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
+    _icon_eye:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
+    _icon_eye_close:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==',
+
     _connectionTypes:{
         "Flowchart":{anchor:"Continuous", connector:[ "Flowchart", { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true } ]   },
         "Straight":{ anchor:"Continuous", connector:[ "Straight", { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true } ] },
@@ -65,38 +82,65 @@ var andflow={
 
     _initHtml:function(containerId){
         var $this=this;
-        var css="";
+        var css_state="";
         if($this.editable==false){
-            css="state";
+            css_state="state";
         }
 
+        var css_showtoolbar="";
+        if($this.show_toolbar==false||$this.show_toolbar=="false"){
+            css_showtoolbar="toolbar_hide";
+        }
+        var metadata_style=$this.metadata_style;
 
-
-        var html='<div class="andflow '+css+'">';
+        var html='<div class="andflow  '+metadata_style+' '+css_state+' '+css_showtoolbar+'">';
 
         //begin metadata
 
         html+='<div class="metadata" >';
 
         html+='<div class="tags">';
-        html+='<label>'+$this.lang.metadata_tag_title+'</label>';
         html+='<select id="tag_select">';
         html+='</select>';
         html+='</div>';
         html+='<div class="actions">';
-        html+='<ul id="leftMenu" class="leftMenu" >';
+        html+='<ul id="actionMenu" class="actionMenu" >';
         html+='</ul>';
         html+='</div>';
         html+='</div>';
         //end metadata
 
 
+
         //begin designer
         html+='<div class="designer">';
 
-        html+='<div id="canvasContainer" class="canvasContainer">';
-        html+='<div id="canvas" ></div>';
+        // begin tools
+        html+='<div class="flow_tools">';
+        html+='<div class="left">';
+        html+='<a class="nav_btn">&nbsp;</a>';
         html+='</div>';
+        html+='<div class="right">';
+        html+='<a class="scale_down_btn" title="缩小">-</a>';
+        html+='<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
+        html+='<a class="scale_up_btn"  title="放大">+</a>';
+
+        html+='<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
+        html+='</div>';
+
+        html+='</div>';
+        //end tools
+
+        //begin flow_thumbnail
+        html+='<div class="flow_thumbnail">';
+        html+='</div>';
+        //end flow_thumbnail
+
+        //begin canvas
+        html+='<div id="canvasContainer" class="canvasContainer">';
+        html+='<div id="canvas" class="canvas"></div>';
+        html+='</div>';
+        //end canvas
 
         //begin flow_state_list
         html+='<div id="flow_state_list" class="flow_state_list"  data_fold="false" >';
@@ -110,6 +154,7 @@ var andflow={
         html+='</div>';
         //end flow_state_list
 
+
         html+='</div>';
         //end designer
 
@@ -117,6 +162,11 @@ var andflow={
 
         $("#"+containerId).html(html);
 
+
+        ///////
+        //events
+
+        // state_list
         $("#"+containerId).find(".flow_state_list_title").bind("dblclick",function(){
 
             var element = $("#"+$this.containerId+" #flow_state_list");
@@ -151,6 +201,63 @@ var andflow={
         })
 
 
+
+        //nav
+        $("#"+containerId).find(".nav_btn").css("background-image",'url('+this._icon_nav+')');
+        $("#"+containerId).find(".nav_btn").attr("state","open");
+        $("#"+containerId).find(".nav_btn").bind("click",function(e) {
+            var btn=$("#"+$this.containerId).find(".nav_btn")
+            var state = btn.attr("state");
+            if(state=="open"){
+                btn.attr("state","close");
+                $("#"+$this.containerId).find(".andflow").addClass("fold");
+            }else{
+                btn.attr("state","open");
+                $("#"+$this.containerId).find(".andflow").removeClass("fold");
+
+            }
+        });
+
+        //scale
+        $("#"+containerId).find(".scale_up_btn").bind("click",function(e){
+            var value = $("#"+$this.containerId).find(".scale_value").html()*1.0;
+            value = value + 1;
+            var v = value / 100.0;
+            $("#"+$this.containerId).find(".canvas").css("transform","scale("+v+")");
+            $("#"+$this.containerId).find(".scale_value").html(value);
+
+        });
+        $("#"+containerId).find(".scale_down_btn").bind("click",function(e){
+            var value = $("#"+$this.containerId).find(".scale_value").html()*1.0;
+            value = value - 1;
+            var v = value / 100.0;
+            $("#"+$this.containerId).find(".canvas").css("transform","scale("+v+")");
+            $("#"+$this.containerId).find(".scale_value").html(value);
+        });
+        $("#"+containerId).find(".scale_info").bind("click",function(e){
+
+            $("#"+$this.containerId).find(".canvas").css("transform","scale(1)");
+            $("#"+$this.containerId).find(".scale_value").html("100");
+        });
+
+        //thumbnail
+        $("#"+containerId).find(".thumbnail_btn").css("background-image",'url('+this._icon_eye_close+')');
+        $("#"+containerId).find(".thumbnail_btn").attr("state","close");
+        $("#"+containerId).find(".thumbnail_btn").bind("click",function(e){
+            var element = $("#"+$this.containerId).find(".flow_thumbnail");
+            var btn=$("#"+$this.containerId).find(".thumbnail_btn")
+            var state = btn.attr("state");
+            if(state=="open"){
+                btn.attr("state","close");
+                btn.css("background-image",'url('+$this._icon_eye_close+')');
+                element.hide();
+            }else{
+                btn.attr("state","open");
+                btn.css("background-image",'url('+$this._icon_eye+')');
+                element.show();
+                $this._showThumbnail();
+            }
+        });
 
     },
     _initEvents:function(){
@@ -195,9 +302,13 @@ var andflow={
         if($("#tag_select").length>0){
             var tpdata=[];
 
+            $("#tag_select").html("");
+            $("#tag_select").append('<option value="">'+$this.lang.metadata_tag_all+'</option>');
             for(var i in tags){
                 var t = tags[i];
-
+                if(t==null || t==""){
+                    continue;
+                }
                 $("#tag_select").append('<option value="'+t+'">'+t+'</option>');
             }
 
@@ -338,6 +449,7 @@ var andflow={
                     label: "",
                     id: "label",
                     cssClass: "linkLabel" ,
+                    visible: false,
                     events:{
                         tap:function(conn,e) {
                             //alert(conn);
@@ -372,7 +484,7 @@ var andflow={
 
                 $this._paintConnection(info.connection,link);
 
-
+                $this._onCanvasChanged();
             }catch(e){
 
             }
@@ -382,10 +494,10 @@ var andflow={
 
 
         this._plumb.bind("connectionDetached", function (conn) {
-            var sourceId = conn.sourceId
-            var targetId = conn.targetId
+            var sourceId = conn.sourceId;
+            var targetId = conn.targetId;
 
-            $this._linkInfos[sourceId+'-'+targetId]=null;
+            $this.removeLink(sourceId,targetId);
         });
 
 
@@ -393,8 +505,6 @@ var andflow={
 
             var sourceId=info.originalSourceId;
             var targetId=info.originalTargetId;
-
-
 
             $this._linkInfos[sourceId+'-'+targetId]=null;
         });
@@ -437,8 +547,8 @@ var andflow={
         this._plumb.bind("click", function (conn, event) {
             if( $this.editable  ){
                 if($this.event_link_click && $this.event_link_dblclick){
-                    $this._timer && clearTimeout($this._timer);
-                    $this._timer = setTimeout( function (){
+                    $this._timer_link && clearTimeout($this._timer_link);
+                    $this._timer_link = setTimeout( function (){
                         var sourceId = conn.sourceId;
                         var targetId = conn.targetId;
                         var link = $this.getLinkInfo(sourceId,targetId);
@@ -460,7 +570,7 @@ var andflow={
             if( $this.editable  ){
 
                 if($this.event_link_dblclick){
-                    $this._timer && clearTimeout($this._timer);
+                    $this._timer_link && clearTimeout($this._timer_link);
                     var sourceId = conn.sourceId;
                     var targetId = conn.targetId;
                     var link = $this.getLinkInfo(sourceId,targetId);
@@ -474,11 +584,11 @@ var andflow={
 
         // bind a double click listener to "canvas"; add new node when this occurs.
         this._plumb.on(canvas, "click", function(e) {
-
             if($this.event_canvas_click){
-                $this.event_canvas_click(e);
-            }
 
+                    $this.event_canvas_click(e);
+
+            }
         });
 
 
@@ -508,16 +618,16 @@ var andflow={
         }
 
         //按分组输出到Html
-        $("#leftMenu").html("");
+        $("#actionMenu").html("");
         var index=0;
         for(var g in groups){
 
             var openClass=index==0?'menu-is-opening menu-open':'';
             var openBody=index==0?'':'display:none';
 
-            var html='<li class="leftMenuGroup"  ><a href="#" class="group-title">'+g+'<i class="pull-right ico"></i></a>';
+            var html='<li class="actionMenuGroup"  ><a href="#" class="group-title">'+g+'<i class="pull-right ico"></i></a></li>';
 
-            html+='<ul class="leftMenuGroupBody" >';
+            //html+='<ul class="actionMenuGroupBody" >';
 
             var item = groups[g];
             for(var i in item){
@@ -527,22 +637,22 @@ var andflow={
 
                 var img='';
                 if(icon && icon.length>0){
-                    img='<img src="'+icon+'" style="height: 16px;width: 16px;" />';
+                    img='<img src="'+icon+'"  />';
                 }
 
-                var element_str = '<li id="' + name + '" action_name="' + name + '" action_title="' + title + '" class="leftMenuItem"  action_icon="'+icon+'" ><a class="item-title">'+ img + title + '</a></li>';
+                var element_str = '<li id="' + name + '" action_name="' + name + '" action_title="' + title + '" class="actionMenuItem"  action_icon="'+icon+'" ><a class="item-title">'+ img + title + '</a></li>';
                 html+=element_str;
             }
 
-            html+='</ul>';
-            html+='</li>';
-            $("#leftMenu").append(html);
+            //html+='</ul>';
+            //html+='</li>';
+            $("#actionMenu").append(html);
             index++;
         }
 
 
         //初始化拖拽设置
-        $("#leftMenu li.leftMenuItem").draggable({
+        $("#actionMenu li.actionMenuItem").draggable({
 
             helper: function (event) {
                 var action_name = $(this).attr("action_name");
@@ -622,13 +732,9 @@ var andflow={
         var titleDescription = action.des||title||des;
 
         var content = '<div class="action-main">';
-
-
-        content+= '<a href="javascript:void(0)" class="btn-remove"  >X</a>';//工具栏
-
         content += '<div class="action-icon"  >'+iconImg+'</div>';
-
         content += '<div class="action-header">' + titleDescription + '</div>';//标题
+
 
         //begin action-body
         var bodystyle="";
@@ -642,52 +748,78 @@ var andflow={
 
         content += '<div class="action-body" '+bodystyle+'>';
         content += '<div class="action-content" '+contentstyle+'></div>';  //消息内容,html,chart
-
-        //if(this.editable==true) {
         content += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
-        // }
         content += '</div>';
-        //end action-body
-
-        //if(this.editable==true) {
-        content += '<div class="action-resize"></div>'; //改变大小的三角形框
-        content += '<div class="ep" title="拖拉连线">+</div>';  //拖拉连线焦点
-        //}
 
         content +='</div>'; //end action-main
 
 
-        var actionHtml='<div class="action action-container '+css+'" id="' + id + '" name="'+ name +'" title="'+title+'" icon="'+icon+'">'+ content + '</div>';
-
-
         if($this.render_action){
-            var r = $this.render_action(action_info, action, actionHtml);
+            var r = $this.render_action(action_info, action, content);
             if(r && r.length>0){
-                actionHtml = r;
+                content = r;
             }
         }
 
+        var actionHtml='<div class="action action-container '+css+'" id="' + id + '" name="'+ name +'" title="'+title+'" icon="'+icon+'">'+content+'</div>';
+
+
         var actionElement=$(actionHtml);
+
+        //endpoint
+        var ep= '<div class="ep" title="拖拉连线">+</div>';  //拖拉连线焦点
+        if($this.render_endpoint){
+            var epr = $this.render_endpoint(action_info,action,ep);
+            if(epr && epr.length>0){
+                ep = epr;
+            }
+        }
+        var epElement = $(ep);
+        epElement.removeClass("ep");
+        epElement.addClass("ep");
+        actionElement.append(epElement);
+
+        //resizer
+        var resizer =  '<div class="action-resize"></div>'; //改变大小的三角形框
+        if($this.render_btn_resize){
+            var resizer_new = $this.render_btn_resize(action_info,action,resizer);
+            if(resizer_new && resizer_new.length>0){
+                resizer = resizer_new;
+            }
+        }
+
+        var resizerElement = $(resizer);
+        resizerElement.removeClass("action-resize");
+        resizerElement.addClass("action-resize");
+
+        actionElement.append(resizerElement);
+
+
+        //remove button
+
+        var removeBtn= '<a href="javascript:void(0)" class="btn-remove"  >X</a>';//工具栏
+        if($this.render_btn_remove){
+            var removeBtn_new = $this.render_btn_remove(action_info,action,removeBtn);
+            if(removeBtn_new && removeBtn_new.length>0){
+                removeBtn = removeBtn_new;
+            }
+        }
+        var removeBtnElement = $(removeBtn);
+        removeBtnElement.removeClass("btn-remove");
+        removeBtnElement.addClass("btn-remove");
+
+        actionElement.append(removeBtnElement);
+
+
         actionElement.removeClass("action");
         actionElement.addClass("action");
+
         actionElement.attr("id",id);
         actionElement.attr("name",name);
         actionElement.attr("title",title);
         actionElement.attr("icon",icon);
 
-        actionElement.find(".btn-remove").bind("click",function(){
-            if(showConfirm){
-                showConfirm("确定删除该节点？",function(){
-                    $this.removeAction(id);
-                });
-            }else {
-                var sure = confirm("确定删除该节点?")
-                if (sure) {
-                    $this.removeAction(id);
-                }
-            }
 
-        });
 
         var selector = $("#"+$this.containerId+" #canvas");
         selector.append(actionElement);
@@ -718,14 +850,25 @@ var andflow={
             $("#"+id).find(".action-body").css("height","");
         }
 
-        //双击打开配置事件,在设计模式和步进模式下才可以用
+        actionElement.bind("mouseup",function(){
+            $this._onCanvasChanged();
 
-        $("#"+$this.containerId).find("#" + id).bind("click",function (event) {
+        })
+
+        actionElement.find(".btn-remove").bind("click",function(){
+            var sure = confirm("确定删除该节点?")
+            if (sure) {
+                $this.removeAction(id);
+            }
+        });
+
+        //双击打开配置事件,在设计模式和步进模式下才可以用
+        actionElement.bind("click",function (event) {
             if($this.editable){
                 if($this.event_action_click && $this.event_action_dblclick){
 
-                    $this._timer && clearTimeout($this._timer);
-                    $this._timer = setTimeout( function (){
+                    $this._timer_action && clearTimeout($this._timer_action);
+                    $this._timer_action = setTimeout( function (){
 
                         $this.event_action_click(action_info, action);
 
@@ -737,22 +880,31 @@ var andflow={
             }
         });
 
-        $("#"+$this.containerId).find("#" + id).bind("dblclick",function (event) {
+        actionElement.bind("dblclick",function (event) {
             if($this.editable){
 
                 if($this.event_action_dblclick){
-                    $this._timer && clearTimeout($this._timer);
+                    $this._timer_action && clearTimeout($this._timer_action);
 
                     $this.event_action_dblclick(action_info, action);
                 }
+            }
+        });
 
+        actionElement.bind("mouseover",function(e){
+            var actionName = $(this).attr("name");
+
+            if(actionName!="end"){
+                $(this).find(".ep").show();
             }
 
         });
-
+        actionElement.bind("mouseout",function(e){
+            $(this).find(".ep").hide();
+        });
 
         //改变大小事件，鼠标按下去
-        $("#"+$this.containerId+" #"+id+" .action-resize").mousedown(function(e){
+        actionElement.find(".action-resize").mousedown(function(e){
             $("#"+$this.containerId).css("cursor", "nwse-resize");
             var divEl = $(this)[0];
             var x1 = e.pageX;
@@ -785,13 +937,16 @@ var andflow={
                     chart.resize();
                 }
                 $this._plumb.repaintEverything();
+
+                $this._onCanvasChanged();
+
                 e.preventDefault();
             });
             e.preventDefault();
         });
 
         //改变Body大小事件，鼠标按下去
-        $("#"+$this.containerId+" #"+id+" .body-resize").mousedown(function(e){
+        actionElement.find(".body-resize").mousedown(function(e){
             $("#"+$this.containerId).css("cursor", "nwse-resize");
             var divEl = $(this)[0];
             var x1 = e.pageX;
@@ -824,6 +979,9 @@ var andflow={
                     chart.resize();
                 }
                 $this._plumb.repaintEverything();
+
+                $this._onCanvasChanged();
+
                 e.preventDefault();
             });
             e.preventDefault();
@@ -832,6 +990,50 @@ var andflow={
         //初始化节点
         this._showActionNode(  $("#" + id).get(0),name);
 
+
+        $this._onCanvasChanged();
+    },
+
+    _showThumbnail:  function(){
+
+        var $this=this;
+
+        if($("#"+this.containerId).find(".flow_thumbnail").is(':hidden')){
+
+            return;
+        }
+        if(!this._timeout_thumbnail){
+            return;
+        }
+
+
+        $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
+        $this._timer_thumbnail = setTimeout(function(){
+
+            $this._timeout_thumbnail = false;
+            $this.getSnapshot(function(canvas){
+                try{
+                    var url = canvas.toDataURL("image/png"); //生成下载的url
+                    $("#"+$this.containerId).find(".flow_thumbnail").css("background-image","url("+url+")");
+                }catch (e) {
+
+                }finally {
+                    $this._timeout_thumbnail = true;
+                }
+
+            },{scale:0.5,backgroundColor:"transparent"});
+
+        },100);
+
+    },
+    _onCanvasChanged:function(){
+
+        var $this=this;
+        $this._showThumbnail();
+
+        if($this.event_canvas_changed){
+            $this.event_canvas_changed();
+        }
     },
 
     _formateDateTime:function(value){
@@ -856,6 +1058,8 @@ var andflow={
         str = str.replace("T"," ")
         return str;
     },
+
+
     //加载流程执行状态列表数据
     _showFlowStateList:function(datas){
         var $this=this;
@@ -1109,7 +1313,7 @@ var andflow={
         return instance;
     },
 
-    reflow:function(){
+    refresh:function(){
 
         this.flowModel = this.getFlow();
         //初始化样式风格
@@ -1118,7 +1322,7 @@ var andflow={
         this.showFlow();
         this.setActionStates();
         this.setLinkStates();
-
+        this.setActionContents();
     },
     repaint:function(){
         //重画
@@ -1138,20 +1342,12 @@ var andflow={
         this.flowModel.theme = this.flowModel.theme||"flow_theme_default"
 
         for(var k in flow_themes){
-            $("#"+this.containerId).removeClass(k);
+            $("#"+this.containerId).find(".andflow").removeClass(k);
         }
-        $("#"+this.containerId).addClass(theme);
-
+        $("#"+this.containerId).find(".andflow").addClass(theme);
 
         this._themeObj = flow_themes[theme];
 
-        // //如果不是在设计模式下，连接点隐藏，避免拖拉操作
-        // if(this.editable!=true){
-        //     this._themeObj.default_endpoint_radius=0.001;
-        //     this._themeObj.default_endpoint_fill_color="transparent";
-        //     this._themeObj.default_endpoint_radius_hover=0.001;
-        //     this._themeObj.default_endpoint_fill_color_hover="transparent";
-        // }
 
     },
 
@@ -1244,30 +1440,46 @@ var andflow={
         $this._plumb.remove(element);
         $(element).remove();
 
-        var id = element.attr("id");
-        $this.delActionInfo(id);
+        var action_info=$this._actionInfos[actionId];
 
-        $this._actionCharts[id]=null;
-        if($this._actionCharts[id]!=null){
-            $this._actionCharts[id].dispose();
+        $this.delActionInfo(actionId);
+
+        $this._actionCharts[actionId]=null;
+        if($this._actionCharts[actionId]!=null){
+            $this._actionCharts[actionId].dispose();
         }
-        $this._actionContents[id]=null;
+        $this._actionContents[actionId]=null;
 
+        if($this.event_action_remove){
+            $this.event_action_remove(action_info)
+        }
 
+        $this._onCanvasChanged();
     },
 
 
     //删除连线
     removeLink:function(sourceId,targetId) {
+        var $this=this;
+
         var conn = this.getConnection(sourceId,targetId)
         if(conn==null){
             return;
         }
 
+        var link_info=this._linkInfos[sourceId+"-"+targetId];
+
         this.delLinkInfo(sourceId,targetId);
 
         this._plumb.deleteConnection(conn);
         this._plumb.repaintEverything();
+
+        if(this.event_link_remove){
+
+            this.event_link_remove(link_info);
+        }
+
+        $this._onCanvasChanged();
     },
 
     setEditable:function(editable){
@@ -1407,10 +1619,10 @@ var andflow={
         }
         if(selected){
 
-            $("#"+actionId).find(".action-main").addClass("selected");
+            $("#"+actionId).addClass("selected");
 
         }else{
-            $("#"+actionId).find(".action-main").removeClass("selected");
+            $("#"+actionId).removeClass("selected");
 
         }
     },
@@ -1470,8 +1682,8 @@ var andflow={
                 element.addClass("reject");
             }
         }
-
     },
+
     //显示状态
     setActionStates:function(action_states) {
         if(action_states==undefined||action_states==null){
@@ -1567,7 +1779,7 @@ var andflow={
     setLinkType:function(link_type){
 
         this.flowModel.link_type=link_type;
-        this.reflow();
+        this.refresh();
 
     },
 
@@ -1692,12 +1904,16 @@ var andflow={
     },
 
     //获取截图
-    getSnapshot:function( callback ){
+    getSnapshot:function( callback ,opts){
         if($("#canvas").is(":hidden")){
             return;
         }
 
-        var options={backgroundColor:"white"}
+        var options={backgroundColor:"white"};
+
+        if(opts){
+            $.extend(options,opts);
+        }
 
         var cardBox = document.querySelector("#canvas");
 
@@ -1732,14 +1948,10 @@ var andflow={
         let h=cardBox.scrollHeight+5;
 
         let scale = options.scale || 1;
-        canvas.width = w*scale;
-        canvas.height = h*scale;
-        canvas.style.width=w+"px";
-        canvas.style.height=h+"px";
-        let context = canvas.getContext("2d");
-        context.scale(scale,scale);
-        //let rect = cardBox.getBoundingClientRect();//获取元素相对于视察的偏移量
-        //context.translate(-rect.left,-rect.top);//设置context位置，值为相对于视窗的偏移量负值，让图片复位
+        canvas.width = w * scale;
+        canvas.height = h * scale;
+        canvas.style.width=(w * scale)+"px";
+        canvas.style.height=(h * scale)+"px";
 
 
         html2canvas(cardBox, {
@@ -1788,7 +2000,19 @@ var andflow={
         });
 
     },
+    setActionContents:function(actioncontentMap){
+        if(actioncontentMap){
+          this._actionContents = actioncontentMap;
+        }
+        if(this._actionContents==null || this._actionContents.length==0){
+          return;
+        }
+        for(var actionId in this._actionContents){
+            var ac = this._actionContents[actionId];
+            this.setActionContent(actionId,ac.content, ac.content_type)
+        }
 
+    },
     setActionContent:function(action_id, content, content_type){
         if(this.flowModel.show_action_content==false || this.flowModel.show_action_content=="false"){
             return;
@@ -1936,8 +2160,8 @@ var andflow={
 
                 break;
         }
-        var content = element.html();
-        this._actionContents[action_id] = {type:'html', content: content};
+
+        this._actionContents[action_id] = {content_type:content_type, content: content};
 
     },
     //显示所有action内容

@@ -9,8 +9,8 @@ div{
 }
 ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
-    border-radius   : 4px;
-    background-color: rgba(200, 200, 200, 0.5);
+    border-radius   : 3px;
+    background-color: rgba(220, 220, 220, 0.7);
     background-image: -webkit-linear-gradient(
             45deg,
             rgba(255, 255, 255, 0.2) 25%,
@@ -125,65 +125,88 @@ div{
     overflow: hidden;
     border: 1px solid #E3E3E3;
     border-radius: 0.25rem;
+
+    -moz-user-select: none; /*火狐*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none;
+    color:#333333 ;
+
 }
 
 
 .andflow .metadata{
+    position: relative;
     display: inline-block;
+
     width: 200px;
     height: 100%;
     float: left;
     border-right: 1px solid #E3E3E3;
-    position: relative;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
     padding-top: 0px;
-}
-.andflow .metadata.close{
-    display: none;
-}
 
+}
 
 .andflow .metadata .tags{
     display: flex;
     padding: 0px;
     align-items: center;
     border-bottom: 1px solid #E3E3E3;
+    height: 25px;
+    background-color: #E3E3E3;
+    overflow: hidden;
 }
+
 .andflow .metadata .tags>label{
     display: inline-block;
     width: 50px;
-    height: 25px;
+    height: 100%;
     font-size: 12px;
     background-color: #E3E3E3;
     color:#333333 ;
     line-height: 25px;
     text-align: center;
     margin:0px;
-    /*border-radius: .25rem 0px    0px .25rem;*/
+
+
 }
 .andflow .metadata .tags>select{
     display: inline-block;
-    width: calc(100% - 50px);
-    height: 25px;
-    /*border-radius: 0px .25rem .25rem 0px;*/
+
+    /*width: calc(100% - 50px);*/
+    width: 100%;
+    height: 100%;
+
     font-size: 12px;
-    padding: 3px;
+
     margin:0px;
     border: 0px;
     outline:0px;
+    border-radius: 0px;
+
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -webkit-appearance: none ;
+    appearance: none;
+
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGVJREFUOE9jZKAQMFKon2HUAAbahEEDAwPDVQYGhtVoMRTKwMCgzcDAAJKHA2yxAFK4ioGBIQzJEGxiYENwRSOyBpA6dAPxugAmCTMExEd2DYrPCCUkGajqJ7hSLCEDCKb0YWAAAPWaDREoXWNBAAAAAElFTkSuQmCC");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 5px) 50%;
+
+    padding-left: 10px;
 
     color: #333333;
+
 }
 
 .andflow .metadata .actions{
     padding: 5px;
+    height: calc(100% - 25px);
     overflow: auto;
 }
 
@@ -192,34 +215,47 @@ div{
     color: #333333;
     font-size: 12px;
 }
-.andflow .leftMenu{
+.andflow .actionMenu{
     list-style-type: none;
     padding: 0px;
     margin:0px;
 }
 
-.andflow .leftMenuGroup{
-    margin-bottom: 10px;
+.andflow .actionMenuGroup{
+    margin-top: 10px;
+
+
 }
-.andflow .leftMenuGroup>a{
+.andflow .actionMenuGroup>a{
     cursor:default;
-    font-size: 14px;
     text-decoration: none;
     color: #333333;
     font-size: 14px;
-
 }
-.andflow .leftMenuGroupBody{
+.andflow .actionMenuGroupBody{
     padding: 0px;
-    padding-left: 10px;
 }
-.andflow .leftMenuItem{
+.andflow .actionMenuItem{
+
+    padding-left: 10px;
     list-style-type: none;
-    cursor: pointer;
     height: 25px;
     line-height: 25px;
+    font-size: 12px;
+    cursor: pointer;
+
 }
-.andflow .leftMenuItem:hover{
+.andflow .actionMenuItem>a{
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+.andflow .actionMenuItem>a>img{
+    height: 16px;width: 16px;
+}
+
+
+.andflow .actionMenuItem:hover{
     background-color: rgba(233,233,233,0.21);
 }
 
@@ -256,7 +292,7 @@ div{
     background-color: transparent;
 
     width: 100%;
-    height: 100%;
+    height: calc(100% - 25px);
     padding: 0px;
     background-image: url(data:image/gif;base64,R0lGODlhDAAMAJEAAOrq6v////Hx8QAAACH5BAAHAP8ALAAAAAAMAAwAAAIWjI8hycvonomSPtvkwYlDPQniSApAAQA7);
     overflow: auto;
@@ -272,8 +308,86 @@ div{
     margin:0px;
     background-color: transparent;
     overflow: visible;
+}
+
+.flow_tools{
+    display: inline-block;
+    height: 25px;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid #E3E3E3;
+    color:#333333 ;
+    font-size: 12px;
+    overflow: hidden;
+    margin: 0px;
+    padding:0px;
+    /*background-color: #E3E3E3;*/
+}
+.flow_tools .left{
+    display: inline-block;
+
+    float: left;
+    height: 100%;
+}
+.flow_tools .right{
+    display: inline-block;
+    float: right;
+    height: 100%;
 
 }
+.flow_tools a{
+    display: inline-block;
+    min-width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    cursor: pointer;
+    background-size: 70% 70%;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+    /*background-color: #E3E3E3;*/
+    /*border: 1px solid #E3E3E3;*/
+}
+.flow_tools a:hover{
+    background-color: #d9d9d9;
+
+}
+.flow_tools .scale_value{
+    font-size: 10px;
+}
+
+.flow_tools .fold_btn{
+    color: white;
+}
+/*.flow_tools .left a{*/
+/*    border-right: 1px solid white;*/
+/*}*/
+/*.flow_tools .right a{*/
+/*    border-left: 1px solid white;*/
+/*}*/
+
+
+.flow_thumbnail{
+    display: none;
+    position: absolute;
+    z-index: 100;
+    right: 0px;
+    padding: 0px;
+    top: 25px;
+    width: 100px;
+    height:100px;
+    border: 1px solid #E3E3E3;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-size: contain;
+    background-repeat: no-repeat;
+
+ }
 
 /*流程执行结果列表*/
 .flow_state_list{
@@ -349,8 +463,166 @@ div{
     color: green;
 }
 
-/*static */
 
+
+/***************************************************/
+
+/*hide toolbar*/
+.andflow.toolbar_hide .flow_tools{
+    display: none;
+}
+.andflow.toolbar_hide .canvasContainer{
+    height: 100%;
+}
+
+
+/***************************************************/
+
+/*float left metadata*/
+.andflow.metadata_float_left .metadata{
+    position: absolute;
+    z-index: 100;
+    left: 0px;
+    top: 25px;
+    display: inline-block;
+    width: 200px;
+    height: calc(100% - 25px);
+    border-right: 1px solid #E3E3E3;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-clip: border-box;
+    padding-top: 0px;
+}
+.andflow.metadata_float_left.toolbar_hide .metadata{
+    top: 0px;
+    height: 100%;
+}
+
+
+.andflow.metadata_float_left .designer{
+    display: inline-block;
+
+    width: 100%;
+    height: 100%;
+
+    border-right: 5px solid transparent;
+    box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
+    position: relative;
+
+
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+}
+
+
+
+/***************************************************/
+/*float top metadata*/
+.andflow.metadata_float_top .metadata{
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+    top: 25px;
+    display: inline-block;
+    width: 100%;
+    height: 25px;
+    border-right: 0px;
+    border-left: 0px;
+    border-bottom: 1px solid #E3E3E3;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: rgba(255, 255, 255, 1);
+    background-clip: border-box;
+    padding-top: 0px;
+}
+
+.andflow.metadata_float_top.toolbar_hide .metadata{
+    top: 0px;
+}
+
+.andflow.metadata_float_top .metadata .tags{
+    float: left;
+    width: 100px;
+}
+.andflow.metadata_float_top .metadata .actions{
+    float: right;
+    padding: 0px;
+    height: auto;
+    width: calc(100% - 100px);
+    overflow-y:hidden;
+    overflow-x:auto;
+    white-space: nowrap;
+    box-sizing: border-box;
+
+}
+
+
+.andflow.metadata_float_top .metadata .actions .actionMenu{
+    display: flex;
+    align-items: center;
+    align-content: center;
+    height: auto;
+    width: 100%;
+}
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup{
+    display: inline-block;
+    height: 25px;
+    padding: 0px;
+    margin:0px;
+    padding-left: 5px;
+    border-left: 1px solid #E3E3E3;
+}
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup>a{
+    font-size: 10px;
+    padding-left: 5px;
+
+    height: 100%;
+    line-height: 25px;
+    color: #A3A3A3;
+}
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem{
+    display: inline-block;
+}
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem>a{
+    display: flex;
+}
+.andflow.metadata_float_top .designer{
+    display: inline-block;
+
+    width: 100%;
+    height: 100%;
+
+    border-right: 5px solid transparent;
+    box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
+    position: relative;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+}
+
+
+/************************************************/
+
+/*close metadata*/
+.andflow.fold .metadata{
+    display: none;
+}
+
+.andflow.fold .designer{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+/************************************************/
+
+/*editable=false static */
 .andflow.state .metadata{
     display: none;
 }
@@ -361,8 +633,9 @@ div{
     height: 100%;
 }
 
-
-/*state*/
+.andflow.state .flow_tools .nav_btn{
+    display: none;
+}
 
 .andflow.state .action .btn-remove{
     display: none;
@@ -380,4 +653,5 @@ div{
     display: none;
     visibility: hidden;
 }
+
 

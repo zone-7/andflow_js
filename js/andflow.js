@@ -401,40 +401,51 @@ var andflow = {
     $('#canvas').droppable({
       scope: 'plant',
       drop: function (event, ui) {
-        var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
+        
 
-        var name = $(ui.draggable).attr('action_name');
-
+        var name = $(ui.draggable).attr('action_name'); 
         var left = parseInt(ui.offset.left - $(this).offset().left);
         var top = parseInt(ui.offset.top - $(this).offset().top);
+        var metaInfo = $this.getMetadata(name);
 
-        var action = { id: actionId, left: left, top: top, name: name, params: {} };
-        var actionInfo = $this.getMetadata(name);
-        if (actionInfo != null) {
-          for (var i in actionInfo.params) {
-            var p = actionInfo.params[i];
-            var name = p.name;
-            var defaultValue = p.default;
-            if (defaultValue) {
-              action.params[name] = defaultValue;
+        if(metaInfo.tp=="group"){
+          var groupId = jsPlumbUtil.uuid().replaceAll('-', '');
+          var group = { id: groupId, left: left, top: top, width: "200px", height: "200px"};
+           
+          $this._createGroup(group);
+
+        }else{
+          var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
+          var action = { id: actionId, left: left, top: top, name: name, params: {} };
+
+          if (metaInfo != null) {
+            for (var i in metaInfo.params) {
+              var p = metaInfo.params[i];
+              var name = p.name;
+              var defaultValue = p.default;
+              if (defaultValue) {
+                action.params[name] = defaultValue;
+              }
             }
           }
+
+          //开始节点只有一个
+          if (name == 'begin') {
+            if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
+              return;
+            }
+          }
+          //结束节点只有一个
+          if (name == 'end') {
+            if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
+              return;
+            }
+          }
+
+          $this._createAction(action);
+
         }
 
-        //开始节点只有一个
-        if (name == 'begin') {
-          if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
-            return;
-          }
-        }
-        //结束节点只有一个
-        if (name == 'end') {
-          if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
-            return;
-          }
-        }
-
-        $this._createAction(action);
       },
     });
   },
@@ -730,6 +741,8 @@ var andflow = {
     $('#actionMenu li.actionMenuItem').draggable({
       helper: function (event) {
         var action_name = $(this).attr('action_name');
+        var tp = $(this).attr('action_tp');
+
         var title = $(this).attr('action_title');
         var icon = $(this).attr('action_icon');
         var metadata = $this.getMetadata(action_name);
@@ -741,6 +754,13 @@ var andflow = {
           ($this.img_path || '') +
           icon +
           '"/></div></div>';
+        if(metadata.tp=="group"){
+          var html =
+            '<div class="group-drag"><div class="group-header">' +
+            title +
+            '</div><div class="group-body"></div></div>';
+        }
+
 
         if ($this.render_action_helper) {
           var r = $this.render_action_helper(metadata, html);
@@ -788,33 +808,80 @@ var andflow = {
     });
 
     //双击打开配置事件,在设计模式和步进模式下才可以用
-    groupElement.bind('click', function (event) {
+    // groupElement.bind('click', function (event) {
+    //   if ($this.editable) {
+    //     if ($this.event_group_click && $this.event_group_dblclick) {
+    //       $this._timer_group && clearTimeout($this._timer_group);
+    //       $this._timer_group = setTimeout(function () {
+    //         $this.event_group_click(group);
+    //       }, 300);
+    //     } else if ($this.event_group_click) {
+    //       $this.event_group_click(group);
+    //     }
+    //   }
+    // });
+
+    // groupElement.bind('dblclick', function (event) {
+    //   if ($this.editable) {
+    //     if ($this.event_group_dblclick) {
+    //       $this._timer_group && clearTimeout($this._timer_group);
+
+    //       $this.event_group_dblclick(group);
+    //     }
+    //   }
+    // });
+
+    groupElement.find('.group-header').bind('dblclick',function(event){
       if ($this.editable) {
-        if ($this.event_group_click && $this.event_group_dblclick) {
-          $this._timer_group && clearTimeout($this._timer_group);
-          $this._timer_group = setTimeout(function () {
-            $this.event_group_click(group);
-          }, 300);
-        } else if ($this.event_group_click) {
-          $this.event_group_click(group);
-        }
-      }
-    });
+        var editor=$('<input  />');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
+        editor.val(groupElement.find('.group-header').html());
+        groupElement.find('.group-header').append(editor);
 
-    groupElement.bind('dblclick', function (event) {
+        editor.focus();
+        editor.on("blur",function(e){
+          
+          var value = editor.val(); 
+          editor.parent().html(value);
+          editor.remove();
+        });
+
+      } 
+    });
+    groupElement.find('.group-body').bind('dblclick',function(event){
       if ($this.editable) {
-        if ($this.event_group_dblclick) {
-          $this._timer_group && clearTimeout($this._timer_group);
+        var editor=$('<textarea></textarea>');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
 
-          $this.event_group_dblclick(group);
-        }
-      }
+        editor.val(groupElement.find('.group-body').html());
+        groupElement.find('.group-body').append(editor);
+
+        editor.focus();
+        editor.on("blur",function(e){
+          var value = editor.val(); 
+          editor.parent().html(value);
+          editor.remove();
+        });
+
+      } 
     });
-
 
     //title\body
     groupElement.find('.group-header').html(group.title || '');
     groupElement.find('.group-body').html(group.des || '');
+
 
     //位置
     var padding_top=30;
@@ -823,7 +890,7 @@ var andflow = {
     var padding_bottom=10;
 
     //left
-    if(group.position==null || group.position=="auto" || group.position.left==null || group.position.left=="auto"){
+    if(group.left==null || group.left=="auto"){
       if(actions.length>0){
         var minLeft = 9999999999999;
    
@@ -837,14 +904,14 @@ var andflow = {
         groupElement.css("left",minLeft+"px");
       } 
     }else{
-      if((group.position.left+"").indexOf("px")>=0){
-        groupElement.css("left", group.position.left);
+      if((group.left+"").indexOf("px")>=0){
+        groupElement.css("left", group.left);
       }else{
-        groupElement.css("left", group.position.left+"px");
+        groupElement.css("left", group.left+"px");
       } 
     }
     //top
-    if(group.position==null || group.position=="auto" || group.position.top==null || group.position.top=="auto"){
+    if(group.top==null || group.top=="auto"){
       if(actions.length>0){
         var minTop = 999999999;
    
@@ -858,15 +925,15 @@ var andflow = {
         groupElement.css("top",minTop+"px");
       } 
     }else{ 
-      if((group.position.top+"").indexOf("px")>=0){
-        groupElement.css("top", group.position.top);
+      if((group.top+"").indexOf("px")>=0){
+        groupElement.css("top", group.top);
       }else{
-        groupElement.css("top", group.position.top+"px");
+        groupElement.css("top", group.top+"px");
       }
     }
 
     //width
-    if(group.position==null || group.position=="auto" || group.position.width==null || group.position.width=="auto"){
+    if( group.width==null || group.width=="auto"){
       if(actions.length>0){
         var maxWidth = 0;
 
@@ -887,15 +954,15 @@ var andflow = {
         groupElement.width(maxWidth);
       } 
     }else{
-      if((group.position.width+"").indexOf("px")>=0){
-        groupElement.css("width", group.position.width);
+      if((group.width+"").indexOf("px")>=0){
+        groupElement.css("width", group.width);
       }else{
-        groupElement.css("width", group.position.width+"px"); 
+        groupElement.css("width", group.width+"px"); 
       }  
     }
 
     //height
-    if(group.position==null || group.position=="auto" || group.position.height==null || group.position.height=="auto"){
+    if(group.height==null || group.height=="auto"){
       if(actions.length>0){
         var maxHeight = 0;
 
@@ -916,10 +983,10 @@ var andflow = {
         groupElement.height(maxHeight);
       } 
     }else{
-      if((group.position.height+"").indexOf("px")>=0){
-        groupElement.css("height", group.position.height);
+      if((group.height+"").indexOf("px")>=0){
+        groupElement.css("height", group.height);
       }else{
-        groupElement.css("height", group.position.height+"px"); 
+        groupElement.css("height", group.height+"px"); 
       }  
     }
 
@@ -958,13 +1025,12 @@ var andflow = {
 
     $this._plumb.addGroup({
       el:groupElement.get(0),
-      id:id,
+      id:id, 
       orphan:true,
       droppable:true,
       dropOverride: true,
       endpoint:["Dot", { radius:3 }]
-    });
-    // $this._plumb.draggable(groupElement);
+    }); 
     
     
     if(actions && actions.length>0){
@@ -2113,18 +2179,22 @@ var andflow = {
         group.actions.push(id);
       }
 
-      //position
-      if(group.position!="auto"){
-        group.position = {};
+      if(group.left!="auto"){ 
         let left = el.css("left");
-        group.position.left = left;
+        group.left = left;
+      }
+      if(group.top!="auto"){ 
         let top = el.css("top");
-        group.position.top = top;
+        group.top = top;
+      }
+      if(group.width!="auto"){ 
         let w = el.css('width');
-        group.position.width = w;
+        group.width = w;
+      }
+      if(group.height!="auto"){ 
         let h = el.css('height');
-        group.position.height = h;
-      } 
+        group.height = h;
+      }
     
       groups.push(group);
     }

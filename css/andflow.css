@@ -280,6 +280,7 @@ div{
     background-clip: border-box;
     border: 0 solid rgba(0,0,0,.125);
     border-radius: .25rem;
+    box-sizing: border-box;
 }
 .andflow .designer.max{
     width: 100%;
@@ -296,6 +297,7 @@ div{
     padding: 0px;
     background-image: url(data:image/gif;base64,R0lGODlhDAAMAJEAAOrq6v////Hx8QAAACH5BAAHAP8ALAAAAAAMAAwAAAIWjI8hycvonomSPtvkwYlDPQniSApAAQA7);
     overflow: auto;
+    box-sizing: border-box;
 }
  
 

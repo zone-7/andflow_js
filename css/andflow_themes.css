@@ -31,6 +31,35 @@ flow_theme_default
     font-size: 10px;
 }
 
+.flow_theme_default .group-drag {
+    color: #434343;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.01);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+     
+
+}
+.flow_theme_default .group-drag .group-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
 .flow_theme_default .action-container {
     position: relative;
     color: #434343;
@@ -398,33 +427,36 @@ flow_theme_default
 
 
 /* group */
-.flow_theme_default .group-container {
+.flow_theme_default .group {
     position: absolute;  
     border-radius: 5px;
     background-color: rgba(128, 128, 128, 0.01);
     border: 1px solid rgba(128, 128, 128, 0.3);
     font-size: 12px;
-    cursor:move;
-
+    cursor:move; 
     box-sizing: border-box;
 }
-.flow_theme_default .group-container .group-header {
+.flow_theme_default .group .group-header {
+    position: relative;
     height: 20px;
     width: 100%;
     background-color: rgba(128, 128, 128, 0.05);
     border-bottom: 1px solid rgba(128, 128, 128, 0.3);
     padding-left: 10px;
     color: rgba(128, 128, 128, 1);
-
+    box-sizing: border-box;
 }
-.flow_theme_default .group-container .group-body {
+
+.flow_theme_default .group .group-body {
+    position: relative;
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
     color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
 }
-
-.flow_theme_default .group-container .group-remove-btn{
+ 
+.flow_theme_default .group .group-remove-btn{
     display: none;
     overflow: hidden;
     position: absolute;
@@ -440,10 +472,10 @@ flow_theme_default
     text-decoration:none;
     cursor: pointer;
 }
-.flow_theme_default .group-container:hover .group-remove-btn{
+.flow_theme_default .group:hover .group-remove-btn{
     display: block;
 }
-.flow_theme_default .group-container .group-resize {
+.flow_theme_default .group .group-resize {
     display: none;
     position: absolute;
     z-index: 8;
@@ -461,7 +493,7 @@ flow_theme_default
     border-right: 7px solid rgba(128, 128, 128, 0.3);
     border-bottom: 7px solid rgba(128, 128, 128, 0.3);
 }
-.flow_theme_default .group-container:hover .group-resize {
+.flow_theme_default .group:hover .group-resize {
     display: block;
 }
 /*
@@ -506,6 +538,35 @@ flow_theme_icon
     white-space:nowrap;
 }
 
+.flow_theme_icon .group-drag {
+    color: #434343;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.01);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+     
+
+}
+.flow_theme_icon .group-drag .group-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
 
 .flow_theme_icon .action-drag .action-icon{
     width: 100%;
@@ -903,30 +964,32 @@ flow_theme_icon
 
 
 /* group */
-.flow_theme_icon .group-container {
+.flow_theme_icon .group {
     position: absolute;  
     border-radius: 5px;
     background-color: rgba(128, 128, 128, 0.01);
     border: 1px solid rgba(128, 128, 128, 0.3);
     font-size: 12px;
     cursor:move;
+    box-sizing: border-box;
 }
-.flow_theme_icon .group-container .group-header {
+.flow_theme_icon .group .group-header {
+    position: relative;
     height: 20px;
     width: 100%;
     background-color: rgba(128, 128, 128, 0.05);
     border-bottom: 1px solid rgba(128, 128, 128, 0.3);
-    padding-left: 10px;
+    padding: 0px;
     color: rgba(128, 128, 128, 1);
 
-}
-.flow_theme_icon .group-container .group-body {
+} 
+.flow_theme_icon .group .group-body {
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
     color: rgba(128, 128, 128, 0.7);
-}
-.flow_theme_icon .group-container .group-remove-btn{
+} 
+.flow_theme_icon .group .group-remove-btn{
     display: inline-block;
     overflow: hidden;
     position: absolute;
@@ -942,7 +1005,7 @@ flow_theme_icon
     text-decoration:none;
     cursor: pointer;
 }
-.flow_theme_icon .group-container .group-resize {
+.flow_theme_icon .group .group-resize {
     display: none;
     position: absolute;
     z-index: 20;
@@ -960,7 +1023,7 @@ flow_theme_icon
     border-right: 7px solid rgba(128, 128, 128, 0.3);
     border-bottom: 7px solid rgba(128, 128, 128, 0.3);
 }
-.flow_theme_icon .group-container:hover .group-resize {
+.flow_theme_icon .group:hover .group-resize {
     display: block;
 }
 
@@ -1008,6 +1071,36 @@ flow_theme_zone
     writing-mode: tb-lr;/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
 }
 
+
+.flow_theme_zone .group-drag {
+    color: #434343;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.01);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+     
+
+}
+.flow_theme_zone .group-drag .group-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
 
 .flow_theme_zone .action-container{
     color: #434343;
@@ -1420,7 +1513,7 @@ flow_theme_zone
 
 /* group */
 
-.flow_theme_zone .group-container {
+.flow_theme_zone .group {
     position: absolute;  
     border-radius: 5px;
     background-color: rgba(128, 128, 128, 0.01);
@@ -1428,7 +1521,8 @@ flow_theme_zone
     font-size: 12px;
     cursor:move;
 }
-.flow_theme_zone .group-container .group-header {
+.flow_theme_zone .group .group-header {
+    position: relative;
     height: 20px;
     width: 100%;
     background-color: rgba(128, 128, 128, 0.05);
@@ -1436,15 +1530,16 @@ flow_theme_zone
     padding-left: 10px;
     color: rgba(128, 128, 128, 1);
 
-}
-.flow_theme_zone .group-container .group-body {
+} 
+.flow_theme_zone .group .group-body {
+    position: relative;
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
     color: rgba(128, 128, 128, 0.7);
 }
 
-.flow_theme_zone .group-container .group-remove-btn{
+.flow_theme_zone .group .group-remove-btn{
     display: inline-block;
     overflow: hidden;
     position: absolute;
@@ -1460,7 +1555,7 @@ flow_theme_zone
     text-decoration:none;
     cursor: pointer;
 }
-.flow_theme_zone .group-container .group-resize {
+.flow_theme_zone .group .group-resize {
     display: none;
     position: absolute;
     z-index: 20;
@@ -1478,6 +1573,6 @@ flow_theme_zone
     border-right: 7px solid rgba(128, 128, 128, 0.3);
     border-bottom: 7px solid rgba(128, 128, 128, 0.3);
 }
-.flow_theme_zone .group-container:hover .group-resize {
+.flow_theme_zone .group:hover .group-resize {
     display: block;
 }

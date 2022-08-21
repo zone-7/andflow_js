@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>andflow</title>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/jsplumb.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <script src="../js/canvg.js"></script>
+
+    <link rel="stylesheet" href="../css/andflow.css">
+    <link rel="stylesheet" href="../css/andflow_themes.css">
+ 
+    <script src="../js/andflow.js"></script>
+    <script src="../js/andflow_themes.js"></script> 
+ 
+</head>
+<body>
+<div id="andflow" style="width: 800px;height: 600px;padding:0px;">
+</div>
+ 
+</body>
+<script>
+
+
+</script>
+<script>
+ 
+    var tags=['', '通用', '系统'];
+
+    var metadata=[
+        {
+            "name": "begin",
+            "title": "开始",
+            "icon": "begin.png"
+        },
+        {
+            "name": "end",
+            "title": "结束",
+            "des": "结束",
+            "icon": "end.png"
+        },
+
+        {
+            "name": "script",
+            "title": "执行脚本",
+            "icon": "script.png"
+        },
+
+        {
+            "name": "cmd",
+            "title": "系统命令",
+            "icon": "cmd.png"
+        }
+
+    ] ;
+
+    var flowModel= {
+        "code":"topology",  //编码
+        "name":"网络拓扑图",  //名称
+        "show_action_body":"true",       //是否显示Body,默认true, flow_theme_icon比较有用
+        "show_action_content":"true",     //是否显示节点内容,默认true
+        "theme":"flow_theme_icon",     //节点风格,默认 flow_theme_default: flow_theme_default、flow_theme_icon、flow_theme_zone
+        "link_type":"Flowchart",          //连接线风格，默认Flowchart、Straight、Bezier、StateMachine
+        "actions":[//节点
+            {
+                "id":"f7a6ec0031784f5a80d8633a6418fd52",
+                "left":"77px",
+                "top":"101px",
+                "name":"begin",
+                "params":{},
+                "title":"开始",
+                "icon":"begin.png",
+                "width":"50px",
+                "height":"50px",
+                "content":{
+                    "content_type":"msg",
+                    "content":"hello"
+                }
+            },
+            {
+                "id":"793a2a11cf8b40e9afd8bd8f04405e64",
+                "left":"300px",
+                "top":"101px",
+                "name":"script",
+                "params":{},
+                "title":"执行脚本",
+                "icon":"script.png",
+                "width":"50px",
+                "height":"50px",
+                "content":{
+                    "content_type":"msg",
+                    "content":"world"
+                }
+            },
+            {
+                "id":"f558687ca5f34a6c89732eb50749a15a",
+                "left":"501px",
+                "top":"101px",
+                "name":"end",
+                "params":{},
+                "title":"结束aa",
+                "icon": "end.png",
+                "width":"50px",
+                "height":"50px",
+                "content":{
+                    "content_type":"msg",
+                    "content":"yes"
+                }
+            }
+        ],
+        "links":[//连接线
+            {
+                "source_id":"f7a6ec0031784f5a80d8633a6418fd52",
+                "target_id":"793a2a11cf8b40e9afd8bd8f04405e64",
+                "title":"D01",
+                "lineStyle":"dotted",
+                "arrows":[true,true],
+            },
+            {
+                "source_id":"793a2a11cf8b40e9afd8bd8f04405e64",
+                "target_id":"f558687ca5f34a6c89732eb50749a15a",
+                "title":"D02"
+            }
+        ],
+        "groups":[
+            {
+                "id":"group1",
+                "actions":["793a2a11cf8b40e9afd8bd8f04405e64","f558687ca5f34a6c89732eb50749a15a"],
+                "left":"auto",
+                "top":"auto",
+                "width":"auto",
+                "height":"auto"
+            }
+        ]
+    };
+
+
+    var options={
+        // tags:tags,            //组件过滤标签列表
+        // metadata:metadata,    //组件元素
+        flowModel:flowModel,  //流程模型
+        img_path: "../img/",
+        show_grid: false,
+        editable:false,   //是否可编辑，默认true
+        render_action:function(metadata,action,html){ return html; },//节点渲染
+        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
+        render_state_list: function(datas){return null},             //流程状态列表渲染
+        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
+
+        //节点单击事件
+        event_action_click:function(metadata,action){
+
+             
+        },
+        //节点双击事件
+        event_action_dblclick:function(metadata,action){
+
+             
+
+        },
+        //连线单击事件
+        event_link_click: function (link) {
+        
+        },
+        //连线双击事件
+        event_link_dblclick: function (link) {
+         
+        },
+        //画图板单击事件
+        event_canvas_click: function(e){
+           
+        }
+    }
+
+
+    andflow.newInstance("andflow",options);
+    andflow.showFlow();
+
+
+
+    //方法
+    function getFlowContent(){
+        var content = andflow.getFlow();
+        document.getElementById("flow_content").value=JSON.stringify(content,null,'\t');
+    }
+    function setFlowContent(){
+        var txt = document.getElementById("flow_content").value;
+
+        if(txt.length==0){
+            return;
+        }
+        try{
+
+            var m = JSON.parse(txt);
+            andflow.showFlow(m);
+        }catch (e) {
+            alert(e)
+        }
+    }
+
+    function snap(){
+
+        andflow.snap("流程");
+    }
+
+
+    function changeTheme(obj){
+        var obj = document.getElementById("theme_select");
+
+        var index = obj.selectedIndex; // 选中索引
+
+        var theme = obj.options[index].value; // 选中文本
+        andflow.setTheme(theme);
+        andflow.reflow();
+    }
+
+    function changeLinkType(e){
+        var obj = document.getElementById("link_type_select");
+
+        var index = obj.selectedIndex; // 选中索引
+
+        var link_type = obj.options[index].value; // 选中文本
+        andflow.setLinkType(link_type);
+        andflow.reflow();
+    }
+    function changeEditable(){
+        var obj = document.getElementById("editable_select");
+        var index = obj.selectedIndex; // 选中索引
+        var editable = obj.options[index].value; // 选中文本
+        andflow.setEditable(editable=="true"?true:false);
+    }
+    function changeShowContent(){
+        var obj = document.getElementById("showcontent_select");
+        var index = obj.selectedIndex; // 选中索引
+        var visible = obj.options[index].value; // 选中文本
+        andflow.setActionContentVisible(visible=="true"?true:false);
+
+    }
+
+</script>
+</html>

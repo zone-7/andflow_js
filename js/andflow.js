@@ -10,2100 +10,2603 @@
  */
 
 var andflow = {
-    containerId: null, //DOM
-    img_path: '', //图谱跟路径
-    editable: true, //是否可编辑
+  containerId: null, //DOM
+  img_path: '', //图谱跟路径
+  editable: true, //是否可编辑
+
+  tags: null, //标签
+  metadata: null, //控件信息
+  flowModel: null, //流程数据
+
+  show_toolbar: true, //是否显示工具栏
+  show_grid:true,
+  metadata_style: '',
+  metadata_position: '',
+  //渲染器
+  render_action: null,
+  render_action_helper: null,
+  render_link: null,
+  render_endpoint: null,
+  render_btn_resize: null,
+  render_btn_remove: null,
+
+  //事件
+  event_action_click: null,
+  event_action_dblclick: null,
+  event_action_remove: null,
+
+  event_group_click: null,
+  event_group_dblclick: null,
+  event_group_remove: null,
+
+  event_link_click: null,
+  event_link_dblclick: null,
+  event_link_remove: null,
+
+  event_canvas_click: null,
+
+  event_canvas_changed: null,
+
+  //语言
+  lang: {
+    metadata_tag_all: '所有组件', 
+    delete_action_confirm: '确定删除该节点?',
+  },
+
+  _themeObj: null, //当前样式对象
+  _plumb: null, //jsplumb
+  _actionInfos: {},
+  _actionScript: {}, //插件脚本，getParam,setParam
+  _actionCharts: {},
+  _action_states: [],  
+  _actionContents: {},
+
+  _linkInfos: {},
+  _link_states: [],
   
-    tags: null, //标签
-    metadata: null, //控件信息
-    flowModel: null, //流程数据
-  
-    show_toolbar: true, //是否显示工具栏
-  
-    metadata_style: '',
-  
-    //渲染器
-    render_action: null,
-    render_action_helper: null,
-    render_link: null,
-    render_endpoint: null,
-    render_btn_resize: null,
-    render_btn_remove: null,
-  
-    //事件
-    event_action_click: null,
-    event_action_dblclick: null,
-    event_action_remove: null,
-  
-    event_link_click: null,
-    event_link_dblclick: null,
-    event_link_remove: null,
-  
-    event_canvas_click: null,
-  
-    event_canvas_changed: null,
-  
-    //语言
-    lang: {
-      metadata_tag_all: '所有组件', 
-      delete_action_confirm: '确定删除该节点?',
+  _groupInfos: {},
+
+  _timer_link: null,
+  _timer_group: null,
+  _timer_action: null,
+  _timer_thumbnail: null,
+  _timeout_thumbnail: true,
+
+  _icon_nav:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
+  _icon_eye:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
+  _icon_eye_close:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==',
+  _icon_cursor_hand:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAfJJREFUWEft1r+rz1Ecx/HHLdNdlGK4g1gw3IHUNRgw2GxSBuqSDErcJIv8GCySDAqDRUnXaiJhUTJQymJScv+A272Tgd51jo6P637P53z79o186vSp8/mc9/t5Xud93u/3hDE/E2P2768H2IRv+Nqq5DAKvMGu5PghjrRA9AWYxSS24XRy+Ap7E8B6vMCHWpg+AI9xqGM41ofzl535C7heA1ELcAWX8QhrCpASYBl3cRARG1cRc6HG0z/B1ALEDmOn+xCSf08GS4CYj+8ZtvQZMDH/2zNKgHC6FmexgK1Y6hKMGiB2nRXJ6v3C8E8ARMC9xjMcK3acz30oBU5iCns6Qfg26TizQlxFsMaIoIzRDHAfxzsO8jluSfOfKu56E0Ck2Ei1T9LdPt9RoMLvz1+aAM7hRkomYaCbB0YOcCDt/jn2p7QaaTiO4HMf760xEOn2PaaxE+96Oi1/bzqCMJCPYR6HxwGwLqmwEZsbpM/MzQqEgUgml3AHpxpVGAogdh6xEEUlxmIDRJTiHdjQWg1v4Qyu4WJPgAc4ittFB9W7GG1PKnzEiZSgajjyVf6C3Yh3cz9QtmO58RgEkW9R9I6hwIpPbTmOxVGY7iUrNetWDb5MU2OoJC9bsUEK/AeYw82ikR06BgZJ3vS9bww0OVlt0Q8nvokhubPnZQAAAABJRU5ErkJggg==',
+  _icon_cursor_auto:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAlZJREFUWEfV10vITWEUxvHfN1IkmRhgIERSiiRKuUwkjMhIbgMmQkpMhFIYuSdKiEgiyTXFRy7lOpOBXDKiyIARoaW1azvOOd85Ovsrq87ofc/7/Pd617P22l2YjiVYqrrYjdu4UCvRhS2YlhuqQpiLb5hSD+AntiZIVQDxkJsxA91lkcjAfwUwAu/xpc1UdSwD5zEGy/GgDYiOAdxK13xIiMstQnQUIDTDut+xDCdbgOg4wHo8SuE12NsDRMcBwk5D8BSD0sJh5UZRCUCI9cFDjMssRDbqRWUAhdg1zMp6WJy9pQxSOUCIHct3SjgjID6VCHoFIPS2Y2P2iIB4mRC9BhB6a7ELLzIjUSNh2/gFyB/R7rsgGlFEuKBZLMIJRMOKTFxvtLkqgNCbjSvZsALidD2IKgFCbxJuoh9W4UBvXUFZZ3hewUhswrbyYtUZKLQG4GpORFGg64qFqgCi4utFCM/D8WIGrQJgGF734JLCSd3NhtIY1WK9iPBwIxvGWuHxvviKG7jfBOT3/hBoZSwvhtZ6AEULjg64MwUPYQUm4FmzbJSfsIWs/ZWBmPfjDXgvrTY+D5mY88I+rK4KoOjv+/Eun34hzqZgXMFk9K8C4BQO4xwWYDTu4g7mp2B0v6j2lbm3Lse/XkHUTUzFU/EjTz6Sg+pYPMdAPMbH7IgdAwjxN1m8b0unzsGlvIooyIgd2ICoiSf1CNrNwMWcfGZm4dWeGdcQfWBojbsafvq1CzAKg2u/70oUUfF7cj0y9QpHEYX6uRMZ6MmqMSGfSUseTPGm//kFAJG9IcmEOX4AAAAASUVORK5CYII=',
+  _icon_drag_start:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAhxJREFUWEft1kvITHEYx/HPu2EhRYnEwpawkZV7IgrJZcEKJRGFhcsKK1m4RBZs3BZKSZIUC5QoiY0QCxYkykYWFoqe+o+OMTPv/z9nXi/lqWk6M8//PN/ze26nzyBb3yDH9x+grgJzcadOGksBxuEd9mNOJfCBBDIBb0qAcgHWYR8iwEEsw9YUdBvW4gXCLwAC6GwOSA5ABH2NpXiKW/iGiZUA33Eee7EQZzA+qdWRIwcg5A5rfG9PaoxsAtiBY+m3e/iM4Qn2Mi7iUzPNQAE8x1AswWhcwq5WaRkogI94hRnpiU9iDFZ1o0CjmKLAGhb1cK1yfQQ7K9cPcT0VYyN90TXzSgEuYD6uYnNOVSefSXhW8W+0bRFAHJqKl/haKcICjp+uxQCLU1vNxJqmLvgjAEcxAusRcoZVJS2FKFbgNu7WlL0K+e8BXEnFt7tU6zb+xQrEgolVu7JHAPFA77Eldw5EAcY8P5wWSx2OIfiA2BW/bchOo3h1muEbakKsQCyj6KbYEb9Yf7tgEW5gE053KcPbNLZbTtL+ACJmLJRIxx4cKoSIdo50zsKXVmdzAOLcNJxLIzneBwKok43FCczGctxv55wL0Dgf7RSvZsfxAI9Tu8b/UWwLMD35nEpFHGu5rZUCxI2imDamV7IpGIYniL0RQPGJtruZk65uAJrvOwqT8ahdnnutQM6DZfv0QoHsYHW6oFaQvzoFPwAAmG4hmL5K1gAAAABJRU5ErkJggg==',
+
+  _connectionTypes: {
+    Flowchart: {
+      anchor: 'Continuous',
+      connector: [
+        'Flowchart',
+        { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true },
+      ],
     },
-  
-    _themeObj: null, //当前样式对象
-    _plumb: null, //jsplumb
-    _actionScript: {}, //插件脚本，getParam,setParam
-    _linkInfos: {},
-    _link_states: [],
-    _actionInfos: {},
-    _actionCharts: {},
-    _action_states: [],
-  
-    _actionContents: {},
-  
-    _timer_link: null,
-    _timer_action: null,
-    _timer_thumbnail: null,
-    _timeout_thumbnail: true,
-  
-    _icon_nav:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
-    _icon_eye:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
-    _icon_eye_close:
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==',
-  
-    _connectionTypes: {
-      Flowchart: {
-        anchor: 'Continuous',
-        connector: [
-          'Flowchart',
-          { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true },
-        ],
-      },
-      Straight: {
-        anchor: 'Continuous',
-        connector: ['Straight', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
-      },
-      Bezier: {
-        anchor: 'Continuous',
-        connector: ['Bezier', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
-      },
-      StateMachine: {
-        anchor: 'Continuous',
-        connector: [
-          'StateMachine',
-          { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true },
-        ],
-      },
+    Straight: {
+      anchor: 'Continuous',
+      connector: ['Straight', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
     },
-  
-    _initHtml: function (containerId) {
-      var $this = this;
-      var css_state = '';
-      if ($this.editable == false) {
-        css_state = 'state';
-      }
-  
-      var css_showtoolbar = '';
-      if ($this.show_toolbar == false || $this.show_toolbar == 'false') {
-        css_showtoolbar = 'toolbar_hide';
-      }
-      var metadata_style = $this.metadata_style;
-  
-      var html =
-        '<div class="andflow  ' + metadata_style + ' ' + css_state + ' ' + css_showtoolbar + '">';
-  
-      //begin metadata
-  
-      html += '<div class="metadata" >';
-  
-      html += '<div class="tags">';
-      html += '<select id="tag_select">';
-      html += '</select>';
-      html += '</div>';
-      html += '<div class="actions">';
-      html += '<ul id="actionMenu" class="actionMenu" >';
-      html += '</ul>';
-      html += '</div>';
-      html += '</div>';
-      //end metadata
-  
-      //begin designer
-      html += '<div class="designer">';
-  
-      // begin tools
-      html += '<div class="flow_tools">';
-      html += '<div class="left">';
-      html += '<a class="nav_btn">&nbsp;</a>';
-      html += '</div>';
-      html += '<div class="right">';
-      html += '<a class="scale_down_btn" title="缩小">-</a>';
-      html +=
-        '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
-      html += '<a class="scale_up_btn"  title="放大">+</a>';
-  
-      html += '<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
-      html += '</div>';
-  
-      html += '</div>';
-      //end tools
-  
-      //begin flow_thumbnail
-      html += '<div class="flow_thumbnail">';
-      html += '</div>';
-      //end flow_thumbnail
-  
-      //begin canvas
-      html += '<div id="canvasContainer" class="canvasContainer">';
-      html += '<div id="canvas" class="canvas"></div>';
-      html += '</div>';
-      //end canvas
-   
-      html += '</div>';
-      //end designer
-  
-      html += '</div>';
-  
-      $('#' + containerId).html(html);
-  
-      ///////
-      //events
-  
-      
-      //nav
-      $('#' + containerId)
-        .find('.nav_btn')
-        .css('background-image', 'url(' + this._icon_nav + ')');
-      $('#' + containerId)
-        .find('.nav_btn')
-        .attr('state', 'open');
-      $('#' + containerId)
-        .find('.nav_btn')
-        .bind('click', function (e) {
-          var btn = $('#' + $this.containerId).find('.nav_btn');
-          var state = btn.attr('state');
-          if (state == 'open') {
-            btn.attr('state', 'close');
-            $('#' + $this.containerId)
-              .find('.andflow')
-              .addClass('fold');
-          } else {
-            btn.attr('state', 'open');
-            $('#' + $this.containerId)
-              .find('.andflow')
-              .removeClass('fold');
-          }
-        });
-  
-      //scale
-      $('#' + containerId)
-        .find('.scale_up_btn')
-        .bind('click', function (e) {
-          var value =
-            $('#' + $this.containerId)
-              .find('.scale_value')
-              .html() * 1.0;
-          value = value + 1;
-          var v = value / 100.0;
-          $('#' + $this.containerId)
-            .find('.canvas')
-            .css('transform', 'scale(' + v + ')');
-          $('#' + $this.containerId)
-            .find('.scale_value')
-            .html(value);
-        });
-      $('#' + containerId)
-        .find('.scale_down_btn')
-        .bind('click', function (e) {
-          var value =
-            $('#' + $this.containerId)
-              .find('.scale_value')
-              .html() * 1.0;
-          value = value - 1;
-          var v = value / 100.0;
-          $('#' + $this.containerId)
-            .find('.canvas')
-            .css('transform', 'scale(' + v + ')');
-          $('#' + $this.containerId)
-            .find('.scale_value')
-            .html(value);
-        });
-      $('#' + containerId)
-        .find('.scale_info')
-        .bind('click', function (e) {
-          $('#' + $this.containerId)
-            .find('.canvas')
-            .css('transform', 'scale(1)');
-          $('#' + $this.containerId)
-            .find('.scale_value')
-            .html('100');
-        });
-  
-      //thumbnail
-      $('#' + containerId)
-        .find('.thumbnail_btn')
-        .css('background-image', 'url(' + this._icon_eye_close + ')');
-      $('#' + containerId)
-        .find('.thumbnail_btn')
-        .attr('state', 'close');
-      $('#' + containerId)
-        .find('.thumbnail_btn')
-        .bind('click', function (e) {
-          var element = $('#' + $this.containerId).find('.flow_thumbnail');
-          var btn = $('#' + $this.containerId).find('.thumbnail_btn');
-          var state = btn.attr('state');
-          if (state == 'open') {
-            btn.attr('state', 'close');
-            btn.css('background-image', 'url(' + $this._icon_eye_close + ')');
-            element.hide();
-          } else {
-            btn.attr('state', 'open');
-            btn.css('background-image', 'url(' + $this._icon_eye + ')');
-            element.show();
-            $this._showThumbnail();
-          }
-        });
+    Bezier: {
+      anchor: 'Continuous',
+      connector: ['Bezier', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
     },
-    _initEvents: function () {
-      var $this = this;
-  
-      $('#' + $this.containerId).mouseup(function (e) {
-        $(this).unbind('mousemove');
-        $(this).css('cursor', 'default');
-      });
+    StateMachine: {
+      anchor: 'Continuous',
+      connector: [
+        'StateMachine',
+        { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true },
+      ],
     },
-    //初始化样式
-    _initTheme: function (theme) {
-      this.setTheme(theme);
-    },
-  
-    //初始化action 列表
-    _initMetadata: function () {
-      var $this = this;
-  
-      var tags = this.tags;
-      var metadata = this.metadata;
-  
-      if (tags == null) {
-        tags = [];
+  },
+
+  _initHtml: function (containerId) {
+    var $this = this;
+    var css_state = '';
+    if ($this.editable == false) {
+      css_state = 'state';
+    }
+
+    var css_showtoolbar = '';
+    if ($this.show_toolbar == false || $this.show_toolbar == 'false') {
+      css_showtoolbar = 'toolbar_hide';
+    }
+    // metadata position: metadata_float_top,metadata_float_left
+    var metadata_style = $this.metadata_style; 
+    if(metadata_style==null || metadata_style==""){
+      if($this.metadata_position=="top"){
+        metadata_style = "metadata_float_top"; 
+      }else  if($this.metadata_position=="left"){
+        metadata_style = "metadata_float_left";  
       }
-      if (metadata == null) {
-        metadata = [];
-      }
-  
-      //初始化控件脚本
-      var scripts = '<script>\n';
-      for (var i in metadata) {
-        scripts += metadata[i].params_script || '';
-        scripts += '\n';
-      }
-      scripts += '</script>';
-      $('body').append(scripts);
-  
-      //初始化action模板元数据
-      if ($('#tag_select').length > 0) {
-        var tpdata = [];
-  
-        $('#tag_select').html('');
-        $('#tag_select').append('<option value="">' + $this.lang.metadata_tag_all + '</option>');
-        for (var i in tags) {
-          var t = tags[i];
-          if (t == null || t == '') {
-            continue;
-          }
-          $('#tag_select').append('<option value="' + t + '">' + t + '</option>');
+    }
+
+    var html = '<div class="andflow  ' + metadata_style + ' ' + css_state + ' ' + css_showtoolbar + '">';
+
+    //begin metadata
+
+    html += '<div class="metadata" >';
+
+    html += '<div class="tags">';
+    html += '<select id="tag_select">';
+    html += '</select>';
+    html += '</div>';
+    html += '<div class="actions">';
+    html += '<ul id="actionMenu" class="actionMenu" >';
+    html += '</ul>';
+    html += '</div>';
+    html += '</div>';
+    //end metadata
+
+    //begin designer
+    html += '<div class="designer">';
+
+    // begin tools
+    html += '<div class="flow_tools">';
+    html += '<div class="left">';
+    html += '<a class="nav_btn">&nbsp;</a>';
+    html += '</div>';
+    html += '<div class="right">'; 
+    html += '<a class="scale_down_btn" title="缩小">-</a>';
+    html += '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
+    html += '<a class="scale_up_btn"  title="放大">+</a>';
+
+    html += '<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
+    html += '</div>';
+
+    html += '</div>';
+    //end tools
+
+    //begin flow_thumbnail
+    html += '<div class="flow_thumbnail">';
+    html += '</div>';
+    //end flow_thumbnail
+
+    //begin canvasContainer
+    var bgstyle="";
+    if(!$this.show_grid){
+      bgstyle="background:none";
+    }
+    
+    html += '<div id="canvasContainer" class="canvasContainer" style="'+bgstyle+'">'; 
+    html += '<div id="canvas" class="canvas"></div>';  
+
+    html += '</div>';
+
+    //end canvasContainer
+ 
+    html += '</div>';
+    //end designer
+
+    html += '</div>';
+
+    $('#' + containerId).html(html);
+ 
+    //events
+    
+    
+    //nav button
+    $('#' + containerId)
+      .find('.nav_btn')
+      .css('background-image', 'url(' + this._icon_nav + ')');
+    $('#' + containerId)
+      .find('.nav_btn')
+      .attr('state', 'open');
+    $('#' + containerId)
+      .find('.nav_btn')
+      .bind('click', function (e) {
+        var btn = $('#' + $this.containerId).find('.nav_btn');
+        var state = btn.attr('state');
+        if (state == 'open') {
+          btn.attr('state', 'close');
+          $('#' + $this.containerId)
+            .find('.andflow')
+            .addClass('fold');
+        } else {
+          btn.attr('state', 'open');
+          $('#' + $this.containerId)
+            .find('.andflow')
+            .removeClass('fold');
         }
-  
-        $('#tag_select').on('change', function (e) {
-          var tag = $(this).val();
-          $this._showMetadata(tag);
-        });
-  
-        //加载Action元数据
-        $this._showMetadata($('#tag_select').val());
-      } else {
-        $this._showMetadata('');
-      }
-  
-      $('#canvas').droppable({
-        scope: 'plant',
-        drop: function (event, ui) {
-          var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
-  
-          var name = $(ui.draggable).attr('action_name');
-  
-          var left = parseInt(ui.offset.left - $(this).offset().left);
-          var top = parseInt(ui.offset.top - $(this).offset().top);
-  
-          var action = { id: actionId, left: left, top: top, name: name, params: {} };
-          var actionInfo = $this.getMetadata(name);
-          if (actionInfo != null) {
-            for (var i in actionInfo.params) {
-              var p = actionInfo.params[i];
-              var name = p.name;
-              var defaultValue = p.default;
-              if (defaultValue) {
-                action.params[name] = defaultValue;
-              }
-            }
-          }
-  
-          //开始节点只有一个
-          if (name == 'begin') {
-            if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
-              return;
-            }
-          }
-          //结束节点只有一个
-          if (name == 'end') {
-            if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
-              return;
-            }
-          }
-  
-          $this._createAction(action);
-        },
       });
-    },
-  
-    _initPlumb: function () {
-      var $this = this;
-  
-      if ($this._plumb != null) {
-        $this._plumb.destroy();
-        $('#' + this.containerId + ' #canvas').html('');
+
+    //scale
+    $('#' + containerId)
+      .find('.scale_up_btn')
+      .bind('click', function (e) {
+        var value =
+          $('#' + $this.containerId)
+            .find('.scale_value')
+            .html() * 1.0;
+        value = value + 1;
+        var v = value / 100.0;
+        $('#' + $this.containerId)
+          .find('.canvas')
+          .css('transform', 'scale(' + v + ')');
+        $('#' + $this.containerId)
+          .find('.scale_value')
+          .html(value);
+      });
+    $('#' + containerId)
+      .find('.scale_down_btn')
+      .bind('click', function (e) {
+        var value =
+          $('#' + $this.containerId)
+            .find('.scale_value')
+            .html() * 1.0;
+        value = value - 1;
+        var v = value / 100.0;
+        $('#' + $this.containerId)
+          .find('.canvas')
+          .css('transform', 'scale(' + v + ')');
+        $('#' + $this.containerId)
+          .find('.scale_value')
+          .html(value);
+      });
+    $('#' + containerId)
+      .find('.scale_info')
+      .bind('click', function (e) {
+        $('#' + $this.containerId)
+          .find('.canvas')
+          .css('transform', 'scale(1)');
+        $('#' + $this.containerId)
+          .find('.scale_value')
+          .html('100');
+      });
+
+    
+    //drag and move
+    var canvasContainer = $('#' + containerId).find(".canvasContainer");
+    $('#' + containerId).find('.canvas').bind('mousedown',function(e){
+      var masker = $('#' + containerId).find('.canvas');
+
+      masker.attr("drag","true");
+      masker.attr("offset_x",e.offsetX);
+      masker.attr("offset_y",e.offsetY);
+      masker.css("cursor","move");
+      $this._resizeCanvas();
+
+    });
+    $('#' + containerId).find('.canvas').bind('mouseup',function(e){
+      var masker = $('#' + containerId).find('.canvas');
+
+      masker.attr("drag","false");
+      masker.attr("offset_x",e.offsetX);
+      masker.attr("offset_y",e.offsetY); 
+      masker.css("cursor","auto");
+    });
+    $('#' + containerId).find('.canvas').bind('mouseout',function(e){
+      var masker = $('#' + containerId).find('.canvas');
+
+      masker.attr("drag","false");
+      masker.attr("offset_x",e.offsetX);
+      masker.attr("offset_y",e.offsetY); 
+      masker.css("cursor","auto");
+    });
+    $('#' + containerId).find('.canvas').bind('mousemove',function(e){
+      var masker = $('#' + containerId).find('.canvas'); 
+      var drag = masker.attr("drag");
+      if(drag=="true"){
+        let startX = masker.attr("offset_x");
+        let startY = masker.attr("offset_y");
+        let offsetX = e.offsetX - startX;
+        let offsetY = e.offsetY - startY;
+        
+        // $('#' + containerId).find('.canvas').width(canvasContainer.get(0).scrollWidth);
+        // $('#' + containerId).find('.canvas').height(canvasContainer.get(0).scrollHeight);
+         
+
+        scrollLeft = canvasContainer.scrollLeft() - offsetX;
+        scrollTop = canvasContainer.scrollTop() - offsetY;
+
+        canvasContainer.scrollLeft(scrollLeft); 
+        canvasContainer.scrollTop(scrollTop);
+         
+      
       }
-      
-      var linkType = this.flowModel.link_type || 'Flowchart';
-  
-      var link_color = this._themeObj.default_link_color;
-      var link_radius = this._themeObj.default_link_radius;
-      var link_strokeWidth = this._themeObj.default_link_strokeWidth;
-      var link_color_hover = this._themeObj.default_link_color_hover;
-      var link_strokeWidth_hover = this._themeObj.default_link_strokeWidth_hover;
-  
-      var link_outlineWidth = this._themeObj.default_link_outlineWidth;
-  
-      var endpoint_stroke_color = this._themeObj.default_endpoint_stroke_color;
-      var endpoint_stroke_color_hover = this._themeObj.default_endpoint_stroke_color_hover;
-      var endpoint_fill_color = this._themeObj.default_endpoint_fill_color;
-      var endpoint_fill_color_hover = this._themeObj.default_endpoint_fill_color_hover;
-  
-      var endpoint_radius = this._themeObj.default_endpoint_radius;
-      var endpoint_radius_hover = this._themeObj.default_endpoint_radius_hover;
-      var endpoint_strokeWidth = this._themeObj.default_endpoint_strokeWidth;
-      var endpoint_strokeWidth_hover = this._themeObj.default_endpoint_strokeWidth_hover;
-      
-      var cc = $this._connectionTypes[linkType].connector;
-      cc.cornerRadius = link_radius;
-      this._plumb = jsPlumb.getInstance({
-        Endpoint: ['Dot', { radius: 5 }],
-        Connector: cc,
-  
-        EndpointStyle: {
-          stroke: endpoint_stroke_color,
-          fill: endpoint_fill_color,
-          radius: endpoint_radius,
-          strokeWidth: endpoint_strokeWidth,
-        }, //端点的颜色样式
-        EndpointHoverStyle: {
-          stroke: endpoint_stroke_color_hover,
-          fill: endpoint_fill_color_hover,
-          radius: endpoint_radius_hover,
-          strokeWidth: endpoint_strokeWidth_hover,
-        },
-        PaintStyle: {
-          stroke: link_color,
-          radius: endpoint_radius,
-          strokeWidth: link_strokeWidth,
-          outlineStroke: 'transparent',
-          outlineWidth: link_outlineWidth,
-        },
-        HoverPaintStyle: {
-          stroke: link_color_hover,
-          strokeWidth: link_strokeWidth_hover,
-        },
-  
-        ConnectionOverlays: [
-          [
-            'Arrow',
-            {
-              location: 1,
-              id: 'arrow',
-              length: 10,
-              width: 10,
-              foldback: 0.8,
-            },
-          ],
-          [
-            'Label',
-            {
-              label: '',
-              id: 'label',
-              cssClass: 'linkLabel',
-              visible: false,
-              events: {
-                tap: function (conn, e) {
-                  //alert(conn);
-                },
+    });
+
+    //thumbnail
+    $('#' + containerId)
+      .find('.thumbnail_btn')
+      .css('background-image', 'url(' + this._icon_eye_close + ')');
+    $('#' + containerId)
+      .find('.thumbnail_btn')
+      .attr('state', 'close');
+    $('#' + containerId)
+      .find('.thumbnail_btn')
+      .bind('click', function (e) {
+        var element = $('#' + $this.containerId).find('.flow_thumbnail');
+        var btn = $('#' + $this.containerId).find('.thumbnail_btn');
+        var state = btn.attr('state');
+        if (state == 'open') {
+          btn.attr('state', 'close');
+          btn.css('background-image', 'url(' + $this._icon_eye_close + ')');
+          element.hide();
+        } else {
+          btn.attr('state', 'open');
+          btn.css('background-image', 'url(' + $this._icon_eye + ')');
+          element.show();
+          $this._showThumbnail();
+        }
+      });
+  },
+
+
+  _initEvents: function () {
+    var $this = this;
+
+    $('#' + $this.containerId).mouseup(function (e) {
+      $(this).unbind('mousemove');
+      $(this).css('cursor', 'default');
+    });
+  },
+  //初始化样式
+  _initTheme: function (theme) {
+    this.setTheme(theme);
+  },
+
+  //初始化action 列表
+  _initMetadata: function () {
+    var $this = this;
+
+    var tags = this.tags ||[];
+    var metadata = this.metadata || [];
+
+    if (tags == null) {
+      tags = [];
+    }
+    if (metadata == null) {
+      metadata = [];
+    }
+
+    //初始化控件脚本
+    var scripts = '<script>\n';
+    for (var i in metadata) {
+      scripts += metadata[i].params_script || '';
+      scripts += '\n';
+    }
+    scripts += '</script>';
+    $('body').append(scripts);
+
+    //初始化action模板元数据
+    if ($('#tag_select').length > 0) {
+      var tpdata = [];
+
+      $('#tag_select').html('');
+      $('#tag_select').append('<option value="">' + $this.lang.metadata_tag_all + '</option>');
+      for (var i in tags) {
+        var t = tags[i];
+        if (t == null || t == '') {
+          continue;
+        }
+        $('#tag_select').append('<option value="' + t + '">' + t + '</option>');
+      }
+
+      $('#tag_select').on('change', function (e) {
+        var tag = $(this).val();
+        $this._showMetadata(tag);
+      });
+
+      //加载Action元数据
+      $this._showMetadata($('#tag_select').val());
+    } else {
+      $this._showMetadata('');
+    }
+
+    $('#canvas').droppable({
+      scope: 'plant',
+      drop: function (event, ui) {
+        var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
+
+        var name = $(ui.draggable).attr('action_name');
+
+        var left = parseInt(ui.offset.left - $(this).offset().left);
+        var top = parseInt(ui.offset.top - $(this).offset().top);
+
+        var action = { id: actionId, left: left, top: top, name: name, params: {} };
+        var actionInfo = $this.getMetadata(name);
+        if (actionInfo != null) {
+          for (var i in actionInfo.params) {
+            var p = actionInfo.params[i];
+            var name = p.name;
+            var defaultValue = p.default;
+            if (defaultValue) {
+              action.params[name] = defaultValue;
+            }
+          }
+        }
+
+        //开始节点只有一个
+        if (name == 'begin') {
+          if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
+            return;
+          }
+        }
+        //结束节点只有一个
+        if (name == 'end') {
+          if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
+            return;
+          }
+        }
+
+        $this._createAction(action);
+      },
+    });
+  },
+
+  _initPlumb: function () {
+    var $this = this;
+
+    if ($this._plumb != null) {
+      $this._plumb.destroy();
+      $('#' + this.containerId + ' #canvas').html('');
+    }
+    
+    var linkType = this.flowModel.link_type || 'Flowchart';
+
+    var link_color = this._themeObj.default_link_color;
+    var link_radius = this._themeObj.default_link_radius;
+    var link_strokeWidth = this._themeObj.default_link_strokeWidth;
+    var link_color_hover = this._themeObj.default_link_color_hover;
+    var link_strokeWidth_hover = this._themeObj.default_link_strokeWidth_hover;
+
+    var link_outlineWidth = this._themeObj.default_link_outlineWidth;
+
+    var endpoint_stroke_color = this._themeObj.default_endpoint_stroke_color;
+    var endpoint_stroke_color_hover = this._themeObj.default_endpoint_stroke_color_hover;
+    var endpoint_fill_color = this._themeObj.default_endpoint_fill_color;
+    var endpoint_fill_color_hover = this._themeObj.default_endpoint_fill_color_hover;
+
+    var endpoint_radius = this._themeObj.default_endpoint_radius;
+    var endpoint_radius_hover = this._themeObj.default_endpoint_radius_hover;
+    var endpoint_strokeWidth = this._themeObj.default_endpoint_strokeWidth;
+    var endpoint_strokeWidth_hover = this._themeObj.default_endpoint_strokeWidth_hover;
+    
+    var cc = $this._connectionTypes[linkType].connector;
+    cc.cornerRadius = link_radius;
+    this._plumb = jsPlumb.getInstance({
+      Endpoint: ['Dot', { radius: 5 }],
+      Connector: cc,
+
+      EndpointStyle: {
+        stroke: endpoint_stroke_color,
+        fill: endpoint_fill_color,
+        radius: endpoint_radius,
+        strokeWidth: endpoint_strokeWidth,
+      }, //端点的颜色样式
+      EndpointHoverStyle: {
+        stroke: endpoint_stroke_color_hover,
+        fill: endpoint_fill_color_hover,
+        radius: endpoint_radius_hover,
+        strokeWidth: endpoint_strokeWidth_hover,
+      },
+      PaintStyle: {
+        stroke: link_color,
+        radius: endpoint_radius,
+        strokeWidth: link_strokeWidth,
+        outlineStroke: 'transparent',
+        outlineWidth: link_outlineWidth,
+      },
+      HoverPaintStyle: {
+        stroke: link_color_hover,
+        strokeWidth: link_strokeWidth_hover,
+      },
+
+      ConnectionOverlays: [
+        [
+          'Arrow',
+          {
+            location: 0,
+            id: 'arrow0',
+            length: 10,
+            width: 10,
+            direction: -1,
+            foldback: 0.8,
+          },
+          
+        ],
+        [
+          'Label',
+          {
+            label: '',
+            id: 'label',
+            cssClass: 'linkLabel',
+            visible: false,
+            events: {
+              tap: function (conn, e) {
+                //alert(conn);
               },
             },
-          ],
+          },
         ],
-        Container: 'canvas',
-      });
-  
-      for (var t in $this._connectionTypes) {
-        $this._plumb.registerConnectionType(t, $this._connectionTypes[t]);
-      }
-  
-      //监听新的连接
-      this._plumb.bind('connection', function (info, event) {
-        try {
-          var sourceId = info.sourceId;
-          var targetId = info.targetId;
-  
-          var link = info.connection.data;
+        [
+          'Arrow',
+          {
+            location: 1,
+            id: 'arrow1',
+            length: 10,
+            width: 10,
+            
+            foldback: 0.8,
+            show:false,
+          },
+          
+        ],
+      ],
+      Container: 'canvas',
+    });
+
+    for (var t in $this._connectionTypes) {
+      $this._plumb.registerConnectionType(t, $this._connectionTypes[t]);
+    }
+
+    //监听新的连接
+    this._plumb.bind('connection', function (info, event) {
+      try {
+        var sourceId = info.sourceId;
+        var targetId = info.targetId;
+
+        var link = info.connection.data;
+        if (link == null) {
+          link = $this._linkInfos[sourceId + '-' + targetId];
           if (link == null) {
-            link = $this._linkInfos[sourceId + '-' + targetId];
-            if (link == null) {
-              link = {};
-            }
+            link = {};
           }
-  
-          link['source_id'] = sourceId;
-          link['target_id'] = targetId;
-  
-          $this._linkInfos[sourceId + '-' + targetId] = link;
-  
-          $this._paintConnection(info.connection, link);
-  
-          $this._onCanvasChanged();
-        } catch (e) {}
-      });
-  
-      this._plumb.bind('connectionDetached', function (conn) {
-        var sourceId = conn.sourceId;
-        var targetId = conn.targetId;
-  
-        $this.removeLink(sourceId, targetId);
-      });
-  
-      this._plumb.bind('connectionMoved', function (info) {
-        var sourceId = info.originalSourceId;
-        var targetId = info.originalTargetId;
-  
-        $this._linkInfos[sourceId + '-' + targetId] = null;
-      });
-  
-      this._plumb.bind('beforeDetach', function (conn) {
-        if ($this.editable) {
-          return true;
         }
+
+        link['source_id'] = sourceId;
+        link['target_id'] = targetId;
+
+        $this._linkInfos[sourceId + '-' + targetId] = link;
+
+        $this._paintConnection(info.connection, link);
+
+        $this._onCanvasChanged();
+      } catch (e) {}
+    });
+
+    this._plumb.bind('connectionDetached', function (conn) {
+      var sourceId = conn.sourceId;
+      var targetId = conn.targetId;
+
+      $this.removeLink(sourceId, targetId);
+    });
+
+    this._plumb.bind('connectionMoved', function (info) {
+      var sourceId = info.originalSourceId;
+      var targetId = info.originalTargetId;
+
+      $this._linkInfos[sourceId + '-' + targetId] = null;
+    });
+
+    this._plumb.bind('beforeDetach', function (conn) {
+      if ($this.editable) {
+        return true;
+      }
+      return false;
+    });
+    this._plumb.bind('beforeDetach', function (conn) {
+      if (!$this.editable) {
         return false;
-      });
-      this._plumb.bind('beforeDetach', function (conn) {
-        if (!$this.editable) {
-          return false;
-        }
-        return true;
-      });
-      //自动避免重复连线
-      this._plumb.bind('beforeDrop', function (conn) {
-        if (!$this.editable) {
-          return false;
-        }
-  
-        //return true;
-        var sourceId = conn.sourceId;
-        var targetId = conn.targetId;
-  
-        var linkData = $this._linkInfos[sourceId + '-' + targetId];
-        if (linkData != null) {
-          return false;
-        }
-  
-        return true;
-      });
-  
-      this._plumb.bind('click', function (conn, event) {
-        if ($this.editable) {
-          if ($this.event_link_click && $this.event_link_dblclick) {
-            $this._timer_link && clearTimeout($this._timer_link);
-            $this._timer_link = setTimeout(function () {
-              var sourceId = conn.sourceId;
-              var targetId = conn.targetId;
-              var link = $this.getLinkInfo(sourceId, targetId);
-              $this.event_link_click(link);
-            }, 300);
-          } else if ($this.event_link_click) {
+      }
+      return true;
+    });
+    //自动避免重复连线
+    this._plumb.bind('beforeDrop', function (conn) {
+      if (!$this.editable) {
+        return false;
+      }
+
+      //return true;
+      var sourceId = conn.sourceId;
+      var targetId = conn.targetId;
+
+      var linkData = $this._linkInfos[sourceId + '-' + targetId];
+      if (linkData != null) {
+        return false;
+      }
+
+      return true;
+    });
+
+    this._plumb.bind('click', function (conn, event) {
+      if ($this.editable) {
+        if ($this.event_link_click && $this.event_link_dblclick) {
+          $this._timer_link && clearTimeout($this._timer_link);
+          $this._timer_link = setTimeout(function () {
             var sourceId = conn.sourceId;
             var targetId = conn.targetId;
             var link = $this.getLinkInfo(sourceId, targetId);
             $this.event_link_click(link);
-          }
+          }, 300);
+        } else if ($this.event_link_click) {
+          var sourceId = conn.sourceId;
+          var targetId = conn.targetId;
+          var link = $this.getLinkInfo(sourceId, targetId);
+          $this.event_link_click(link);
         }
-      });
-  
-      this._plumb.bind('dblclick', function (conn, event) {
-        if ($this.editable) {
-          if ($this.event_link_dblclick) {
-            $this._timer_link && clearTimeout($this._timer_link);
-            var sourceId = conn.sourceId;
-            var targetId = conn.targetId;
-            var link = $this.getLinkInfo(sourceId, targetId);
-  
-            $this.event_link_dblclick(link);
-          }
-        }
-      });
-  
-      // bind a double click listener to "canvas"; add new node when this occurs.
-      $("#canvas").bind("click", function(e) {
-          if($this.event_canvas_click){
-  
-                  $this.event_canvas_click(e);
-  
-          }
-      });
-    },
-    /**
-     * 设置左边Action菜单
-     * @param Data
-     */
-    _showMetadata: function (tag) {
-      var $this = this;
-      var list = this.metadata;
-      //先进行分组
-      var groups = {};
-      for (var i in list) {
-        if (tag && tag.length > 0 && list[i].tag && list[i].tag.length > 0) {
-          if (list[i].tag != tag) {
-            continue;
-          }
-        }
-  
-        var group = list[i].group || '通用';
-  
-        if (groups[group] == null) {
-          groups[group] = [];
-        }
-        groups[group].push(list[i]);
       }
-  
-      //按分组输出到Html
-      $('#actionMenu').html('');
-      var index = 0;
-      for (var g in groups) {
-        var openClass = index == 0 ? 'menu-is-opening menu-open' : '';
-        var openBody = index == 0 ? '' : 'display:none';
-  
+    });
+
+    this._plumb.bind('dblclick', function (conn, event) {
+      if ($this.editable) {
+        if ($this.event_link_dblclick) {
+          $this._timer_link && clearTimeout($this._timer_link);
+          var sourceId = conn.sourceId;
+          var targetId = conn.targetId;
+          var link = $this.getLinkInfo(sourceId, targetId);
+
+          $this.event_link_dblclick(link);
+        }
+      }
+    });
+
+    // bind a double click listener to "canvas"; add new node when this occurs.
+    $("#canvas").bind("click", function(e) {
+        if($this.event_canvas_click){
+
+                $this.event_canvas_click(e);
+
+        }
+    });
+  },
+  /**
+   * 设置左边Action菜单
+   * @param Data
+   */
+  _showMetadata: function (tag) {
+    var $this = this;
+    var list = this.metadata;
+    //先进行分组
+    var groups = {};
+    for (var i in list) {
+      if (tag && tag.length > 0 && list[i].tag && list[i].tag.length > 0) {
+        if (list[i].tag != tag) {
+          continue;
+        }
+      }
+
+      var group = list[i].group || '通用';
+
+      if (groups[group] == null) {
+        groups[group] = [];
+      }
+      groups[group].push(list[i]);
+    }
+
+    //按分组输出到Html
+    $('#actionMenu').html('');
+    var index = 0;
+    for (var g in groups) {
+      var openClass = index == 0 ? 'menu-is-opening menu-open' : '';
+      var openBody = index == 0 ? '' : 'display:none';
+
+      var html =
+        '<li class="actionMenuGroup"  ><a href="#" class="group-title">' +
+        g +
+        '<i class="pull-right ico"></i></a></li>';
+
+      //html+='<ul class="actionMenuGroupBody" >';
+
+      var item = groups[g];
+      for (var i in item) {
+        var name = item[i].name;
+        var title = item[i].title;
+        var icon = item[i].icon || 'img/node.png';
+
+        var img = '';
+        if (icon && icon.length > 0) {
+          img = '<img src="' + ($this.img_path || '') + icon + '"  />';
+        }
+
+        var element_str =
+          '<li id="' +
+          name +
+          '" action_name="' +
+          name +
+          '" action_title="' +
+          title +
+          '" class="actionMenuItem"  action_icon="' +
+          icon +
+          '" ><a class="item-title">' +
+          img +
+          title +
+          '</a></li>';
+        html += element_str;
+      }
+
+      //html+='</ul>';
+      //html+='</li>';
+      $('#actionMenu').append(html);
+      index++;
+    }
+
+    //初始化拖拽设置
+    $('#actionMenu li.actionMenuItem').draggable({
+      helper: function (event) {
+        var action_name = $(this).attr('action_name');
+        var title = $(this).attr('action_title');
+        var icon = $(this).attr('action_icon');
+        var metadata = $this.getMetadata(action_name);
+
         var html =
-          '<li class="actionMenuGroup"  ><a href="#" class="group-title">' +
-          g +
-          '<i class="pull-right ico"></i></a></li>';
-  
-        //html+='<ul class="actionMenuGroupBody" >';
-  
-        var item = groups[g];
-        for (var i in item) {
-          var name = item[i].name;
-          var title = item[i].title;
-          var icon = item[i].icon || 'img/node.png';
-  
-          var img = '';
-          if (icon && icon.length > 0) {
-            img = '<img src="' + ($this.img_path || '') + icon + '"  />';
+          '<div class="action-drag"><div class="action-header">' +
+          title +
+          '</div><div class="action-icon"><img src="' +
+          ($this.img_path || '') +
+          icon +
+          '"/></div></div>';
+
+        if ($this.render_action_helper) {
+          var r = $this.render_action_helper(metadata, html);
+          if (r != null && r.length > 0) {
+            html = r;
           }
-  
-          var element_str =
-            '<li id="' +
-            name +
-            '" action_name="' +
-            name +
-            '" action_title="' +
-            title +
-            '" class="actionMenuItem"  action_icon="' +
-            icon +
-            '" ><a class="item-title">' +
-            img +
-            title +
-            '</a></li>';
-          html += element_str;
         }
-  
-        //html+='</ul>';
-        //html+='</li>';
-        $('#actionMenu').append(html);
-        index++;
+
+        return $(html);
+      },
+      scope: 'plant',
+    });
+  },
+
+  _createGroup: function(group){
+    var $this= this;
+     
+    $this.setGroupInfo(group);
+
+    var id = group.id;
+    var actions = group.actions;
+    
+    var html='<div id="group_'+id+'" class="group group-container">';
+    html+='<div class="group-remove-btn">X</div>';
+
+    html+='<div class="group-header"></div>';
+    html+='<div class="group-body"></div>';
+    html+='<div class="group-resize"></div>';
+    
+    html+='</div>';
+    
+    var groupElement = $(html);
+
+
+    var canvasElement = $('#' + $this.containerId + ' #canvas');
+    canvasElement.append(groupElement); 
+
+    //event
+    groupElement.find('.group-remove-btn').bind('click', function () {
+      var sure = confirm('确定删除分组?');
+      if (sure) {
+        $this.removeGroup(id);
+      } 
+
+    });
+
+    //双击打开配置事件,在设计模式和步进模式下才可以用
+    groupElement.bind('click', function (event) {
+      if ($this.editable) {
+        if ($this.event_group_click && $this.event_group_dblclick) {
+          $this._timer_group && clearTimeout($this._timer_group);
+          $this._timer_group = setTimeout(function () {
+            $this.event_group_click(group);
+          }, 300);
+        } else if ($this.event_group_click) {
+          $this.event_group_click(group);
+        }
       }
-  
-      //初始化拖拽设置
-      $('#actionMenu li.actionMenuItem').draggable({
-        helper: function (event) {
-          var action_name = $(this).attr('action_name');
-          var title = $(this).attr('action_title');
-          var icon = $(this).attr('action_icon');
-          var metadata = $this.getMetadata(action_name);
-  
-          var html =
-            '<div class="action-drag"><div class="action-header">' +
-            title +
-            '</div><div class="action-icon"><img src="' +
-            ($this.img_path || '') +
-            icon +
-            '"/></div></div>';
-  
-          if ($this.render_action_helper) {
-            var r = $this.render_action_helper(metadata, html);
-            if (r != null && r.length > 0) {
-              html = r;
+    });
+
+    groupElement.bind('dblclick', function (event) {
+      if ($this.editable) {
+        if ($this.event_group_dblclick) {
+          $this._timer_group && clearTimeout($this._timer_group);
+
+          $this.event_group_dblclick(group);
+        }
+      }
+    });
+
+
+    //title\body
+    groupElement.find('.group-header').html(group.title || '');
+    groupElement.find('.group-body').html(group.des || '');
+
+    //位置
+    var padding_top=30;
+    var padding_left=10;
+    var padding_right=10;
+    var padding_bottom=10;
+
+    //left
+    if(group.position==null || group.position=="auto" || group.position.left==null || group.position.left=="auto"){
+      if(actions.length>0){
+        var minLeft = 9999999999999;
+   
+        for(var i in actions){
+          let l = $("#"+actions[i]).offset().left - canvasElement.offset().left;
+           if(minLeft>l){
+            minLeft = l;
+          }  
+        }
+        minLeft = minLeft - padding_left;
+        groupElement.css("left",minLeft+"px");
+      } 
+    }else{
+      if((group.position.left+"").indexOf("px")>=0){
+        groupElement.css("left", group.position.left);
+      }else{
+        groupElement.css("left", group.position.left+"px");
+      } 
+    }
+    //top
+    if(group.position==null || group.position=="auto" || group.position.top==null || group.position.top=="auto"){
+      if(actions.length>0){
+        var minTop = 999999999;
+   
+        for(var i in actions){
+          let t = $("#"+actions[i]).offset().top - canvasElement.offset().top;
+           if(minTop>t){
+            minTop = t;
+          }  
+        }
+        minTop = minTop - padding_top;
+        groupElement.css("top",minTop+"px");
+      } 
+    }else{ 
+      if((group.position.top+"").indexOf("px")>=0){
+        groupElement.css("top", group.position.top);
+      }else{
+        groupElement.css("top", group.position.top+"px");
+      }
+    }
+
+    //width
+    if(group.position==null || group.position=="auto" || group.position.width==null || group.position.width=="auto"){
+      if(actions.length>0){
+        var maxWidth = 0;
+
+        for(var i in actions){
+
+          $("#"+actions[i]).find("div").each(function(index,el){
+            
+            let w = $(el).offset().left+$(el).width();
+            w = w - groupElement.position().left - canvasElement.offset().left;
+
+            if(w > maxWidth){
+              maxWidth = w;
             }
-          }
-  
-          return $(html);
-        },
-        scope: 'plant',
-      });
-    },
-    /**
-     * 添加模型
-     * @param ui
-     * @param selector
-     */
-    _createAction: function (action) {
-      var $this = this;
-      var id = action.id;
-      if (id == null) {
-        return;
-      }
-  
-      var name = action.name;
-      if (name == null) {
-        return;
-      }
-  
-      this.setActionInfo(action);
-  
-      var action_info = this.getMetadata(name);
-  
-      if (action_info == null) {
-        return;
-      }
-  
-      var title = action_info.title || '';
-      var icon = action_info.icon || '';
-      var des = action_info.des || '';
-      var css = action_info.css || '';
-  
-      var left = action.left;
-      var top = action.top;
-      var width = action.width;
-      var height = action.height;
-  
-      var body_width = '';
-      var body_height = '';
-  
-      if (this._themeObj.is_body_resizable) {
-        body_width = action.body_width;
-        body_height = action.body_height;
-      }
-  
-      var iconImg = '';
-      if (icon && icon.length > 0) {
-        iconImg = '<img src="' + ($this.img_path || '') + icon + '" >';
-      } else {
-        iconImg = '<img src="' + ($this.img_path || '') + 'img/node.png">';
-      }
-  
-      var titleDescription = action.des || title || des;
-  
-      var content = '<div class="action-main">';
-      content += '<div class="action-icon"  >' + iconImg + '</div>';
-      content += '<div class="action-header">' + titleDescription + '</div>'; //标题
-  
-      //begin action-body
-      var bodystyle = '';
-      if (this.flowModel.show_action_body == 'false') {
-        bodystyle = 'style="visibility: hidden"';
-      }
-      var contentstyle = '';
-      if (this.flowModel.show_action_content == 'false') {
-        contentstyle = 'style="visibility: hidden"';
-      }
-  
-      content += '<div class="action-body" ' + bodystyle + '>';
-      content += '<div class="action-content" ' + contentstyle + '></div>'; //消息内容,html,chart
-      content += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
-      content += '</div>';
-  
-      content += '</div>'; //end action-main
-  
-      if ($this.render_action) {
-        var r = $this.render_action(action_info, action, content);
-        if (r && r.length > 0) {
-          content = r;
+          }); 
         }
-      }
-  
-      var actionHtml =
-        '<div class="action action-container ' +
-        css +
-        '" id="' +
-        id +
-        '" name="' +
-        name +
-        '" title="' +
-        title +
-        '" icon="' +
-        icon +
-        '">' +
-        content +
-        '</div>';
-  
-      var actionElement = $(actionHtml);
-  
-      //endpoint
-      var ep = '<div class="ep" title="拖拉连线">+</div>'; //拖拉连线焦点
-      if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_info, action, ep);
-        if (epr && epr.length > 0) {
-          ep = epr;
+        maxWidth = maxWidth+padding_right;
+
+        groupElement.width(maxWidth);
+      } 
+    }else{
+      if((group.position.width+"").indexOf("px")>=0){
+        groupElement.css("width", group.position.width);
+      }else{
+        groupElement.css("width", group.position.width+"px"); 
+      }  
+    }
+
+    //height
+    if(group.position==null || group.position=="auto" || group.position.height==null || group.position.height=="auto"){
+      if(actions.length>0){
+        var maxHeight = 0;
+
+        for(var i in actions){
+
+          $("#"+actions[i]).find("div").each(function(index,el){
+            
+            let h = $(el).offset().top+$(el).height();
+            h = h - groupElement.position().top - canvasElement.offset().top;
+
+            if(h > maxHeight){
+              maxHeight = h;
+            }
+          }); 
         }
-      }
-      var epElement = $(ep);
-      epElement.removeClass('ep');
-      epElement.addClass('ep');
-      actionElement.append(epElement);
-  
-      //resizer
-      var resizer = '<div class="action-resize"></div>'; //改变大小的三角形框
-      if ($this.render_btn_resize) {
-        var resizer_new = $this.render_btn_resize(action_info, action, resizer);
-        if (resizer_new && resizer_new.length > 0) {
-          resizer = resizer_new;
-        }
-      }
-  
-      var resizerElement = $(resizer);
-      resizerElement.removeClass('action-resize');
-      resizerElement.addClass('action-resize');
-  
-      actionElement.append(resizerElement);
-  
-      //remove button
-  
-      var removeBtn = '<a href="javascript:void(0)" class="btn-remove"  >X</a>'; //工具栏
-      if ($this.render_btn_remove) {
-        var removeBtn_new = $this.render_btn_remove(action_info, action, removeBtn);
-        if (removeBtn_new && removeBtn_new.length > 0) {
-          removeBtn = removeBtn_new;
-        }
-      }
-      var removeBtnElement = $(removeBtn);
-      removeBtnElement.removeClass('btn-remove');
-      removeBtnElement.addClass('btn-remove');
-  
-      actionElement.append(removeBtnElement);
-  
-      actionElement.removeClass('action');
-      actionElement.addClass('action');
-  
-      actionElement.attr('id', id);
-      actionElement.attr('name', name);
-      actionElement.attr('title', title);
-      actionElement.attr('icon', icon);
-  
-      var selector = $('#' + $this.containerId + ' #canvas');
-      selector.append(actionElement);
-  
-      $('#' + id)
-        .css('position', 'absolute')
-        .css('left', left)
-        .css('top', top);
-  
-      if (width && width.length > 0) {
-        $('#' + id).attr('width', width);
-        $('#' + id).css('width', width);
-      }
-      if (height && height.length > 0) {
-        $('#' + id).attr('height', height);
-        $('#' + id).css('height', height);
-      }
-  
-      if (body_width && body_width.length > 0) {
-        $('#' + id).attr('body_width', body_width);
-        $('#' + id)
-          .find('.action-body')
-          .css('width', body_width);
-      } else {
-        $('#' + id)
-          .find('.action-body')
-          .css('width', '');
-      }
-      if (body_height && body_height.length > 0) {
-        $('#' + id).attr('body_height', body_height);
-        $('#' + id)
-          .find('.action-body')
-          .css('height', body_height);
-      } else {
-        $('#' + id)
-          .find('.action-body')
-          .css('height', '');
-      }
-  
-      actionElement.bind('mouseup', function () {
+        maxHeight = maxHeight+padding_bottom;
+
+        groupElement.height(maxHeight);
+      } 
+    }else{
+      if((group.position.height+"").indexOf("px")>=0){
+        groupElement.css("height", group.position.height);
+      }else{
+        groupElement.css("height", group.position.height+"px"); 
+      }  
+    }
+
+    //group event
+    groupElement.find('.group-resize').mousedown(function (e) {
+      $('#' + $this.containerId).css('cursor', 'nwse-resize');
+      var groupEl = groupElement;
+      var x1 = e.pageX;
+      var y1 = e.pageY;
+      var width = groupEl.width();
+      var height = groupEl.height();
+
+      $('#' + $this.containerId).mousemove(function (e) {
+        var x2 = e.pageX;
+        var y2 = e.pageY;
+
+        var w = width + (x2 - x1);
+        var h = height + (y2 - y1);
+        groupEl.css({
+          width: w,
+          height: h,
+        });
+        groupEl.attr('width', w);
+        groupEl.attr('height', h);
+ 
+        $this._plumb.repaintEverything();
+
         $this._onCanvasChanged();
+
+        e.preventDefault();
       });
-  
-      actionElement.find('.btn-remove').bind('click', function () {
-        var sure = confirm('确定删除该节点?');
-        if (sure) {
-          $this.removeAction(id);
+      e.preventDefault();
+    }); 
+
+    //plumb add group
+
+    $this._plumb.addGroup({
+      el:groupElement.get(0),
+      id:id,
+      orphan:true,
+      droppable:true,
+      dropOverride: true,
+      endpoint:["Dot", { radius:3 }]
+    });
+    // $this._plumb.draggable(groupElement);
+    
+    
+    if(actions && actions.length>0){
+      var actionElements = [];
+      for(var i in actions){
+        actionElements.push($("#"+actions[i]).get(0));
+
+      }
+      $this._plumb.addToGroup(id, actionElements);
+    }
+    
+  },
+  /**
+   * 添加模型
+   * @param ui
+   * @param selector
+   */
+  _createAction: function (action) {
+    var $this = this;
+    var id = action.id;
+    if (id == null) {
+      return;
+    }
+
+    var name = action.name;
+    if (name == null) {
+      return;
+    }
+
+    this.setActionInfo(action);
+
+    var action_meta = this.getMetadata(name) || {};
+ 
+    var title =  action.title || action.des || action_meta.title || action_meta.des || '';
+    var icon = action.icon || action_meta.icon || '';
+    var des = action.des || action_meta.des || '';
+    var css = action.css || action_meta.css || '';
+    var content = action.content;
+
+    var left = action.left;
+    var top = action.top;
+    var width = action.width;
+    var height = action.height;
+
+    var body_width = '';
+    var body_height = '';
+
+    if (this._themeObj.is_body_resizable) {
+      body_width = action.body_width;
+      body_height = action.body_height;
+    }
+
+    var iconImg = '';
+    if (icon && icon.length > 0) {
+
+      
+      iconImg = '<img src="' + ($this.img_path || '') + icon + '" >';
+
+    } else {
+      iconImg = '<img src="' + ($this.img_path || '') + 'node.png">';
+
+    }
+
+ 
+    var action_main_dom = '<div class="action-main">';
+    action_main_dom += '<div class="action-icon"  >' + iconImg + '</div>';
+
+    action_main_dom += '<div class="action-header">' + title + '</div>'; //标题
+
+    //begin action-body
+    var bodystyle = '';
+    if (this.flowModel.show_action_body == 'false') {
+      bodystyle = 'style="visibility: hidden"';
+    }
+    var contentstyle = '';
+    if (this.flowModel.show_action_content == 'false') {
+      contentstyle = 'style="visibility: hidden"';
+    }
+
+    action_main_dom += '<div class="action-body" ' + bodystyle + '>';
+    action_main_dom += '<div class="action-content" ' + contentstyle + '></div>'; //消息内容,html,chart
+    action_main_dom += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
+    action_main_dom += '</div>';
+
+    action_main_dom += '</div>'; //end action-main
+
+    if ($this.render_action) {
+      var r = $this.render_action(action_meta, action, action_main_dom);
+      if (r && r.length > 0) {
+        action_main_dom = r;
+      }
+    }
+
+    var actionHtml =
+      '<div class="action action-container ' +
+      css +
+      '" id="' +
+      id +
+      '" name="' +
+      name +
+      '" title="' +
+      title +
+      '" icon="' +
+      icon +
+      '">' +
+      action_main_dom +
+      '</div>';
+
+    var actionElement = $(actionHtml);
+
+    //endpoint
+    var ep = '<div class="ep" title="拖拉连线">+</div>'; //拖拉连线焦点
+    if ($this.render_endpoint) {
+      var epr = $this.render_endpoint(action_meta, action, ep);
+      if (epr && epr.length > 0) {
+        ep = epr;
+      }
+    }
+    var epElement = $(ep);
+    epElement.removeClass('ep');
+    epElement.addClass('ep');
+    actionElement.append(epElement);
+
+    //resizer
+    var resizer = '<div class="action-resize"></div>'; //改变大小的三角形框
+    if ($this.render_btn_resize) {
+      var resizer_new = $this.render_btn_resize(action_meta, action, resizer);
+      if (resizer_new && resizer_new.length > 0) {
+        resizer = resizer_new;
+      }
+    }
+
+    var resizerElement = $(resizer);
+    resizerElement.removeClass('action-resize');
+    resizerElement.addClass('action-resize');
+
+    actionElement.append(resizerElement);
+
+    //remove button
+
+    var removeBtn = '<a href="javascript:void(0)" class="btn-remove"  >X</a>'; //工具栏
+    if ($this.render_btn_remove) {
+      var removeBtn_new = $this.render_btn_remove(action_meta, action, removeBtn);
+      if (removeBtn_new && removeBtn_new.length > 0) {
+        removeBtn = removeBtn_new;
+      }
+    }
+    var removeBtnElement = $(removeBtn);
+    removeBtnElement.removeClass('btn-remove');
+    removeBtnElement.addClass('btn-remove');
+
+    actionElement.append(removeBtnElement);
+
+    actionElement.removeClass('action');
+    actionElement.addClass('action');
+
+    actionElement.attr('id', id);
+    actionElement.attr('name', name);
+    actionElement.attr('title', title);
+    actionElement.attr('icon', icon);
+
+    var canvasElement = $('#' + $this.containerId + ' #canvas');
+    canvasElement.append(actionElement);
+     
+    //content
+    if(content && content.content && content.content_type){
+      this.setActionContent(id,content.content,content.content_type );
+    } else if(content && content.content){
+      this.setActionContent(id,content.content, "");
+    } else if(content){
+      this.setActionContent(id,content, "");
+    }
+
+    
+    //position
+    $('#' + id)
+      .css('position', 'absolute')
+      .css('left', left)
+      .css('top', top);
+    
+    //size
+    if (width && width.length > 0) {
+      $('#' + id).attr('width', width);
+      $('#' + id).css('width', width);
+    }
+    if (height && height.length > 0) {
+      $('#' + id).attr('height', height);
+      $('#' + id).css('height', height);
+    }
+
+    if (body_width && body_width.length > 0) {
+      $('#' + id).attr('body_width', body_width);
+      $('#' + id)
+        .find('.action-body')
+        .css('width', body_width);
+    } else {
+      $('#' + id)
+        .find('.action-body')
+        .css('width', '');
+    }
+    if (body_height && body_height.length > 0) {
+      $('#' + id).attr('body_height', body_height);
+      $('#' + id)
+        .find('.action-body')
+        .css('height', body_height);
+    } else {
+      $('#' + id)
+        .find('.action-body')
+        .css('height', '');
+    }
+    
+
+    //events
+    actionElement.bind('mouseup', function () {
+      $this._onCanvasChanged();
+    });
+
+    actionElement.find('.btn-remove').bind('click', function () {
+      var sure = confirm('确定删除该节点?');
+      if (sure) {
+        $this.removeAction(id);
+      }
+    });
+
+    //双击打开配置事件,在设计模式和步进模式下才可以用
+    actionElement.bind('click', function (event) {
+      if ($this.editable) {
+        if ($this.event_action_click && $this.event_action_dblclick) {
+          $this._timer_action && clearTimeout($this._timer_action);
+          $this._timer_action = setTimeout(function () {
+            $this.event_action_click(action_meta, action);
+          }, 300);
+        } else if ($this.event_action_click) {
+          $this.event_action_click(action_meta, action);
         }
-      });
-  
-      //双击打开配置事件,在设计模式和步进模式下才可以用
-      actionElement.bind('click', function (event) {
-        if ($this.editable) {
-          if ($this.event_action_click && $this.event_action_dblclick) {
-            $this._timer_action && clearTimeout($this._timer_action);
-            $this._timer_action = setTimeout(function () {
-              $this.event_action_click(action_info, action);
-            }, 300);
-          } else if ($this.event_action_click) {
-            $this.event_action_click(action_info, action);
-          }
+      }
+    });
+
+    actionElement.bind('dblclick', function (event) {
+      if ($this.editable) {
+        if ($this.event_action_dblclick) {
+          $this._timer_action && clearTimeout($this._timer_action);
+
+          $this.event_action_dblclick(action_meta, action);
         }
-      });
-  
-      actionElement.bind('dblclick', function (event) {
-        if ($this.editable) {
-          if ($this.event_action_dblclick) {
-            $this._timer_action && clearTimeout($this._timer_action);
-  
-            $this.event_action_dblclick(action_info, action);
-          }
+      }
+    });
+
+    actionElement.bind('mouseover', function (e) {
+      var actionName = $(this).attr('name');
+
+      if (actionName != 'end') {
+        $(this).find('.ep').show();
+      }
+    });
+    actionElement.bind('mouseout', function (e) {
+      $(this).find('.ep').hide();
+    });
+
+    //改变大小事件，鼠标按下去
+    actionElement.find('.action-resize').mousedown(function (e) {
+      $('#' + $this.containerId).css('cursor', 'nwse-resize');
+      var divEl = $(this)[0];
+      var x1 = e.pageX;
+      var y1 = e.pageY;
+      var width = $('#' + id).width();
+      var height = $('#' + id).height();
+
+      $('#' + $this.containerId).mousemove(function (e) {
+        var x2 = e.pageX;
+        var y2 = e.pageY;
+
+        var w = width + (x2 - x1);
+        var h = height + (y2 - y1);
+        $('#' + id).css({
+          width: w,
+          height: h,
+        });
+        $('#' + id).attr('width', w);
+        $('#' + id).attr('height', h);
+
+        var chart = $this._actionCharts[id];
+        if (chart != null) {
+          var pw = $('#chart_' + id)
+            .parent()
+            .width();
+          var ph = $('#chart_' + id)
+            .parent()
+            .height();
+          $('#chart_' + id).css({
+            width: pw,
+            height: ph,
+          });
+          chart.resize();
         }
+        $this._plumb.repaintEverything();
+
+        $this._onCanvasChanged();
+
+        e.preventDefault();
       });
-  
-      actionElement.bind('mouseover', function (e) {
-        var actionName = $(this).attr('name');
-  
-        if (actionName != 'end') {
-          $(this).find('.ep').show();
-        }
-      });
-      actionElement.bind('mouseout', function (e) {
-        $(this).find('.ep').hide();
-      });
-  
-      //改变大小事件，鼠标按下去
-      actionElement.find('.action-resize').mousedown(function (e) {
-        $('#' + $this.containerId).css('cursor', 'nwse-resize');
-        var divEl = $(this)[0];
-        var x1 = e.pageX;
-        var y1 = e.pageY;
-        var width = $('#' + id).width();
-        var height = $('#' + id).height();
-  
-        $('#' + $this.containerId).mousemove(function (e) {
-          var x2 = e.pageX;
-          var y2 = e.pageY;
-  
-          var w = width + (x2 - x1);
-          var h = height + (y2 - y1);
-          $('#' + id).css({
+      e.preventDefault();
+    });
+
+    //改变Body大小事件，鼠标按下去
+    actionElement.find('.body-resize').mousedown(function (e) {
+      $('#' + $this.containerId).css('cursor', 'nwse-resize');
+      var divEl = $(this)[0];
+      var x1 = e.pageX;
+      var y1 = e.pageY;
+      var width = $('#' + id)
+        .find('.action-body')
+        .width();
+      var height = $('#' + id)
+        .find('.action-body')
+        .height();
+
+      $('#' + $this.containerId).mousemove(function (e) {
+        var x2 = e.pageX;
+        var y2 = e.pageY;
+
+        var w = width + (x2 - x1);
+        var h = height + (y2 - y1);
+        $('#' + id)
+          .find('.action-body')
+          .css({
             width: w,
             height: h,
           });
-          $('#' + id).attr('width', w);
-          $('#' + id).attr('height', h);
-  
-          var chart = $this._actionCharts[id];
-          if (chart != null) {
-            var pw = $('#chart_' + id)
-              .parent()
-              .width();
-            var ph = $('#chart_' + id)
-              .parent()
-              .height();
-            $('#chart_' + id).css({
-              width: pw,
-              height: ph,
-            });
-            chart.resize();
-          }
-          $this._plumb.repaintEverything();
-  
-          $this._onCanvasChanged();
-  
-          e.preventDefault();
-        });
+        $('#' + id).attr('body_width', w);
+        $('#' + id).attr('body_height', h);
+
+        //刷新图表
+        var chart = $this._actionCharts[id];
+        if (chart != null) {
+          var pw = $('#chart_' + id)
+            .parent()
+            .width();
+          var ph = $('#chart_' + id)
+            .parent()
+            .height();
+          $('#chart_' + id).css({
+            width: pw,
+            height: ph,
+          });
+          chart.resize();
+        }
+        $this._plumb.repaintEverything();
+
+        $this._onCanvasChanged();
+
         e.preventDefault();
       });
-  
-      //改变Body大小事件，鼠标按下去
-      actionElement.find('.body-resize').mousedown(function (e) {
-        $('#' + $this.containerId).css('cursor', 'nwse-resize');
-        var divEl = $(this)[0];
-        var x1 = e.pageX;
-        var y1 = e.pageY;
-        var width = $('#' + id)
-          .find('.action-body')
-          .width();
-        var height = $('#' + id)
-          .find('.action-body')
-          .height();
-  
-        $('#' + $this.containerId).mousemove(function (e) {
-          var x2 = e.pageX;
-          var y2 = e.pageY;
-  
-          var w = width + (x2 - x1);
-          var h = height + (y2 - y1);
-          $('#' + id)
-            .find('.action-body')
-            .css({
-              width: w,
-              height: h,
-            });
-          $('#' + id).attr('body_width', w);
-          $('#' + id).attr('body_height', h);
-  
-          //刷新图表
-          var chart = $this._actionCharts[id];
-          if (chart != null) {
-            var pw = $('#chart_' + id)
-              .parent()
-              .width();
-            var ph = $('#chart_' + id)
-              .parent()
-              .height();
-            $('#chart_' + id).css({
-              width: pw,
-              height: ph,
-            });
-            chart.resize();
-          }
-          $this._plumb.repaintEverything();
-  
-          $this._onCanvasChanged();
-  
-          e.preventDefault();
-        });
-        e.preventDefault();
-      });
-  
-      //初始化节点
-      this._showActionNode($('#' + id).get(0), name);
-  
-      $this._onCanvasChanged();
-    },
-  
-    _showThumbnail: function () {
-      var $this = this;
-  
-      if (
-        $('#' + this.containerId)
-          .find('.flow_thumbnail')
-          .is(':hidden')
-      ) {
-        return;
-      }
-      if (!this._timeout_thumbnail) {
-        return;
-      }
-  
-      $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
-      $this._timer_thumbnail = setTimeout(function () {
-        $this._timeout_thumbnail = false;
-        $this.getSnapshot(
-          function (canvas) {
-            try {
-              var url = canvas.toDataURL('image/png'); //生成下载的url
-              $('#' + $this.containerId)
-                .find('.flow_thumbnail')
-                .css('background-image', 'url(' + url + ')');
-            } catch (e) {
-            } finally {
-              $this._timeout_thumbnail = true;
-            }
-          },
-          { scale: 0.5, backgroundColor: 'transparent' },
-        );
-      }, 100);
-    },
-    _onCanvasChanged: function () {
-      var $this = this;
-      $this._showThumbnail();
-  
-      if ($this.event_canvas_changed) {
-        $this.event_canvas_changed();
-      }
-    },
-  
-    _formateDateTime: function (value) {
-      if (value.indexOf('0001') == 0) {
-        return '';
-      }
-      var str = value;
-      var idx = value.indexOf('+');
-      if (idx >= 0) {
-        str = str.substr(0, idx);
-      }
-  
-      idx = value.indexOf('.');
-      if (idx >= 0) {
-        str = str.substr(0, idx);
-      }
-  
-      idx = value.indexOf('Z');
-      if (idx >= 0) {
-        str = str.substr(0, idx);
-      }
-      str = str.replace('T', ' ');
-      return str;
-    },
-   
+      e.preventDefault();
+    });
+
     //初始化节点
-    _showActionNode: function (el, name) {
-      this._plumb.getContainer().appendChild(el);
-      // initialise draggable elements.
-      this._plumb.draggable(el);
+    this._showActionNode($('#' + id).get(0), name);
+
+    $this._onCanvasChanged();
+  },
+
+  _showThumbnail: function () {
+    var $this = this;
+
+    if (
+      $('#' + this.containerId)
+        .find('.flow_thumbnail')
+        .is(':hidden')
+    ) {
+      return;
+    }
+    if (!this._timeout_thumbnail) {
+      return;
+    }
+   
+    $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
+    $this._timer_thumbnail = setTimeout(function () {
+      $this._timeout_thumbnail = false;
+      $this.getSnapshot(
+        function (canvas) {
+          try { 
+            
+            var url = canvas.toDataURL('image/png'); //生成下载的url
+            
+            $('#' + $this.containerId)
+              .find('.flow_thumbnail')
+              .css('background-image', 'url(' + url + ')');
+
+          } catch (e) {
+             console.error(e);
+          } finally {
+            $this._timeout_thumbnail = true;
+          }
+        },
+        { scale: 0.5, backgroundColor: 'transparent' },
+      );
+    }, 100);
+  },
+  _resizeCanvas: function(){
+    //调整canvas大小
+    var maxWidth=0;
+    var maxHeight=0;
+    $('#' + this.containerId).find(".canvas").find("div").each(function(index,e){
+      let left = $(e).position().left;
+      let width = $(e).width(); 
+      let top = $(e).position().top;
+      let height = $(e).height(); 
+      if(left + width>maxWidth){
+        maxWidth=left + width;
+      } 
+      if(top + height>maxHeight){
+        maxHeight=top + height;
+      } 
+    });
   
-      if (name == null || name != 'end') {
-        this._plumb.makeSource(el, {
-          filter: '.ep',
-  
-          anchor: 'Continuous',
-          extract: {
-            action: 'the-action',
-          },
-          maxConnections: 20,
-          onMaxConnections: function (info, e) {
-            showWarning('已经达到连接最大数 (' + info.maxConnections + ') ');
-          },
-        });
+    $('#' + this.containerId).find(".canvas").width(maxWidth);
+    $('#' + this.containerId).find(".canvas").height(maxHeight);
+    
+  },
+  _onCanvasChanged: function () {
+    var $this = this;
+    //显示缩略图
+    $this._showThumbnail();
+
+    $this._resizeCanvas();
+
+    if ($this.event_canvas_changed) {
+      $this.event_canvas_changed();
+    }
+
+
+
+  },
+
+  _formateDateTime: function (value) {
+    if (value.indexOf('0001') == 0) {
+      return '';
+    }
+    var str = value;
+    var idx = value.indexOf('+');
+    if (idx >= 0) {
+      str = str.substr(0, idx);
+    }
+
+    idx = value.indexOf('.');
+    if (idx >= 0) {
+      str = str.substr(0, idx);
+    }
+
+    idx = value.indexOf('Z');
+    if (idx >= 0) {
+      str = str.substr(0, idx);
+    }
+    str = str.replace('T', ' ');
+    return str;
+  },
+ 
+  //初始化节点
+  _showActionNode: function (el, name) {
+    this._plumb.getContainer().appendChild(el);
+    // initialise draggable elements.
+    this._plumb.draggable(el);
+
+    if (name == null || name != 'end') {
+      this._plumb.makeSource(el, {
+        filter: '.ep',
+
+        anchor: 'Continuous',
+        extract: {
+          action: 'the-action',
+        },
+        maxConnections: 20,
+        onMaxConnections: function (info, e) {
+          showWarning('已经达到连接最大数 (' + info.maxConnections + ') ');
+        },
+      });
+    }
+
+    if (name == null || name != 'begin') {
+      this._plumb.makeTarget(el, {
+        dropOptions: { hoverClass: 'dragHover' },
+        anchor: 'Continuous',
+
+        allowLoopback: true,
+      });
+    }
+  },
+
+  //画连接线基础样式
+  _paintConnection: function (conn, link) {
+    var linktype = this.flowModel.link_type || 'Flowchart';
+
+    if (link == null) {
+      link == {};
+    }
+    var style = link.lineStyle || 'solid';  //solid、dotted
+
+    var active = link.active || 'true';
+
+    //连线样式
+    var paintStyle = {
+      stroke: this._themeObj.default_link_color,
+      radius: this._themeObj.default_link_radius,
+      strokeWidth: this._themeObj.default_link_strokeWidth,
+      outlineStroke: 'transparent',
+      outlineWidth: this._themeObj.default_link_outlineWidth,
+    };
+
+    var hoverPaintStyle = {
+      stroke: this._themeObj.default_link_color_hover,
+      radius: this._themeObj.default_link_radius_hover,
+      strokeWidth: this._themeObj.default_link_strokeWidth_hover,
+      outlineStroke: 'transparent',
+      outlineWidth: this._themeObj.default_link_outlineWidth_hover,
+    };
+
+
+
+    if ( style == 'dotted' || (active != null && active == 'false')) {
+      paintStyle.dashstyle = '1 2';
+      hoverPaintStyle.dashstyle = '1 2';
+    } else {
+      paintStyle.dashstyle = '1 0';
+      hoverPaintStyle.dashstyle = '1 0';
+    }
+
+
+
+    conn.setType(linktype);
+    conn.setPaintStyle(paintStyle);
+    conn.setHoverPaintStyle(hoverPaintStyle);
+
+    //连接箭头
+    if(link.arrows && link.arrows.length>0){
+      if(link.arrows[0]){
+        conn.getOverlay('arrow0').setVisible(true);
+      }else{
+        conn.getOverlay('arrow0').setVisible(false);
       }
-  
-      if (name == null || name != 'begin') {
-        this._plumb.makeTarget(el, {
-          dropOptions: { hoverClass: 'dragHover' },
-          anchor: 'Continuous',
-  
-          allowLoopback: true,
-        });
+
+      if(link.arrows.length>1 && link.arrows[1]){
+        conn.getOverlay('arrow1').setVisible(true);
+      }else{
+        conn.getOverlay('arrow1').setVisible(false);
       }
-    },
-  
-    //画连接线基础样式
-    _paintConnection: function (conn, link) {
-      var linktype = this.flowModel.link_type || 'Flowchart';
-  
-      if (link == null) {
-        link == {};
-      }
-  
-      var active = link.active || 'true';
-      //连线样式
-      var paintStyle = {
+    }else{
+      conn.getOverlay('arrow0').setVisible(false);
+      conn.getOverlay('arrow1').setVisible(true);
+    }
+    
+
+    //连线文本信息
+    var linkLabel = $('<div/>')
+      .text(link.title || link.label || '')
+      .html();
+    conn.getOverlay('label').setVisible(linkLabel.length > 0);
+    conn.getOverlay('label').setLabel(linkLabel);
+
+
+    conn.data = link; 
+    if (this.render_link) {
+      this.render_link(conn, linktype, link);
+    }
+  },
+
+  //画连接线状态
+  _paintConnectionState: function (conn, state) {
+    if (state == -1 || state == 'error') {
+      conn.setPaintStyle({
+        stroke: this._themeObj.default_link_color_error,
+        radius: this._themeObj.default_link_radius_error,
+        strokeWidth: this._themeObj.default_link_strokeWidth_error,
+        outlineStroke: 'transparent',
+        outlineWidth: this._themeObj.default_link_outlineWidth_error,
+      });
+    } else if (state == 1 || state == 'execute') {
+      conn.setPaintStyle({
+        stroke: this._themeObj.default_link_color_run,
+        radius: this._themeObj.default_link_radius_run,
+        strokeWidth: this._themeObj.default_link_strokeWidth_run,
+        outlineStroke: 'transparent',
+        outlineWidth: this._themeObj.default_link_outlineWidth_run,
+      });
+    } else if (state == 2 || state == 'success') {
+      conn.setPaintStyle({
+        stroke: this._themeObj.default_link_color_success,
+        radius: this._themeObj.default_link_radius_success,
+        strokeWidth: this._themeObj.default_link_strokeWidth_success,
+        outlineStroke: 'transparent',
+        outlineWidth: this._themeObj.default_link_outlineWidth_success,
+      });
+    } else if (state == 3 || state == 'reject') {
+      conn.setPaintStyle({
+        stroke: this._themeObj.default_link_color_reject,
+        radius: this._themeObj.default_link_radius_reject,
+        strokeWidth: this._themeObj.default_link_strokeWidth_reject,
+        outlineStroke: 'transparent',
+        outlineWidth: this._themeObj.default_link_outlineWidth_reject,
+      });
+    } else {
+      conn.setPaintStyle({
         stroke: this._themeObj.default_link_color,
         radius: this._themeObj.default_link_radius,
         strokeWidth: this._themeObj.default_link_strokeWidth,
         outlineStroke: 'transparent',
         outlineWidth: this._themeObj.default_link_outlineWidth,
-      };
-  
-      var hoverPaintStyle = {
-        stroke: this._themeObj.default_link_color_hover,
-        radius: this._themeObj.default_link_radius_hover,
-        strokeWidth: this._themeObj.default_link_strokeWidth_hover,
-        outlineStroke: 'transparent',
-        outlineWidth: this._themeObj.default_link_outlineWidth_hover,
-      };
-  
-      if (active != null && active == 'false') {
-        paintStyle.dashstyle = '1 2';
-        hoverPaintStyle.dashstyle = '1 2';
-      } else {
-        paintStyle.dashstyle = '1 0';
-        hoverPaintStyle.dashstyle = '1 0';
-      }
-  
-      conn.setType(linktype);
-      conn.setPaintStyle(paintStyle);
-      conn.setHoverPaintStyle(hoverPaintStyle);
-  
-      //连线文本信息
-      var linkLabel = $('<div/>')
-        .text(link.title || '')
-        .html();
-      conn.getOverlay('label').setVisible(linkLabel.length > 0);
-      conn.getOverlay('label').setLabel(linkLabel);
-      conn.data = link;
-  
-      if (this.render_link) {
-        this.render_link(conn, linktype, link);
-      }
-    },
-  
-    //画连接线状态
-    _paintConnectionState: function (conn, state) {
-      if (state == -1 || state == 'error') {
-        conn.setPaintStyle({
-          stroke: this._themeObj.default_link_color_error,
-          radius: this._themeObj.default_link_radius_error,
-          strokeWidth: this._themeObj.default_link_strokeWidth_error,
-          outlineStroke: 'transparent',
-          outlineWidth: this._themeObj.default_link_outlineWidth_error,
-        });
-      } else if (state == 1 || state == 'execute') {
-        conn.setPaintStyle({
-          stroke: this._themeObj.default_link_color_run,
-          radius: this._themeObj.default_link_radius_run,
-          strokeWidth: this._themeObj.default_link_strokeWidth_run,
-          outlineStroke: 'transparent',
-          outlineWidth: this._themeObj.default_link_outlineWidth_run,
-        });
-      } else if (state == 2 || state == 'success') {
-        conn.setPaintStyle({
-          stroke: this._themeObj.default_link_color_success,
-          radius: this._themeObj.default_link_radius_success,
-          strokeWidth: this._themeObj.default_link_strokeWidth_success,
-          outlineStroke: 'transparent',
-          outlineWidth: this._themeObj.default_link_outlineWidth_success,
-        });
-      } else if (state == 3 || state == 'reject') {
-        conn.setPaintStyle({
-          stroke: this._themeObj.default_link_color_reject,
-          radius: this._themeObj.default_link_radius_reject,
-          strokeWidth: this._themeObj.default_link_strokeWidth_reject,
-          outlineStroke: 'transparent',
-          outlineWidth: this._themeObj.default_link_outlineWidth_reject,
-        });
-      } else {
-        conn.setPaintStyle({
-          stroke: this._themeObj.default_link_color,
-          radius: this._themeObj.default_link_radius,
-          strokeWidth: this._themeObj.default_link_strokeWidth,
-          outlineStroke: 'transparent',
-          outlineWidth: this._themeObj.default_link_outlineWidth,
-        });
-      }
-    },
-  
-    newInstance: function (containerId, option) {
-      var instance = this;
-      instance.containerId = containerId;
-  
-      $.extend(instance, option);
-  
-      if (instance.flowModel == null) {
-        instance.flowModel = {};
-      }
-      if (instance.flowModel.theme == null) {
-        instance.flowModel.theme = 'flow_theme_default';
-      }
-  
-      if (instance.flowModel.link_type == null) {
-        instance.flowModel.link_type = 'Flowchart';
-      }
-      if (instance._connectionTypes[instance.flowModel.link_type] == null) {
-        instance.flowModel.link_type = 'Flowchart';
-      }
-  
-      //初始化html
-      instance._initHtml(containerId);
-  
-      //初始化元数据
-      instance._initMetadata();
-  
-      //初始化样式风格
-      instance._initTheme();
-  
-      //初始化流程实例
-      instance._initPlumb();
-  
-      instance._initEvents();
-  
-      return instance;
-    },
-  
-    refresh: function () {
-      this.flowModel = this.getFlow();
-      //初始化样式风格
-      this._initTheme();
-      this._initPlumb();
-      this.showFlow();
-      this.setActionStates();
-      this.setLinkStates();
-      this.setActionContents();
-    },
-    repaint: function () {
-      //重画
-      this._plumb.repaintEverything();
-    },
-  
-    setTheme: function (theme) {
-  
-      this.flowModel.theme = theme || this.flowModel.theme || 'flow_theme_default';
-      this._themeObj = flow_themes[this.flowModel.theme];
-     
-      for (var k in flow_themes) {
-        $('#' + this.containerId)
-          .find('.andflow')
-          .removeClass(k);
-      }
+      });
+    }
+  },
+
+  newInstance: function (containerId, option) {
+    var instance = this;
+    instance.containerId = containerId;
+
+    $.extend(instance, option);
+
+    if (instance.flowModel == null) {
+      instance.flowModel = {};
+    }
+    if (instance.flowModel.theme == null) {
+      instance.flowModel.theme = 'flow_theme_default';
+    }
+
+    if (instance.flowModel.link_type == null) {
+      instance.flowModel.link_type = 'Flowchart';
+    }
+    if (instance._connectionTypes[instance.flowModel.link_type] == null) {
+      instance.flowModel.link_type = 'Flowchart';
+    }
+
+    //初始化html
+    instance._initHtml(containerId);
+
+    //初始化元数据
+    instance._initMetadata();
+
+    //初始化样式风格
+    instance._initTheme();
+
+    //初始化流程实例
+    instance._initPlumb();
+
+    instance._initEvents();
+
+    return instance;
+  },
+
+  refresh: function () {
+    this.flowModel = this.getFlow();
+    //初始化样式风格
+    this._initTheme();
+    this._initPlumb();
+    this.showFlow();
+    this.setActionStates();
+    this.setLinkStates();
+    this.setActionContents();
+  },
+  repaint: function () {
+    //重画
+    this._plumb.repaintEverything();
+  },
+
+  setTheme: function (theme) {
+
+    this.flowModel.theme = theme || this.flowModel.theme || 'flow_theme_default';
+    this._themeObj = flow_themes[this.flowModel.theme];
+   
+    for (var k in flow_themes) {
       $('#' + this.containerId)
         .find('.andflow')
-        .addClass(this.flowModel.theme);
-  
-    },
-  
-    registActionScript: function (name, obj) {
-      this._actionScript[name] = obj;
-    },
-  
-    getActionScript: function (name) {
-      return this._actionScript[name];
-    },
-  
-    getMetadata: function (name) {
-      for (var index in this.metadata) {
-        var action_info = this.metadata[index];
-        if (name == action_info.name) {
-          return action_info;
-        }
+        .removeClass(k);
+    }
+    $('#' + this.containerId)
+      .find('.andflow')
+      .addClass(this.flowModel.theme);
+
+  },
+
+  registActionScript: function (name, obj) {
+    this._actionScript[name] = obj;
+  },
+
+  getActionScript: function (name) {
+    return this._actionScript[name];
+  },
+
+  getMetadata: function (name) {
+    for (var index in this.metadata) {
+      var action_meta = this.metadata[index];
+      if (name == action_meta.name) {
+        return action_meta;
       }
+    }
+    return null;
+  },
+  getMetadatas: function () {
+    return this.metadata;
+  },
+
+  getDict: function (name) {
+    if (name == null || name == '') {
       return null;
-    },
-    getMetadatas: function () {
-      return this.metadata;
-    },
-  
-    getDict: function (name) {
-      if (name == null || name == '') {
-        return null;
+    }
+    var dicts = this.getFlow().dict;
+    for (var i in dicts) {
+      var dict = dicts[i];
+      if (dict.name == name) {
+        return dict.label;
       }
-      var dicts = this.getFlow().dict;
-      for (var i in dicts) {
-        var dict = dicts[i];
-        if (dict.name == name) {
-          return dict.label;
-        }
-      }
-      return null;
-    },
-    getDicts: function () {
-      var dicts = this.getFlow().dict;
+    }
+    return null;
+  },
+  getDicts: function () {
+    var dicts = this.getFlow().dict;
+
+    return dicts;
+  },
+
+  getActionInfo: function (id) {
+    return this._actionInfos[id];
+  },
+  setActionInfo: function (action) {
+    this._actionInfos[action.id] = action;
+
+    $('#'+this.containerId + ' #' + action.id)
+      .find('.action-header')
+      .html(action.title || action.des || '');
+
+    this._plumb.repaintEverything();
+  },
+  delActionInfo: function (id) {
+    this._actionInfos[id] = null;
+  },
+  getGroupInfo: function(id){
+    return this._groupInfos[id];
+  },
+  setGroupInfo: function(group){
+    this._groupInfos[group.id] = group;
+    var groupEl = $('#'+this.containerId + ' #'+group.id);
+    groupEl.find('.group-header').html(group.title);
+    groupEl.find('.group-body').html(group.des);
+  },
   
-      return dicts;
-    },
-  
-    getActionInfo: function (id) {
-      return this._actionInfos[id];
-    },
-    setActionInfo: function (action) {
-      this._actionInfos[action.id] = action;
-  
-      $('#' + action.id)
-        .find('.action-header')
-        .html(action.des || action.title || '');
-  
+  getLinkInfo: function (sid, tid) {
+    return this._linkInfos[sid + '-' + tid] || {};
+  },
+
+  setLinkInfo: function (link) {
+    
+    $.extend(this._linkInfos[link.source_id + '-' + link.target_id], link);
+
+    var linkTitle = $('<div/>').text(link.title).html();
+
+    var conn = this.getConnection(link.source_id, link.target_id);
+    if (conn != null) {
+      this._paintConnection(conn, link);
+
       this._plumb.repaintEverything();
-    },
-    delActionInfo: function (id) {
-      this._actionInfos[id] = null;
-    },
-  
-    getLinkInfo: function (sid, tid) {
-      return this._linkInfos[sid + '-' + tid] || {};
-    },
-    setLinkInfo: function (link) {
-      this._linkInfos[link.source_id + '-' + link.target_id] = link;
-  
-      var linkTitle = $('<div/>').text(link.title).html();
-  
-      var conn = this.getConnection(link.source_id, link.target_id);
-      if (conn != null) {
-        this._paintConnection(conn, link);
-  
-        this._plumb.repaintEverything();
-      }
-    },
-  
-    delLinkInfo: function (sid, tid) {
-      this._linkInfos[sid + '-' + tid] = null;
-    },
-  
-    //删除节点
-    removeAction: function (actionId) {
-      var $this = this;
-      var element = $('#canvas #' + actionId);
-  
-      if (element == null) {
-        return;
-      }
-  
-      $this._plumb.remove(element);
-      $(element).remove();
-  
-      var action_info = $this._actionInfos[actionId];
-  
-      $this.delActionInfo(actionId);
-  
-      $this._actionCharts[actionId] = null;
-      if ($this._actionCharts[actionId] != null) {
-        $this._actionCharts[actionId].dispose();
-      }
-      $this._actionContents[actionId] = null;
-  
-      if ($this.event_action_remove) {
-        $this.event_action_remove(action_info);
-      }
-  
-      $this._onCanvasChanged();
-    },
-  
-    //删除连线
-    removeLink: function (sourceId, targetId) {
-      var $this = this;
-  
-      var conn = this.getConnection(sourceId, targetId);
-      if (conn == null) {
-        return;
-      }
-  
-      var link_info = this._linkInfos[sourceId + '-' + targetId];
-  
-      this.delLinkInfo(sourceId, targetId);
-  
-      this._plumb.deleteConnection(conn);
-      this._plumb.repaintEverything();
-  
-      if (this.event_link_remove) {
-        this.event_link_remove(link_info);
-      }
-  
-      $this._onCanvasChanged();
-    },
-  
-    setEditable: function (editable) {
-      this.editable = editable;
-      if (this.editable == true) {
-        $('#' + this.containerId + ' .andflow').removeClass('state');
-      } else {
-        $('#' + this.containerId + ' .andflow').addClass('state');
-      }
-    },
-    getEditable: function () {
-      return this.editable;
-    },
-  
-    setFlow: function (flowModel) {
-      this.flowModel = flowModel;
-    },
-    /**
-     *  显示流程画布
-     */
-    showFlow: function (model) {
-      var $this = this;
-      if (model) {
-        this.flowModel = model;
-      }
-   
-      //删除所有连线，重新画
-      this._plumb.deleteEveryConnection();
-      $('.action').each(function (i, e) {
-        $this._plumb.remove(e);
-        $(e).remove();
-      });
-  
-      this._actionInfos = {};
-      this._linkInfos = {};
-  
-      //清空画布
-      $('#canvas').html('');
-  
-      //建立节点
-      var obj = this.flowModel;
-      if (obj && obj.actions) {
-        for (var k in obj.actions) {
-          var action = obj.actions[k];
-          //创建Action节点
-          this._createAction(action);
-        }
-      }
-  
-      //建立节点连线
-      if (obj && obj.links) {
-        var linktype = this.flowModel.link_type || 'Flowchart';
-  
-        for (var k in obj.links) {
-          var link = obj.links[k];
-  
-          var conn = this._plumb.connect({ source: link.source_id, target: link.target_id });
-  
-          if (conn == undefined || conn == null) {
-            continue;
-          }
-  
-          this._paintConnection(conn, link);
-  
-          this._linkInfos[link.source_id + '-' + link.target_id] = link;
-        }
-      }
-  
-      //设置端点样式
+    }
+  },
+
+  delLinkInfo: function (sid, tid) {
+    this._linkInfos[sid + '-' + tid] = null;
+  },
+  setLinkTitle: function(source_id,target_id, title){
+    var link = {source_id:source_id,target_id:target_id, title: title};
+    this.setLinkInfo(link);
+  },
+  getLinkTitle: function(source_id,target_id){
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {};
+    return link.title;
+  },
+  //删除组
+  removeGroup: function(groupId){
+    var $this = this;
+    var group = $this._plumb.getGroup(groupId);
+    group.getEl();
+    $this._plumb.removeGroup(group,false);
+  },
+  //删除节点
+  removeAction: function (actionId) {
+    var $this = this;
+    var element = $('#'+$this.containerId+' #canvas #' + actionId);
+
+    if (element == null) {
+      return;
+    }
+
+    $this._plumb.remove(element);
+    $(element).remove();
+
+    var action_info = $this._actionInfos[actionId];
+
+    $this.delActionInfo(actionId);
+
+    $this._actionCharts[actionId] = null;
+    if ($this._actionCharts[actionId] != null) {
+      $this._actionCharts[actionId].dispose();
+    }
+    $this._actionContents[actionId] = null;
+
+    if ($this.event_action_remove) {
+      $this.event_action_remove(action_info);
+    }
+
+    $this._onCanvasChanged();
+  },
+
+  //删除连线
+  removeLink: function (sourceId, targetId) {
+    var $this = this;
+
+    var conn = this.getConnection(sourceId, targetId);
+    if (conn == null) {
+      return;
+    }
+
+    var link_info = this._linkInfos[sourceId + '-' + targetId];
+
+    this.delLinkInfo(sourceId, targetId);
+
+    this._plumb.deleteConnection(conn);
+    this._plumb.repaintEverything();
+
+    if (this.event_link_remove) {
+      this.event_link_remove(link_info);
+    }
+
+    $this._onCanvasChanged();
+  },
+
+  setEditable: function (editable) {
+    this.editable = editable;
+    if (this.editable == true) {
+      $('#' + this.containerId + ' .andflow').removeClass('state');
+    } else {
+      $('#' + this.containerId + ' .andflow').addClass('state');
+    }
+  },
+  getEditable: function () {
+    return this.editable;
+  },
+
+  setFlow: function (flowModel) {
+    this.flowModel = flowModel;
+  },
+  /**
+   *  显示流程画布
+   */
+  showFlow: function (model) {
+    var $this = this;
+    if (model) {
+      this.flowModel = model;
+    }
+    this._actionInfos = {};
+    this._linkInfos = {};
+    this._groupInfos = {};
+    this._actionContents = {};
+    this._actionCharts = {};
+    this._action_states = [];
+    this._link_states = [];
+
+    //删除所有连线，重新画
+    this._plumb.deleteEveryConnection();
+    $('.action').each(function (i, e) {
+      $this._plumb.remove(e);
+      $(e).remove();
+    });
+
+    //删除所有组，和成员节点
+    this._plumb.removeAllGroups(true);
+    
+
+    //清空画布
+    $('#canvas').html('');
+    
+    //建立节点
+    var obj = this.flowModel;
+    if (obj && obj.actions) {
       for (var k in obj.actions) {
         var action = obj.actions[k];
-        var endpoints = this._plumb.getEndpoints(action.id);
-        for (var k in endpoints) {
-          var endpoint = endpoints[k];
-          endpoint.setPaintStyle({
-            stroke: this._themeObj.default_endpoint_stroke_color,
-            fill: this._themeObj.default_endpoint_fill_color,
-            radius: this._themeObj.default_endpoint_radius,
-            strokeWidth: this._themeObj.default_endpoint_strokeWidth,
-          });
-          endpoint.setHoverPaintStyle({
-            stroke: this._themeObj.default_endpoint_stroke_color_hover,
-            fill: this._themeObj.default_endpoint_fill_color_hover,
-            radius: this._themeObj.default_endpoint_radius_hover,
-            strokeWidth: this._themeObj.default_endpoint_strokeWidth_hover,
-          });
-        }
+        //创建Action节点
+        this._createAction(action);
       }
-  
-      this._plumb.repaintEverything();
-    },
-  
-    getFlow: function () {
-      var actions = this.getActions();
-      var links = this.getLinks();
-      this.flowModel.actions = actions;
-      this.flowModel.links = links;
-  
-      return this.flowModel;
-    },
-  
-    clearActionState: function () {
-      $('#' + this.containerId)
-        .find('.action')
-        .removeClass('error');
-      $('#' + this.containerId)
-        .find('.action')
-        .removeClass('execute');
-      $('#' + this.containerId)
-        .find('.action')
-        .removeClass('reject');
-      $('#' + this.containerId)
-        .find('.action')
-        .removeClass('success');
-    },
-    setActionSelected: function (actionId, selected) {
-      if (actionId == null || actionId == '' || $('#' + actionId).length == 0) {
-        return;
+    }
+
+
+    //建立组
+    if (obj && obj.groups) {
+      for(var k in obj.groups){
+        var group = obj.groups[k];
+
+        this._createGroup(group);
+
       }
-      if (selected) {
-        $('#' + actionId).addClass('selected');
-      } else {
-        $('#' + actionId).removeClass('selected');
-      }
-    },
-    //设置节点图标
-    setActionIcon: function (actionId, action_icon) {
-      if (action_icon != null && action_icon.length > 0) {
-        $('#' + actionId)
-          .find('.action-icon img')
-          .attr('src', this.img_path + action_icon);
-      }
-    },
-    //设置节点样式状态
-    setActionState: function (actionId, state) {
-      if (actionId == null || actionId == '') {
-        return;
-      }
-  
-      var element = $('#' + this.containerId).find('#' + actionId);
-  
-      if (state == null || state == '' || state == 0) {
-        element.removeClass('error');
-        element.removeClass('execute');
-        element.removeClass('reject');
-        element.removeClass('success');
-        return;
-      }
-  
-      if (state == -1 || state == 'error') {
-        element.removeClass('error');
-        element.removeClass('execute');
-        element.removeClass('reject');
-        element.removeClass('success');
-  
-        if (!element.hasClass('error')) {
-          element.addClass('error');
-        }
-      } else if (state == 1 || state == 'execute') {
-        if (!element.hasClass('execute')) {
-          element.addClass('execute');
-        }
-      } else if (state == 2 || state == 'success') {
-        element.removeClass('error');
-        element.removeClass('execute');
-        element.removeClass('reject');
-        element.removeClass('success');
-  
-        if (!element.hasClass('success')) {
-          element.addClass('success');
-        }
-      } else if (state == 3 || state == 'reject') {
-        element.removeClass('error');
-        element.removeClass('execute');
-        element.removeClass('reject');
-        element.removeClass('success');
-  
-        if (!element.hasClass('reject')) {
-          element.addClass('reject');
-        }
-      }
-    },
-  
-    //显示状态
-    setActionStates: function (action_states) {
-      if (action_states == undefined || action_states == null) {
-        action_states = this._action_states;
-      }
-      this._action_states = action_states;
-      var elements = $('#' + this.containerId).find('.action');
-      elements.removeClass('success');
-      elements.removeClass('error');
-      elements.removeClass('execute');
-  
-      var action_state_map = {};
-      for (var k in action_states) {
-        var actionId = action_states[k].action_id;
-        action_state_map[actionId] = action_states[k];
-      }
-  
-      //显示节点状态
-      var actions = this.getActions();
-      for (var i in actions) {
-        action = actions[i];
-        var actionId = action.id;
-        var action_state = action_state_map[actionId];
-        if (action_state == null) {
+    }
+   
+    //建立节点连线
+    if (obj && obj.links) {
+      var linktype = this.flowModel.link_type || 'Flowchart';
+
+      for (var k in obj.links) {
+        var link = obj.links[k];
+
+        var conn = this._plumb.connect({ source: link.source_id, target: link.target_id });
+
+        if (conn == undefined || conn == null) {
           continue;
         }
-        //修改文字、颜色等样式
-        var state = action_state.state;
-        var isError = action_state.is_error;
-        if (isError) {
-          state = -1;
-        }
-        this.setActionState(actionId, state);
-  
-        //修改图标
-        var action_icon = action_state.action_icon;
-        this.setActionIcon(actionId, action_icon);
-  
-        //内容
-        var actionContent = action_state.content;
-        this.showActionContent(actionContent);
+
+        this._paintConnection(conn, link);
+
+        this._linkInfos[link.source_id + '-' + link.target_id] = link;
       }
-   
-    },
-  
-    //设置连线状态
-    setLinkState(source_id, target_id, state) {
-      var conn = this.getConnection(source_id, target_id);
-      if (conn == null) {
-        return;
-      }
-      var data = conn.data;
-      //如果不可用，就不用修改状态
-      if (data != null && data.active == 'false') {
-        return;
-      }
-  
-      this._paintConnectionState(conn, state);
-    },
-    //修改连线状态
-    setLinkStates: function (link_states) {
-      if (link_states == undefined || link_states == null) {
-        link_states = this._link_states;
-      }
-  
-      this._link_states = link_states;
-  
-      var link_state_map = {};
-      for (var i in link_states) {
-        var link_state = link_states[i];
-  
-        var source_id = link_state.source_action_id;
-        var target_id = link_state.target_action_id;
-  
-        var state = link_state.state;
-        var isError = link_state.is_error;
-        if (isError == 1 || isError == true || isError == 'true') {
-          state = -1;
-        }
-  
-        this.setLinkState(source_id, target_id, state);
-      }
-  
-      this._plumb.repaintEverything();
-    },
-  
-    setLinkType: function (link_type) {
-      this.flowModel.link_type = link_type;
-      this.refresh();
-    },
-  
-    //获取Action节点
-    getActions: function () {
-      var $this = this;
-      var actions = [];
-      $('#canvas')
-        .find('.action')
-        .each(function (index, element) {
-          var id = $(element).attr('id');
-  
-          var action = $this._actionInfos[id];
-          if (action == null) {
-            action = {};
-          }
-  
-          action['id'] = id;
-          action['name'] = $(element).attr('name');
-          action['title'] = $(element).attr('title');
-          action['icon'] = $(element).attr('icon');
-  
-          action['left'] = $(element).css('left');
-          action['top'] = $(element).css('top');
-          action['width'] = $(element).css('width');
-          action['height'] = $(element).css('height');
-  
-          action['body_width'] = $(element).attr('body_width');
-          action['body_height'] = $(element).attr('body_height');
-  
-          actions.push(action);
+    }
+
+
+    //设置端点样式
+    for (var k in obj.actions) {
+      var action = obj.actions[k];
+      var endpoints = this._plumb.getEndpoints(action.id);
+      for (var k in endpoints) {
+        var endpoint = endpoints[k];
+        endpoint.setPaintStyle({
+          stroke: this._themeObj.default_endpoint_stroke_color,
+          fill: this._themeObj.default_endpoint_fill_color,
+          radius: this._themeObj.default_endpoint_radius,
+          strokeWidth: this._themeObj.default_endpoint_strokeWidth,
         });
-  
-      return actions;
-    },
-    //获取连线
-    getLinks: function () {
-      var links = [];
-  
-      var conn_list = this._plumb.getAllConnections();
-  
-      for (var i = 0; i < conn_list.length; i++) {
-        var source_id = conn_list[i]['sourceId'];
-        var target_id = conn_list[i]['targetId'];
-  
-        var conn = this._linkInfos[source_id + '-' + target_id];
-        if (conn == null) {
-          conn = {};
-        }
-        conn['source_id'] = source_id;
-        conn['target_id'] = target_id;
-  
-        this._linkInfos[source_id + '-' + target_id] = conn;
-  
-        links.push(conn);
-      }
-  
-      return links;
-    },
-    getConnection: function (sourceId, targetId) {
-      var conn_list = this._plumb.getAllConnections();
-  
-      for (var i = 0; i < conn_list.length; i++) {
-        var source_id = conn_list[i]['sourceId'];
-        var target_id = conn_list[i]['targetId'];
-  
-        if (source_id == sourceId && target_id == targetId) {
-          return conn_list[i];
-        }
-      }
-  
-      return null;
-    },
-    //水平对齐
-    horizontal: function () {
-      var minTop = 999999999;
-  
-      var model = this.getFlow();
-  
-      for (var k in model.actions) {
-        var top = model.actions[k].top;
-        top = top.replace(/px/gi, '');
-        if (minTop > top) {
-          minTop = top;
-        }
-      }
-      if (minTop < 10) {
-        minTop = 10;
-      }
-      for (var k in model.actions) {
-        model.actions[k].top = minTop + 'px';
-      }
-  
-      this.showFlow(model);
-      this.setActionStates(this._action_states);
-      this.setLinkStates(this._link_states);
-    },
-  
-    vertical: function () {
-      var minLeft = 999999999;
-  
-      var model = this.getFlow();
-  
-      for (var k in model.actions) {
-        var left = model.actions[k].top;
-        left = left.replace(/px/gi, '');
-        if (minLeft > left) {
-          minLeft = left;
-        }
-      }
-      if (minLeft < 10) {
-        minLeft = 10;
-      }
-      for (var k in model.actions) {
-        model.actions[k].left = minLeft + 'px';
-      }
-  
-      this.showFlow(model);
-      this.setActionStates(this._action_states);
-      this.setLinkStates(this._link_states);
-    },
-  
-    //获取截图
-    getSnapshot: function (callback, opts) {
-      if ($('#canvas').is(':hidden')) {
-        return;
-      }
-  
-      var options = { backgroundColor: 'white' };
-  
-      if (opts) {
-        $.extend(options, opts);
-      }
-  
-      var cardBox = document.querySelector('#canvas');
-  
-      var nodesToRecover = [];
-      var nodesToRemove = [];
-      var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
-      svgElem.each(function (index, node) {
-        var parentNode = node.parentNode;
-        var svg = node.outerHTML.trim();
-        var subCanvas = document.createElement('canvas');
-        canvg(subCanvas, svg);
-        if (node.style.position) {
-          subCanvas.style.position = node.style.position;
-          subCanvas.style.left = node.style.left;
-          subCanvas.style.top = node.style.top;
-        }
-        nodesToRecover.push({
-          parent: parentNode,
-          child: node,
+        endpoint.setHoverPaintStyle({
+          stroke: this._themeObj.default_endpoint_stroke_color_hover,
+          fill: this._themeObj.default_endpoint_fill_color_hover,
+          radius: this._themeObj.default_endpoint_radius_hover,
+          strokeWidth: this._themeObj.default_endpoint_strokeWidth_hover,
         });
-        parentNode.removeChild(node);
-        nodesToRemove.push({
-          parent: parentNode,
-          child: subCanvas,
-        });
-        parentNode.appendChild(subCanvas);
-      });
-       
-      let canvas = document.createElement('canvas');
-      let w = cardBox.scrollWidth;
-      let h = cardBox.scrollHeight;
-      let scale = options.scale || 1;
-      canvas.width = w * scale;
-      canvas.height = h * scale;
-  
-      canvas.style.width = w * scale + 'px';
-      canvas.style.height = h * scale + 'px';
-  
-      $(canvas).css('position', 'relative');
-      $(canvas).css('box-sizing', 'border-box');
-      $(canvas).css('font-size', '12px');
-      $(canvas).css('padding', '0px');
-  
-      html2canvas(cardBox, {
-        canvas: canvas,
-        scale: scale,
-        dpi: 96,
-        backgroundColor: options.backgroundColor || 'transparent',
-        width: w,
-        height: h,
-        scrollY: 0,
-        scrollX: 0,
-        useCORS: true,
-      }).then(function (canvas) {
-        for (var k in nodesToRemove) {
-          var node = nodesToRemove[k];
-          node.parent.removeChild(node.child);
-        }
-        for (var k in nodesToRecover) {
-          var node = nodesToRecover[k];
-          node.parent.appendChild(node.child);
-        }
-  
-        if (callback) {
-          callback(canvas);
-        }
-      });
-      $(canvas).remove();
-    },
-  
-    //截图,并保存为
-    snap: function (name) {
-      name = name || 'andflow';
-  
-      var ext = 'jpg';
-  
-      this.getSnapshot(function (canvas) {
-        var url = canvas.toDataURL('image/jpeg'); //生成下载的url
-  
-        var triggerDownload = $('<a></a>')
-          .attr('href', url)
-          .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
-        triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
-      });
-    },
-    setActionContents: function (actioncontentMap) {
-      if (actioncontentMap) {
-        this._actionContents = actioncontentMap;
       }
-      if (this._actionContents == null || this._actionContents.length == 0) {
-        return;
+    }
+
+    this._plumb.repaintEverything();
+  },
+
+  getFlow: function () {
+    var actions = this.getActions();
+    var links = this.getLinks();
+    var groups = this.getGroups();
+    
+    this.flowModel.actions = actions;
+    this.flowModel.links = links;
+    this.flowModel.groups = groups;
+
+    return this.flowModel;
+  },
+
+  clearActionState: function () {
+    $('#' + this.containerId)
+      .find('.action')
+      .removeClass('error');
+    $('#' + this.containerId)
+      .find('.action')
+      .removeClass('execute');
+    $('#' + this.containerId)
+      .find('.action')
+      .removeClass('reject');
+    $('#' + this.containerId)
+      .find('.action')
+      .removeClass('success');
+  },
+  setActionSelected: function (actionId, selected) {
+    if (actionId == null || actionId == '' || $('#' + actionId).length == 0) {
+      return;
+    }
+    if (selected) {
+      $('#' + actionId).addClass('selected');
+    } else {
+      $('#' + actionId).removeClass('selected');
+    }
+  },
+  //设置节点图标
+  setActionIcon: function (actionId, action_icon) {
+    if (action_icon != null && action_icon.length > 0) {
+      $('#' + actionId)
+        .find('.action-icon img')
+        .attr('src', this.img_path + action_icon);
+    }
+  },
+  //设置节点样式状态
+  setActionState: function (actionId, state) {
+    if (actionId == null || actionId == '') {
+      return;
+    }
+
+    var element = $('#' + this.containerId).find('#' + actionId);
+
+    if (state == null || state == '' || state == 0) {
+      element.removeClass('error');
+      element.removeClass('execute');
+      element.removeClass('reject');
+      element.removeClass('success');
+      return;
+    }
+
+    if (state == -1 || state == 'error') {
+      element.removeClass('error');
+      element.removeClass('execute');
+      element.removeClass('reject');
+      element.removeClass('success');
+
+      if (!element.hasClass('error')) {
+        element.addClass('error');
       }
-      for (var actionId in this._actionContents) {
-        var ac = this._actionContents[actionId];
-        this.setActionContent(actionId, ac.content, ac.content_type);
+    } else if (state == 1 || state == 'execute') {
+      if (!element.hasClass('execute')) {
+        element.addClass('execute');
       }
-    },
-    setActionContent: function (action_id, content, content_type) {
-      if (
-        this.flowModel.show_action_content == false ||
-        this.flowModel.show_action_content == 'false'
-      ) {
-        return;
+    } else if (state == 2 || state == 'success') {
+      element.removeClass('error');
+      element.removeClass('execute');
+      element.removeClass('reject');
+      element.removeClass('success');
+
+      if (!element.hasClass('success')) {
+        element.addClass('success');
       }
-  
-      content_type = content_type || 'msg';
-  
-      var element = $('#' + this.containerId).find('#' + action_id + ' .action-content');
-  
-      switch (content_type) {
-        case 'msg':
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-  
-          element.html("<div class='action-msg'>" + content + '</div>');
-  
-          break;
-        case 'keyvalue':
-          var data = JSON.parse(content);
-          var grid = $('<table class="action-result-table" style="width:100%"></table>');
-          for (var k in data) {
-            grid.append(
-              '<tr><td class="action-result-label">' +
-                k +
-                '</td><td class="action-result-value">' +
-                data[k] +
-                '</td></tr>',
-            );
-          }
-          element.html('');
-          element.append(grid);
-          element.css('overflow-y', 'auto');
-          break;
-        case 'grid':
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-  
-          var griddata = JSON.parse(content);
-  
-          var columns = griddata['columns'];
-          var data = griddata['rows'];
-  
-          var datas = [];
-          if (data instanceof Array) {
-            datas = data;
-          } else {
-            datas.push(data);
-          }
-  
-          if (columns == null || columns.length == 0) {
-            columns = [];
-            if (datas.length > 0) {
-              for (var k in datas[0]) {
-                columns.push({ name: k, title: k });
-              }
-            }
-          }
-  
-          var grid = $('<table class="table" style="width:100%"></table>');
-  
-          //header
-          var headerEl = $('<tr></tr>');
-          for (var j in columns) {
-            var title = columns[j].title || columns[j].name;
-            var colEl = $('<th>' + title + '</th>');
-            headerEl.append(colEl);
-          }
-          grid.append(headerEl);
-  
-          //body
-          for (var i in datas) {
-            var row = datas[i];
-            var rowDatas = [];
-  
-            if (row instanceof Object) {
-              for (var k in columns) {
-                rowDatas.push(row[columns[k].name]);
-              }
-            } else {
-              rowDatas.push(row);
-            }
-            var rowEl = $('<tr></tr>');
-            for (var j in rowDatas) {
-              var val = rowDatas[j];
-              if (val instanceof Object) {
-                val = JSON.stringify(val);
-              }
-              var colEl = $('<td>' + val + '</td>');
-              rowEl.append(colEl);
-            }
-            grid.append(rowEl);
-          }
-          element.html('');
-          element.append(grid);
-          element.css('overflow-y', 'auto');
-  
-          break;
-        case 'html':
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-  
-          element.html("<div class='action-html'>" + content + '</div>');
-  
-          break;
-        case 'chart':
-          var option = JSON.parse(content);
-  
-          var id = 'chart_' + action_id;
-  
-          var charDom = element.find('#' + id);
-          var actionChart = this._actionCharts[action_id];
-          if (actionChart == null || charDom == null || charDom.length == 0) {
-            element.html("<div id='" + id + "' class='action-chart'></div>");
-            var w = element.width();
-            var h = element.height();
-            $('#' + id).width(w);
-            $('#' + id).height(h);
-  
-            actionChart = echarts.init(document.getElementById(id));
-          }
-          actionChart.setOption(option);
-          this._actionCharts[action_id] = actionChart;
-  
-          break;
-        case 'form':
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-          var data = JSON.parse(content);
-          var url = data.url;
-  
-          element.html(
-            '<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
-          );
-  
-          break;
-        case 'web':
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-          element.html(
-            '<iframe src="' +
-              content +
-              '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
-          );
-  
-          break;
-        default:
-          if (this._actionCharts[action_id] != null) {
-            this._actionCharts[action_id].dispose();
-            this._actionCharts[action_id] = null;
-          }
-  
-          element.html("<div class='action-msg'>" + content + '</div>');
-  
-          break;
+    } else if (state == 3 || state == 'reject') {
+      element.removeClass('error');
+      element.removeClass('execute');
+      element.removeClass('reject');
+      element.removeClass('success');
+
+      if (!element.hasClass('reject')) {
+        element.addClass('reject');
       }
-  
-      this._actionContents[action_id] = { content_type: content_type, content: content };
-    },
-    //显示所有action内容
-    showAllActionContent: function (states) {
-      if (states) {
-        for (var k in states) {
-          var actionContent = states[k].content;
-          if (actionContent != null) {
-            this.showActionContent(actionContent);
-          }
-        }
+    }
+  },
+
+  //设置节点状态样式
+  setActionStates: function (action_states) {
+    if (action_states == undefined || action_states == null) {
+      action_states = this._action_states;
+    }
+    this._action_states = action_states;
+    var elements = $('#' + this.containerId).find('.action');
+    elements.removeClass('success');
+    elements.removeClass('error');
+    elements.removeClass('execute');
+
+    var action_state_map = {};
+    for (var k in action_states) {
+      var actionId = action_states[k].action_id;
+      action_state_map[actionId] = action_states[k];
+    }
+
+    //显示节点状态
+    var actions = this.getActions();
+    for (var i in actions) {
+      action = actions[i];
+      var actionId = action.id;
+      var action_state = action_state_map[actionId];
+      if (action_state == null) {
+        continue;
       }
-    },
-  
-    //绘制Action内容 {action_id,content_type,content}
-    showActionContent: function (actionContent) {
-      if (
-        actionContent == null ||
-        actionContent.content_type == null ||
-        actionContent.content == null
-      ) {
-        return;
+      //修改文字、颜色等样式
+      var state = action_state.state;
+      var isError = action_state.is_error;
+      if (isError) {
+        state = -1;
       }
+      this.setActionState(actionId, state);
+
+      //修改图标
+      var action_icon = action_state.action_icon;
+      this.setActionIcon(actionId, action_icon);
+
+      //内容
+      var actionContent = action_state.content;
+      this.showActionContent(actionContent);
+    }
+ 
+  },
   
-      var content_type = actionContent.content_type;
-      var content = actionContent.content;
-      var action_id = actionContent.action_id;
-  
-      this.setActionContent(action_id, content, content_type);
-    },
-  
+  //设置连线状态
+  setLinkState(source_id, target_id, state) {
+    var conn = this.getConnection(source_id, target_id);
+    if (conn == null) {
+      return;
+    }
+    var data = conn.data;
+    //如果不可用，就不用修改状态
+    if (data != null && data.active == 'false') {
+      return;
+    }
+
+    this._paintConnectionState(conn, state);
+  },
+
+  //修改连线状态
+  setLinkStates: function (link_states) {
+    if (link_states == undefined || link_states == null) {
+      link_states = this._link_states;
+    }
+
+    this._link_states = link_states;
+
+    var link_state_map = {};
+    for (var i in link_states) {
+      var link_state = link_states[i];
+
+      var source_id = link_state.source_action_id;
+      var target_id = link_state.target_action_id;
+
+      var state = link_state.state;
+      var isError = link_state.is_error;
+      if (isError == 1 || isError == true || isError == 'true') {
+        state = -1;
+      }
+
+      this.setLinkState(source_id, target_id, state);
+    }
+
+    this._plumb.repaintEverything();
+  },
+
+  setLinkType: function (link_type) {
+    this.flowModel.link_type = link_type;
+    this.refresh();
+  },
+  //获取group
+  getGroups: function(){
+    var $this = this;
+
+    var groups = [];
+    var gs = this._plumb.getGroups();
+    
+    for(var i in gs){
+      var item = gs[i];
+      var id = item.id;
+      var el = $(item.getEl());
+      var ms = item.getMembers();
       
-    setActionBodyVisible: function (v) {
-      this.flowModel.show_action_body = v ? 'true' : 'false';
-      if (this.flowModel.show_action_body == 'false') {
-        $('#' + this.containerId + ' .action-body').hide();
-      } else {
-        $('#' + this.containerId + ' .action-body').show();
+      var group = $this._groupInfos[id];
+      //actions
+      group.actions = [];
+      for(var j in ms){
+        let id = ms[j].id;
+        group.actions.push(id);
       }
-    },
-    setActionContentVisible: function (v) {
-      this.flowModel.show_action_content = v ? 'true' : 'false';
-      if (this.flowModel.show_action_content == 'false') {
-        $('#' + this.containerId + ' .action-content').hide();
-      } else {
-        $('#' + this.containerId + ' .action-content').show();
+
+      //position
+      if(group.position!="auto"){
+        group.position = {};
+        let left = el.css("left");
+        group.position.left = left;
+        let top = el.css("top");
+        group.position.top = top;
+        let w = el.css('width');
+        group.position.width = w;
+        let h = el.css('height');
+        group.position.height = h;
+      } 
+    
+      groups.push(group);
+    }
+
+
+    return groups;
+  },
+  //获取Action节点
+  getActions: function () {
+    var $this = this;
+    var actions = [];
+    var canvas = $('#'+this.containerId+' #canvas');
+
+    canvas.find('.action').each(function (index, element) {
+        var id = $(element).attr('id');
+
+        var action = $this._actionInfos[id];
+        if (action == null) {
+          action = {};
+        }
+        
+        let ingroup = $(element).parent().hasClass("group-container");
+
+
+        action['id'] = id;
+        action['name'] = $(element).attr('name');
+        action['title'] = $(element).attr('title');
+        action['icon'] = $(element).attr('icon');
+        action['des'] = $(element).attr('des');
+        if(ingroup){
+          action['left'] = ($(element).position().left+$(element).parent().position().left)+"px";
+          action['top'] = ($(element).position().top+ $(element).parent().position().top)+"px";
+        }else{
+          action['left'] = $(element).position().left+"px";
+          action['top'] = $(element).position().top+"px";
+        }
+
+        action['width'] = $(element).css('width');
+        action['height'] = $(element).css('height');
+        action['body_width'] = $(element).attr('body_width');
+        action['body_height'] = $(element).attr('body_height');
+         
+
+        actions.push(action);
+      });
+
+    for(var i in actions){
+      var id = actions[i].id;
+      //set action state\content
+    }
+      
+    return actions;
+  },
+
+  //获取连线
+  getLinks: function () {
+    var links = [];
+
+    var conn_list = this._plumb.getAllConnections();
+
+    for (var i = 0; i < conn_list.length; i++) {
+      var source_id = conn_list[i]['sourceId'];
+      var target_id = conn_list[i]['targetId'];
+
+      var conn = this._linkInfos[source_id + '-' + target_id];
+      if (conn == null) {
+        conn = {};
       }
-    },
-  };
-  
+      conn['source_id'] = source_id;
+      conn['target_id'] = target_id;
+
+      this._linkInfos[source_id + '-' + target_id] = conn;
+
+      links.push(conn);
+    }
+
+    return links;
+  },
+  getConnection: function (sourceId, targetId) {
+    var conn_list = this._plumb.getAllConnections();
+
+    for (var i = 0; i < conn_list.length; i++) {
+      var source_id = conn_list[i]['sourceId'];
+      var target_id = conn_list[i]['targetId'];
+
+      if (source_id == sourceId && target_id == targetId) {
+        return conn_list[i];
+      }
+    }
+
+    return null;
+  },
+  //水平对齐
+  horizontal: function () {
+    var minTop = 999999999;
+
+    var model = this.getFlow();
+
+    for (var k in model.actions) {
+      var top = model.actions[k].top;
+      top = top.replace(/px/gi, '');
+      if (minTop > top) {
+        minTop = top;
+      }
+    }
+    if (minTop < 10) {
+      minTop = 10;
+    }
+    for (var k in model.actions) {
+      model.actions[k].top = minTop + 'px';
+    }
+
+    this.showFlow(model);
+    this.setActionStates(this._action_states);
+    this.setLinkStates(this._link_states);
+  },
+
+  vertical: function () {
+    var minLeft = 999999999;
+
+    var model = this.getFlow();
+
+    for (var k in model.actions) {
+      var left = model.actions[k].top;
+      left = left.replace(/px/gi, '');
+      if (minLeft > left) {
+        minLeft = left;
+      }
+    }
+    if (minLeft < 10) {
+      minLeft = 10;
+    }
+    for (var k in model.actions) {
+      model.actions[k].left = minLeft + 'px';
+    }
+
+    this.showFlow(model);
+    this.setActionStates(this._action_states);
+    this.setLinkStates(this._link_states);
+  },
+
+  //获取截图
+  getSnapshot: function (callback, opts) {
+    if ($('#canvas').is(':hidden')) {
+      return;
+    }
+
+    var options = { backgroundColor: 'white' };
+
+    if (opts) {
+      $.extend(options, opts);
+    }
+
+    var cardBox = document.querySelector('#canvas');
+
+    var nodesToRecover = [];
+    var nodesToRemove = [];
+    var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
+    svgElem.each(function (index, node) {
+      var parentNode = node.parentNode;
+      var svg = node.outerHTML.trim();
+      var subCanvas = document.createElement('canvas');
+      canvg(subCanvas, svg);
+      if (node.style.position) {
+        subCanvas.style.position = node.style.position;
+        subCanvas.style.left = node.style.left;
+        subCanvas.style.top = node.style.top;
+      }
+      nodesToRecover.push({
+        parent: parentNode,
+        child: node,
+      });
+      parentNode.removeChild(node);
+      nodesToRemove.push({
+        parent: parentNode,
+        child: subCanvas,
+      });
+      parentNode.appendChild(subCanvas);
+    });
+     
+    let canvas = document.createElement('canvas');
+    let w = cardBox.scrollWidth;
+    let h = cardBox.scrollHeight;
+    let scale = options.scale || 1;
+    canvas.width = w * scale;
+    canvas.height = h * scale;
+
+    canvas.style.width = w * scale + 'px';
+    canvas.style.height = h * scale + 'px';
+
+    $(canvas).css('position', 'relative');
+    $(canvas).css('box-sizing', 'border-box');
+    $(canvas).css('font-size', '12px');
+    $(canvas).css('padding', '0px');
+
+    
+    html2canvas(cardBox, {
+      canvas: canvas,
+      scale: scale,
+      dpi: 96,
+      backgroundColor: options.backgroundColor || 'transparent',
+      width: w,
+      height: h,
+      scrollY: 0,
+      scrollX: 0,
+      useCORS: true,
+    }).then(function (cvs) {
+       
+      for (var k in nodesToRemove) {
+        var node = nodesToRemove[k];
+        node.parent.removeChild(node.child);
+      }
+      for (var k in nodesToRecover) {
+        var node = nodesToRecover[k];
+        node.parent.appendChild(node.child);
+      }
+
+      if (callback) {
+        callback(cvs);
+      }
+    });
+    $(canvas).remove();
+  },
+
+  //截图,并保存为
+  snap: function (name) {
+    name = name || 'andflow';
+
+    var ext = 'jpg';
+
+    this.getSnapshot(function (canvas) {
+      
+      var url = canvas.toDataURL('image/jpeg'); //生成下载的url
+
+      var triggerDownload = $('<a></a>')
+        .attr('href', url)
+        .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
+      triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
+    });
+  },
+
+  setActionContents: function (actioncontentMap) {
+    if (actioncontentMap) {
+      this._actionContents = actioncontentMap;
+    }
+    if (this._actionContents == null || this._actionContents.length == 0) {
+      return;
+    }
+    for (var actionId in this._actionContents) {
+      var ac = this._actionContents[actionId];
+      this.setActionContent(actionId, ac.content, ac.content_type);
+    }
+  },
+  getActionTitle:function(action_id){
+    var action = this._actionInfos[action_id];
+    return action.title;
+  },
+  setActionTitle:function(action_id, title){
+    this._actionInfos[action_id].title = title;
+    $('#'+this.containerId+' #canvas').find("#"+action_id).find(".action-header").html(title);
+  },
+  getActionContent: function(action_id){
+    var actioncontent = this._actionContents[action_id];
+    return actioncontent;
+  },
+  setActionContent: function (action_id, content, content_type) {
+    this._actionInfos[action_id].content =  { content_type: content_type, content: content };
+    this._actionContents[action_id] = { content_type: content_type, content: content };
+
+    if (
+      this.flowModel.show_action_content == false ||
+      this.flowModel.show_action_content == 'false'
+    ) {
+      return;
+    }
+    
+    var element = $('#' + this.containerId).find('#' + action_id + ' .action-content');
+
+    switch (content_type) {
+      case 'msg':
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+
+        element.html("<div class='action-msg'>" + content + '</div>');
+
+        break;
+      case 'keyvalue':
+        var data = JSON.parse(content);
+        var grid = $('<table class="action-result-table" style="width:100%"></table>');
+        for (var k in data) {
+          grid.append(
+            '<tr><td class="action-result-label">' +
+              k +
+              '</td><td class="action-result-value">' +
+              data[k] +
+              '</td></tr>',
+          );
+        }
+        element.html('');
+        element.append(grid);
+        element.css('overflow-y', 'auto');
+        break;
+      case 'grid':
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+
+        var griddata = JSON.parse(content);
+
+        var columns = griddata['columns'];
+        var data = griddata['rows'];
+
+        var datas = [];
+        if (data instanceof Array) {
+          datas = data;
+        } else {
+          datas.push(data);
+        }
+
+        if (columns == null || columns.length == 0) {
+          columns = [];
+          if (datas.length > 0) {
+            for (var k in datas[0]) {
+              columns.push({ name: k, title: k });
+            }
+          }
+        }
+
+        var grid = $('<table class="table" style="width:100%"></table>');
+
+        //header
+        var headerEl = $('<tr></tr>');
+        for (var j in columns) {
+          var title = columns[j].title || columns[j].name;
+          var colEl = $('<th>' + title + '</th>');
+          headerEl.append(colEl);
+        }
+        grid.append(headerEl);
+
+        //body
+        for (var i in datas) {
+          var row = datas[i];
+          var rowDatas = [];
+
+          if (row instanceof Object) {
+            for (var k in columns) {
+              rowDatas.push(row[columns[k].name]);
+            }
+          } else {
+            rowDatas.push(row);
+          }
+          var rowEl = $('<tr></tr>');
+          for (var j in rowDatas) {
+            var val = rowDatas[j];
+            if (val instanceof Object) {
+              val = JSON.stringify(val);
+            }
+            var colEl = $('<td>' + val + '</td>');
+            rowEl.append(colEl);
+          }
+          grid.append(rowEl);
+        }
+        element.html('');
+        element.append(grid);
+        element.css('overflow-y', 'auto');
+
+        break;
+      case 'html':
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+
+        element.html("<div class='action-html'>" + content + '</div>');
+
+        break;
+      case 'chart':
+        var option = JSON.parse(content);
+
+        var id = 'chart_' + action_id;
+
+        var charDom = element.find('#' + id);
+        var actionChart = this._actionCharts[action_id];
+        if (actionChart == null || charDom == null || charDom.length == 0) {
+          element.html("<div id='" + id + "' class='action-chart'></div>");
+          var w = element.width();
+          var h = element.height();
+          $('#' + id).width(w);
+          $('#' + id).height(h);
+
+          actionChart = echarts.init(document.getElementById(id));
+        }
+        actionChart.setOption(option);
+        this._actionCharts[action_id] = actionChart;
+
+        break;
+      case 'form':
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+        var data = JSON.parse(content);
+        var url = data.url;
+
+        element.html(
+          '<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
+        );
+
+        break;
+      case 'web':
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+        element.html(
+          '<iframe src="' +
+            content +
+            '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
+        );
+
+        break;
+      default:
+        if (this._actionCharts[action_id] != null) {
+          this._actionCharts[action_id].dispose();
+          this._actionCharts[action_id] = null;
+        }
+
+        element.html( content );
+
+        break;
+    }
+
+  },
+
+  //显示所有action内容
+  showAllActionContent: function (states) {
+    if (states) {
+      for (var k in states) {
+        var actionContent = states[k].content;
+        if (actionContent != null) {
+          this.showActionContent(actionContent);
+        }
+      }
+    }
+  },
+
+  //绘制Action内容 {action_id,content_type,content}
+  showActionContent: function (actionContent) {
+    if (
+      actionContent == null ||
+      actionContent.content_type == null ||
+      actionContent.content == null
+    ) {
+      return;
+    }
+
+    var content_type = actionContent.content_type;
+    var content = actionContent.content;
+    var action_id = actionContent.action_id;
+    
+    this.setActionContent(action_id, content, content_type);
+  },
+
+    
+  setActionBodyVisible: function (v) {
+    this.flowModel.show_action_body = v ? 'true' : 'false';
+    if (this.flowModel.show_action_body == 'false') {
+      $('#' + this.containerId + ' .action-body').hide();
+    } else {
+      $('#' + this.containerId + ' .action-body').show();
+    }
+  },
+
+  setActionContentVisible: function (v) {
+    this.flowModel.show_action_content = v ? 'true' : 'false';
+    if (this.flowModel.show_action_content == 'false' || this.flowModel.show_action_content==false) {
+      $('#' + this.containerId + ' .action-content').hide();
+    } else {
+      $('#' + this.containerId + ' .action-content').show();
+    }
+  },
+};

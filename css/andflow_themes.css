@@ -46,7 +46,7 @@ flow_theme_default
     cursor: move;
     background-color: transparent;
     font-size: 10px;
-    padding: 0px;
+    padding: 0px; 
 }
 
 
@@ -58,6 +58,7 @@ flow_theme_default
     background-color: white;
     border: 1px solid #007bff;
     border-radius: 5px;
+ 
 }
 
 .flow_theme_default .action:hover .action-main{
@@ -396,7 +397,77 @@ flow_theme_default
 }
 
 
+/* group */
+.flow_theme_default .group-container {
+    position: absolute;  
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.01);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move;
+
+    box-sizing: border-box;
+}
+.flow_theme_default .group-container .group-header {
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+
+}
+.flow_theme_default .group-container .group-body {
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+}
+
+.flow_theme_default .group-container .group-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 9;
+    right: 5px;
+    top:2px;
+    color: rgba(128, 128, 128, 0.5);
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 11px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_default .group-container:hover .group-remove-btn{
+    display: block;
+}
+.flow_theme_default .group-container .group-resize {
+    display: none;
+    position: absolute;
+    z-index: 8;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_default .group-container:hover .group-resize {
+    display: block;
+}
 /*
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 flow_theme_icon
 */
 .flow_theme_icon .action-drag {
@@ -831,8 +902,73 @@ flow_theme_icon
 
 
 
+/* group */
+.flow_theme_icon .group-container {
+    position: absolute;  
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.01);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move;
+}
+.flow_theme_icon .group-container .group-header {
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+
+}
+.flow_theme_icon .group-container .group-body {
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+}
+.flow_theme_icon .group-container .group-remove-btn{
+    display: inline-block;
+    overflow: hidden;
+    position: absolute;
+    z-index: 9;
+    right: 5px;
+    top:2px;
+    color: rgba(128, 128, 128, 0.5);
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 11px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_icon .group-container .group-resize {
+    display: none;
+    position: absolute;
+    z-index: 20;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_icon .group-container:hover .group-resize {
+    display: block;
+}
 
 /*
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 flow_theme_zone
 
 */
@@ -1279,4 +1415,69 @@ flow_theme_zone
 }
 .flow_theme_zone .linkLabel.jtk-hover {
     background-color: #ffc107;
+}
+
+
+/* group */
+
+.flow_theme_zone .group-container {
+    position: absolute;  
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.01);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move;
+}
+.flow_theme_zone .group-container .group-header {
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+
+}
+.flow_theme_zone .group-container .group-body {
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+}
+
+.flow_theme_zone .group-container .group-remove-btn{
+    display: inline-block;
+    overflow: hidden;
+    position: absolute;
+    z-index: 9;
+    right: 5px;
+    top:2px;
+    color: rgba(128, 128, 128, 0.5);
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 11px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_zone .group-container .group-resize {
+    display: none;
+    position: absolute;
+    z-index: 20;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_zone .group-container:hover .group-resize {
+    display: block;
 }

@@ -174,8 +174,85 @@
             ],
             "params_html": "",
             "params_script": ""
+        },
+        {
+            "name": "server",
+            "tp":"action",
+            "title": "服务器",
+            "des": "",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "server.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        },
+        {
+            "name": "fireware",
+            "tp":"action",
+            "title": "防火墙",
+            "des": "",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "fireware.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        },
+        {
+            "name": "mysql",
+            "tp":"action",
+            "title": "Mysql",
+            "des": "",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "mysql.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        },
+        {
+            "name": "redis",
+            "tp":"action",
+            "title": "Redis",
+            "des": "",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "redis.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        },
+        {
+            "name": "mongodb",
+            "tp":"action",
+            "title": "MongoDB",
+            "des": "MongogDB 文件服务器",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "mongodb.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        },
+        {
+            "name": "nginx",
+            "tp":"action",
+            "title": "Nginx",
+            "des": "负载均衡",
+            "group": "通用",
+            "tag": "通用",
+            "css": "",
+            "icon": "nginx.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
         }
-
     ] ;
 
     var flowModel= {
@@ -218,7 +295,7 @@
             {
                 "id":"group1",
                 "actions":["793a2a11cf8b40e9afd8bd8f04405e64","f558687ca5f34a6c89732eb50749a15a"]
-                //"position":"auto", //auto or {"left":"","top":"","width":"","height":""}
+                
             }
         ]
     };
@@ -228,7 +305,7 @@
         tags:tags,            //组件过滤标签列表
         metadata:metadata,    //组件元素
         flowModel:flowModel,  //流程模型
-        img_path: "../img/",
+        img_path: "../img/meta/",
         editable:true,   //是否可编辑，默认true
         show_toolbar: true,
         metadata_position: 'default', //top,left,default

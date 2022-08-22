@@ -669,3 +669,6 @@ div{
 }
 
 
+.jtk-drag-hover {
+    outline:4px solid cornflowerblue;
+}

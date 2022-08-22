@@ -21,7 +21,7 @@
  
 </head>
 <body>
-<div id="andflow" style="width: 800px;height: 600px;padding:0px;">
+<div id="andflow" style="width: 100%;height: 100%;padding:0px;">
 </div>
  
 </body>
@@ -30,122 +30,219 @@
 
 </script>
 <script>
- 
-    var tags=['', '通用', '系统'];
-
-    var metadata=[
-        {
-            "name": "begin",
-            "title": "开始",
-            "icon": "begin.png"
-        },
-        {
-            "name": "end",
-            "title": "结束",
-            "des": "结束",
-            "icon": "end.png"
-        },
-
-        {
-            "name": "script",
-            "title": "执行脚本",
-            "icon": "script.png"
-        },
-
-        {
-            "name": "cmd",
-            "title": "系统命令",
-            "icon": "cmd.png"
-        }
-
-    ] ;
+  
 
     var flowModel= {
-        "code":"topology",  //编码
-        "name":"网络拓扑图",  //名称
-        "show_action_body":"true",       //是否显示Body,默认true, flow_theme_icon比较有用
-        "show_action_content":"true",     //是否显示节点内容,默认true
-        "theme":"flow_theme_icon",     //节点风格,默认 flow_theme_default: flow_theme_default、flow_theme_icon、flow_theme_zone
-        "link_type":"Flowchart",          //连接线风格，默认Flowchart、Straight、Bezier、StateMachine
-        "actions":[//节点
-            {
-                "id":"f7a6ec0031784f5a80d8633a6418fd52",
-                "left":"77px",
-                "top":"101px",
-                "name":"begin",
-                "params":{},
-                "title":"开始",
-                "icon":"begin.png",
-                "width":"50px",
-                "height":"50px",
-                "content":{
-                    "content_type":"msg",
-                    "content":"hello"
-                }
-            },
-            {
-                "id":"793a2a11cf8b40e9afd8bd8f04405e64",
-                "left":"300px",
-                "top":"101px",
-                "name":"script",
-                "params":{},
-                "title":"执行脚本",
-                "icon":"script.png",
-                "width":"50px",
-                "height":"50px",
-                "content":{
-                    "content_type":"msg",
-                    "content":"world"
-                }
-            },
-            {
-                "id":"f558687ca5f34a6c89732eb50749a15a",
-                "left":"501px",
-                "top":"101px",
-                "name":"end",
-                "params":{},
-                "title":"结束aa",
-                "icon": "end.png",
-                "width":"50px",
-                "height":"50px",
-                "content":{
-                    "content_type":"msg",
-                    "content":"yes"
-                }
-            }
-        ],
-        "links":[//连接线
-            {
-                "source_id":"f7a6ec0031784f5a80d8633a6418fd52",
-                "target_id":"793a2a11cf8b40e9afd8bd8f04405e64",
-                "title":"D01",
-                "lineStyle":"dotted",
-                "arrows":[true,true],
-            },
-            {
-                "source_id":"793a2a11cf8b40e9afd8bd8f04405e64",
-                "target_id":"f558687ca5f34a6c89732eb50749a15a",
-                "title":"D02"
-            }
-        ],
-        "groups":[
-            {
-                "id":"group1",
-                "actions":["793a2a11cf8b40e9afd8bd8f04405e64","f558687ca5f34a6c89732eb50749a15a"],
-                "left":"auto",
-                "top":"auto",
-                "width":"auto",
-                "height":"auto"
-            }
-        ]
-    };
+	"code": "",
+	"name": "",
+	"show_action_body": "true",
+	"show_action_content": "true",
+	"theme": "flow_theme_icon",
+	"link_type": "Flowchart",
+	"params": [],
+	"actions": [
+		{
+			"id": "4de5a6b8ce9449f3b69db390a767ecb7",
+			"left": "517px",
+			"top": "43px",
+			"name": "mongodb",
+			"params": {},
+			"title": "MongoDB",
+			"icon": "mongodb.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "945d6fcb8d01405fb6415e2f9cb0b13e",
+			"left": "529px",
+			"top": "280px",
+			"name": "mysql",
+			"params": {},
+			"title": "Mysql",
+			"icon": "mysql.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "e78ef1cab530479d8f310bffc7361c01",
+			"left": "8px",
+			"top": "219px",
+			"name": "fireware",
+			"params": {},
+			"title": "防火墙",
+			"icon": "fireware.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "7900d2c450d0459488dd04f4daa0430d",
+			"left": "218px",
+			"top": "271px",
+			"name": "server",
+			"params": {},
+			"title": "服务器",
+			"icon": "server.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "2b4c16b7d33d4cffb59efa32c57ea4ae",
+			"left": "217px",
+			"top": "172px",
+			"name": "server",
+			"params": {},
+			"title": "服务器",
+			"icon": "server.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "8d8b301346484b04a29f67e61379fb6b",
+			"left": "218px",
+			"top": "62px",
+			"name": "server",
+			"params": {},
+			"title": "服务器",
+			"icon": "server.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "a096e1e1c14b4fe19df4834e92f70166",
+			"left": "103px",
+			"top": "181px",
+			"name": "nginx",
+			"params": {},
+			"title": "Nginx",
+			"icon": "nginx.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "4f2ea312405d4bce9b718b315d89d151",
+			"left": "112px",
+			"top": "475px",
+			"name": "redis",
+			"params": {},
+			"title": "Redis",
+			"icon": "redis.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "7b39b46b01914094a0bd206fd9a1d516",
+			"left": "262px",
+			"top": "474px",
+			"name": "redis",
+			"params": {},
+			"title": "Redis",
+			"icon": "redis.png",
+			"width": "50px",
+			"height": "50px"
+		},
+		{
+			"id": "5e4beeb5d8764110857f7a2778ba7d0b",
+			"left": "382px",
+			"top": "473px",
+			"name": "redis",
+			"params": {},
+			"title": "Redis",
+			"icon": "redis.png",
+			"width": "32px",
+			"height": "56px"
+		}
+	],
+	"links": [
+		{
+			"source_id": "e78ef1cab530479d8f310bffc7361c01",
+			"target_id": "a096e1e1c14b4fe19df4834e92f70166"
+		},
+		{
+			"source_id": "a096e1e1c14b4fe19df4834e92f70166",
+			"target_id": "2b4c16b7d33d4cffb59efa32c57ea4ae"
+		},
+		{
+			"source_id": "a096e1e1c14b4fe19df4834e92f70166",
+			"target_id": "8d8b301346484b04a29f67e61379fb6b"
+		},
+		{
+			"source_id": "a096e1e1c14b4fe19df4834e92f70166",
+			"target_id": "7900d2c450d0459488dd04f4daa0430d"
+		},
+		{
+			"source_id": "7900d2c450d0459488dd04f4daa0430d",
+			"target_id": "5e4beeb5d8764110857f7a2778ba7d0b"
+		},
+		{
+			"source_id": "2b4c16b7d33d4cffb59efa32c57ea4ae",
+			"target_id": "4f2ea312405d4bce9b718b315d89d151"
+		},
+		{
+			"source_id": "2b4c16b7d33d4cffb59efa32c57ea4ae",
+			"target_id": "945d6fcb8d01405fb6415e2f9cb0b13e"
+		},
+		{
+			"source_id": "7900d2c450d0459488dd04f4daa0430d",
+			"target_id": "945d6fcb8d01405fb6415e2f9cb0b13e"
+		},
+		{
+			"source_id": "8d8b301346484b04a29f67e61379fb6b",
+			"target_id": "4de5a6b8ce9449f3b69db390a767ecb7"
+		},
+		{
+			"source_id": "8d8b301346484b04a29f67e61379fb6b",
+			"target_id": "945d6fcb8d01405fb6415e2f9cb0b13e"
+		},
+		{
+			"source_id": "2b4c16b7d33d4cffb59efa32c57ea4ae",
+			"target_id": "4de5a6b8ce9449f3b69db390a767ecb7"
+		},
+		{
+			"source_id": "7900d2c450d0459488dd04f4daa0430d",
+			"target_id": "4de5a6b8ce9449f3b69db390a767ecb7"
+		},
+		{
+			"source_id": "8d8b301346484b04a29f67e61379fb6b",
+			"target_id": "7b39b46b01914094a0bd206fd9a1d516"
+		}
+	],
+	"groups": [
+		{
+			"id": "a68e809211614a439036a4b9c9023d9f",
+			"left": "80px",
+			"top": "35px",
+			"width": "403px",
+			"height": "357px",
+			"actions": [
+				"7900d2c450d0459488dd04f4daa0430d",
+				"2b4c16b7d33d4cffb59efa32c57ea4ae",
+				"8d8b301346484b04a29f67e61379fb6b",
+				"a096e1e1c14b4fe19df4834e92f70166"
+			],
+			"title": "服务器"
+		},
+		{
+			"id": "cb6b81cab59b445eb493706ee9f0fd44",
+			"left": "81px",
+			"top": "423px",
+			"width": "489px",
+			"height": "140px",
+			"actions": [
+				"4f2ea312405d4bce9b718b315d89d151",
+				"7b39b46b01914094a0bd206fd9a1d516",
+				"5e4beeb5d8764110857f7a2778ba7d0b"
+			],
+			"title": "缓存"
+		}
+	]
+};
 
 
     var options={
         // tags:tags,            //组件过滤标签列表
         // metadata:metadata,    //组件元素
         flowModel:flowModel,  //流程模型
-        img_path: "../img/",
+        img_path: "../img/meta/",
         show_grid: false,
         editable:false,   //是否可编辑，默认true
         render_action:function(metadata,action,html){ return html; },//节点渲染

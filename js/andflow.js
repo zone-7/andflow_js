@@ -568,8 +568,7 @@ var andflow = {
           if (link == null) {
             link = {};
           }
-        }
-
+        } 
         link['source_id'] = sourceId;
         link['target_id'] = targetId;
 
@@ -584,15 +583,19 @@ var andflow = {
     this._plumb.bind('connectionDetached', function (conn) {
       var sourceId = conn.sourceId;
       var targetId = conn.targetId;
-
-      $this.removeLink(sourceId, targetId);
+      
+      $this.delLinkInfo(sourceId, targetId); 
+      
+      $this._plumb.repaintEverything(); 
     });
 
     this._plumb.bind('connectionMoved', function (info) {
       var sourceId = info.originalSourceId;
       var targetId = info.originalTargetId;
-
-      $this._linkInfos[sourceId + '-' + targetId] = null;
+      
+      $this.delLinkInfo(sourceId, targetId);
+     
+      $this._plumb.repaintEverything();
     });
 
     this._plumb.bind('beforeDetach', function (conn) {
@@ -849,6 +852,7 @@ var andflow = {
           
           var value = editor.val(); 
           editor.parent().html(value);
+          $this._groupInfos[id].title = value;
           editor.remove();
         });
 
@@ -872,6 +876,7 @@ var andflow = {
         editor.on("blur",function(e){
           var value = editor.val(); 
           editor.parent().html(value);
+          $this._groupInfos[id].des = value;
           editor.remove();
         });
 
@@ -1820,6 +1825,19 @@ var andflow = {
       return;
     }
 
+    //remove from group
+    var groups = $this._plumb.getGroups();
+
+    for(var i in groups){
+      var ms = groups[i].getMembers();
+      for(var j in ms){
+        if( ms[j].id == actionId ){ 
+          groups[i].remove(element.get(0),null,true);
+        }
+      } 
+    }
+
+    //remove from canvas
     $this._plumb.remove(element);
     $(element).remove();
 
@@ -1833,6 +1851,8 @@ var andflow = {
     }
     $this._actionContents[actionId] = null;
 
+   
+    //event
     if ($this.event_action_remove) {
       $this.event_action_remove(action_info);
     }
@@ -1848,15 +1868,14 @@ var andflow = {
     if (conn == null) {
       return;
     }
-
-    var link_info = this._linkInfos[sourceId + '-' + targetId];
-
+    
     this.delLinkInfo(sourceId, targetId);
 
     this._plumb.deleteConnection(conn);
     this._plumb.repaintEverything();
 
     if (this.event_link_remove) {
+      var link_info = this._linkInfos[sourceId + '-' + targetId];
       this.event_link_remove(link_info);
     }
 

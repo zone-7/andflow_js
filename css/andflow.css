@@ -286,12 +286,32 @@ div{
     width: 100%;
     height: 100%;
 }
+.codeContainer{
+    display: none;
+    position: absolute;
+    z-index: 10000;
+    top: 25px;
+    left: 0px; 
+    background-color: transparent; 
+    width: 100%;
+    height: calc(100% - 25px);
+    padding: 0px;
+    overflow: hidden;
+    box-sizing: border-box;
+   
+}
+.codeContainer textarea{
+    width:100%;
+    height:100%;
+    border: 0px;
+    box-sizing: border-box;
+}
+
 .canvasContainer{
     display: block;
     position: relative;
 
-    background-color: transparent;
-
+    background-color: transparent; 
     width: 100%;
     height: calc(100% - 25px);
     padding: 0px;
@@ -667,8 +687,23 @@ div{
     display: none;
     visibility: hidden;
 }
-
+.andflow.state .group .group-ep{
+    display: none;
+    visibility: hidden;
+}
 
 .jtk-drag-hover {
-    outline:4px solid cornflowerblue;
+    outline:4px solid #ffc107;
+}
+
+.animationLabel{
+ background-color: red;
+ height: 30px;
+ width: 30px;
+ border-radius: 15px;
+}
+
+.drag-helper{
+    position: absolute;
+    z-index: 5;
 }

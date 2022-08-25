@@ -3,19 +3,23 @@ flow_theme_default
 */
 
 
-.flow_theme_default .action-drag {
-    color: #434343;
-    width: 120px;
-    height: 80px;
+.flow_theme_default .action-drag { 
     position: absolute;
-    z-index: 5;
-    border: 1px solid #6c757d;
-    border-radius: 5px;
+    z-index: 5; 
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
     cursor: move;
-    background-color: white;
+    background-color: transparent;
+   
+}
+.flow_theme_default .action-drag .action-drag-main{
+ 
+    width: 120px;
+    height: 80px;
+    border: 1px solid #6c757d;
+    border-radius: 5px;
+    color: #434343; 
     font-size: 10px;
 }
 .flow_theme_default .action-drag .action-header{
@@ -32,6 +36,16 @@ flow_theme_default
 }
 
 .flow_theme_default .group-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_default .group-drag-main {
     color: #434343;
     width: 200px;
     height: 200px;
@@ -46,8 +60,6 @@ flow_theme_default
     cursor: move;
     font-size: 10px;
     box-sizing: border-box;
-     
-
 }
 .flow_theme_default .group-drag .group-header{
     position: relative;
@@ -60,34 +72,30 @@ flow_theme_default
     box-sizing: border-box;
     text-align: left;
 }
-.flow_theme_default .action-container {
-    position: relative;
-    color: #434343;
-    min-width: 50px;
-    min-height: 50px;
-    width: 120px;
-    height: 80px;
+.flow_theme_default .action-container { 
     position: absolute;
-    z-index: 4;
-    border-radius: 5px;
+    z-index: 4; 
     cursor: pointer;
     text-align: center;
     cursor: move;
     background-color: transparent;
-    font-size: 10px;
+    
     padding: 0px; 
 }
 
 
 .flow_theme_default .action-main{
     position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
+    color: #434343; 
+    min-width: 50px;
+    min-height: 50px;
+    width: 120px;
+    height: 80px;  
+    display: block; 
     background-color: white;
     border: 1px solid #007bff;
     border-radius: 5px;
- 
+    font-size: 10px;
 }
 
 .flow_theme_default .action:hover .action-main{
@@ -95,6 +103,9 @@ flow_theme_default
     -o-box-shadow: 2px 2px 10px #444;
     -webkit-box-shadow: 2px 2px 10px #444;
     -moz-box-shadow: 2px 2px 10px #444;
+}
+.flow_theme_default .action:hover .action-remove-btn{
+    display: block;
 }
 
 .flow_theme_default .action:hover .action-resize{
@@ -125,25 +136,28 @@ flow_theme_default
     color: white;
 }
 
-.flow_theme_default .btn-remove{
-    display: inline-block;
+.flow_theme_default .action-remove-btn{
+    display: none;
     overflow: hidden;
     position: absolute;
     z-index: 21;
-    right: 5px;
+    right: 3px;
     top:2px;
     color: white;
-    font-size: 12px;
+    font-size: 10px;
     font-style: normal;
     font-family: normal;
-    text-align: center;
-    line-height: 11px;
+    text-align: center; 
     text-decoration:none;
     cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+    line-height: 15px;
+    width: 15px;
+    height: 15px;
+    border-radius: 8px;
 }
 
 .flow_theme_default .action-body{
-
     position: relative;
     padding: 0px;
     height: calc(100% - 20px);
@@ -152,7 +166,6 @@ flow_theme_default
     border-radius: 3px;
     overflow: hidden;
 }
-
 
 .flow_theme_default .action-content{
     position: relative;
@@ -233,8 +246,9 @@ flow_theme_default
     display: none;
     position: absolute;
     z-index: 100;
-    bottom:  1px;
-    left: calc(50% - 7px);
+    top: calc(50% - 7px);
+    right:  3px;
+
     border-radius: 3px;
     width: 14px;
     height: 14px;
@@ -249,6 +263,7 @@ flow_theme_default
     border: 1px solid #ffc107;
     color:#ffc107;
 }
+
 
 /*各类状态*/
 
@@ -428,14 +443,22 @@ flow_theme_default
 
 /* group */
 .flow_theme_default .group {
-    position: absolute;  
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_default .group-main {
+    width: 200px;
+    height: 200px;
     border-radius: 5px;
-    background-color: rgba(128, 128, 128, 0.01);
+    background-color: #ffc10740;
     border: 1px solid rgba(128, 128, 128, 0.3);
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
 }
+
 .flow_theme_default .group .group-header {
     position: relative;
     height: 20px;
@@ -460,25 +483,54 @@ flow_theme_default
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 9;
-    right: 5px;
+    z-index: 4;
+    right: 3px;
     top:2px;
-    color: rgba(128, 128, 128, 0.5);
+    color: rgba(128, 128, 128, 1); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
     text-align: center;
-    line-height: 11px;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
     text-decoration:none;
     cursor: pointer;
 }
 .flow_theme_default .group:hover .group-remove-btn{
     display: block;
 }
+
+
+.flow_theme_default .group .group-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 14px;
+    height: 14px;
+    line-height: 12px;
+    text-align: center;
+    padding: 0px;
+    font-size: 12px;
+    cursor: crosshair;
+    padding: 0px;
+
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_default .group:hover .group-ep{
+    display: block;
+}
+
 .flow_theme_default .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 8;
+    z-index: 2;
 
     right: 0px;
     bottom: 0px;
@@ -503,20 +555,24 @@ flow_theme_default
 flow_theme_icon
 */
 .flow_theme_icon .action-drag {
-    color: #434343;
-    width: 50px;
-    height: 50px;
     position: absolute;
     z-index: 855;
-    border-radius: 5px;
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
     cursor: move;
-    background-color: white;
-    font-size: 10px;
+    background-color: transparent;
     padding: 2px;
 }
+
+.flow_theme_icon .action-drag .action-drag-main{
+    width: 50px;
+    height: 50px; 
+    border-radius: 5px;
+    color: #434343; 
+    font-size: 10px;
+}
+
 .flow_theme_icon .action-drag .action-header{
     position: absolute;
     z-index: 856;
@@ -537,24 +593,27 @@ flow_theme_icon
     background-color: transparent;
     white-space:nowrap;
 }
-
 .flow_theme_icon .group-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_icon .group-drag-main {
     color: #434343;
     width: 200px;
-    height: 200px;
-    position: absolute;
+    height: 200px; 
     z-index: 5;
     border: 1px solid rgba(128, 128, 128, 0.3);
     background-color: rgba(128, 128, 128, 0.01);
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    opacity: 0.8;
-    cursor: move;
+    border-radius: 5px; 
+    text-align: center; 
     font-size: 10px;
     box-sizing: border-box;
-     
-
 }
 .flow_theme_icon .group-drag .group-header{
     position: relative;
@@ -581,40 +640,35 @@ flow_theme_icon
 
 .flow_theme_icon .action-container {
     color: #434343;
-    min-width: 32px;
-    min-height: 32px;
-    width: 50px;
-    height: 50px;
     position: absolute;
-    z-index: 4;
-    border-radius: 3px;
+    z-index: 4; 
     cursor: pointer;
     text-align: center;
-    cursor: move;
-    font-size: 10px;
+    cursor: move; 
     padding: 0px;
 }
 
 .flow_theme_icon .action-main{
     position: relative;
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 50px;
+    height: 50px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 3px;
     background-color: transparent;
     border-radius: 5px;
-    /*border:1px solid #d3d3d3;*/
+    font-size: 10px; 
 }
 
 .flow_theme_icon .action:hover{
 
 }
 
-.flow_theme_icon .action:hover .btn-remove{
+.flow_theme_icon .action:hover .action-remove-btn{
     display: block;
 }
-.flow_theme_icon .action:hover .btn-remove{
-    display: block;
-}
+
 .flow_theme_icon .action:hover .action-resize{
     display: block;
 }
@@ -623,7 +677,7 @@ flow_theme_icon
     display: block;
 }
 .flow_theme_icon .action:hover .action-body{
-    border: 1px solid rgba(128, 128, 128, 0.3);
+    /* border: 1px solid rgba(128, 128, 128, 0.3); */
 }
 
 
@@ -666,18 +720,17 @@ flow_theme_icon
 
 
 
-.flow_theme_icon  .btn-remove{
-    display: inline-block;
+.flow_theme_icon  .action-remove-btn{
+    display: none;
     position: absolute;
     z-index: 21;
-    right: -5px;
-    top:-5px;
+    right: 0px;
+    top:0px;
     width: 15px;
     height: 15px;
     font-family: normal;
     font-size: 14px;
     color: #007bff;
-    display: none;
     text-decoration:none;
     border-radius: 5px;
     cursor: pointer;
@@ -764,9 +817,8 @@ flow_theme_icon
     display: none;
     position: absolute;
     z-index: 100;
-    top:  calc(50% - 8px);
-
-    left: calc(50% - 8px);
+    top:  calc(50% - 8px); 
+    right: 0px;
     border-radius: 8px;
     width: 16px;
     height: 16px;
@@ -798,7 +850,7 @@ flow_theme_icon
 .flow_theme_icon .action.begin .action-icon{
     /*display: none;*/
 }
-.flow_theme_icon .action.begin .btn-remove{
+.flow_theme_icon .action.begin .action-remove-btn{
 
     color: #17a2b8;
 }
@@ -818,7 +870,7 @@ flow_theme_icon
 .flow_theme_icon .action.end .action-icon{
 
 }
-.flow_theme_icon .action.end .btn-remove{
+.flow_theme_icon .action.end .action-remove-btn{
 
     color: #17a2b8;
 }
@@ -838,7 +890,7 @@ flow_theme_icon
 .flow_theme_icon .action.external .action-icon{
 
 }
-.flow_theme_icon .action.external .btn-remove{
+.flow_theme_icon .action.external .action-remove-btn{
 
     color: #a7a2ff;
 }
@@ -858,7 +910,7 @@ flow_theme_icon
 .flow_theme_icon .action.custom .action-icon{
 
 }
-.flow_theme_icon .action.custom .btn-remove{
+.flow_theme_icon .action.custom .action-remove-btn{
 
     color: #b67fb6;
 }
@@ -896,7 +948,7 @@ flow_theme_icon
 
 }
 
-.flow_theme_icon .action.error .btn-remove{
+.flow_theme_icon .action.error .action-remove-btn{
 
     color: #b0413f;
 }
@@ -920,7 +972,7 @@ flow_theme_icon
 
 }
 
-.flow_theme_icon .action.success .btn-remove{
+.flow_theme_icon .action.success .action-remove-btn{
 
     color: #7AB02C;
 }
@@ -942,7 +994,7 @@ flow_theme_icon
 .flow_theme_icon .action.reject .action-icon{
 
 }
-.flow_theme_icon .action.reject .btn-remove{
+.flow_theme_icon .action.reject .action-remove-btn{
 
     color: #fdcf7c;
 }
@@ -965,20 +1017,26 @@ flow_theme_icon
 
 /* group */
 .flow_theme_icon .group {
-    position: absolute;  
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_icon .group-main {
+    width: 200px;
+    height: 200px;
     border-radius: 5px;
-    background-color: rgba(128, 128, 128, 0.01);
-    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: transparent;
+    border: 4px dashed rgba(128, 128, 128, 0.3);
     font-size: 12px;
-    cursor:move;
+    cursor:move; 
     box-sizing: border-box;
 }
+
 .flow_theme_icon .group .group-header {
     position: relative;
     height: 20px;
-    width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    width: 100%;  
     padding: 0px;
     color: rgba(128, 128, 128, 1);
 
@@ -989,11 +1047,36 @@ flow_theme_icon
     padding: 10px;
     color: rgba(128, 128, 128, 0.7);
 } 
+
+.flow_theme_icon .group .group-ep{
+    display: none;
+    position: absolute;
+    z-index: 2;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 14px;
+    height: 14px;
+    line-height: 12px;
+    text-align: center;
+    padding: 0px;
+    font-size: 12px;
+    cursor: crosshair;
+    padding: 0px;
+
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_icon .group:hover .group-ep{
+    display: block;
+}
+
 .flow_theme_icon .group .group-remove-btn{
-    display: inline-block;
+    display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 9;
+    z-index: 4;
     right: 5px;
     top:2px;
     color: rgba(128, 128, 128, 0.5);
@@ -1005,10 +1088,13 @@ flow_theme_icon
     text-decoration:none;
     cursor: pointer;
 }
+.flow_theme_icon .group:hover .group-remove-btn{
+    display: block;
+}
 .flow_theme_icon .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 20;
+    z-index: 3;
 
     right: 0px;
     bottom: 0px;
@@ -1037,20 +1123,25 @@ flow_theme_zone
 */
 
 .flow_theme_zone .action-drag {
-    color: #434343;
-    width: 200px;
-    height: 100px;
     position: absolute;
-    z-index: 5;
-    border: 1px solid #6c757d;
-    border-radius: 5px;
+    z-index: 5; 
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
     cursor: move;
+    background-color: transparent;
+}
+
+.flow_theme_zone .action-drag .action-drag-main{
+    width: 200px;
+    height: 100px;
+    border: 1px solid #6c757d;
     background-color: white;
+    border-radius: 5px;
+    color: #434343; 
     font-size: 10px;
 }
+
 .flow_theme_zone .action-drag .action-header{
 
     border-left: 4px solid #6c757d;
@@ -1073,6 +1164,16 @@ flow_theme_zone
 
 
 .flow_theme_zone .group-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .group-drag-main {
     color: #434343;
     width: 200px;
     height: 200px;
@@ -1087,9 +1188,8 @@ flow_theme_zone
     cursor: move;
     font-size: 10px;
     box-sizing: border-box;
-     
-
 }
+
 .flow_theme_zone .group-drag .group-header{
     position: relative;
     height: 20px;
@@ -1103,30 +1203,28 @@ flow_theme_zone
 }
 
 .flow_theme_zone .action-container{
-    color: #434343;
-    min-width: 50px;
-    min-height: 50px;
-    width: 200px;
-    height: 100px;
     position: absolute;
     z-index: 4;
-    border-radius: 3px;
     cursor: pointer;
     text-align: center;
-    cursor: move;
-
-    font-size: 10px;
+    cursor: move; 
     padding: 0px;
 }
 
 .flow_theme_zone .action-main{
     position: relative;
     display: block;
-    width: 100%;
-    height: 100%;
+    min-width: 50px;
+    min-height: 50px;
+    width: 200px;
+    height: 100px;
+    color: #434343;
+    border-radius: 3px;
     background-color: white;
     border: 1px solid #007bff;
     border-radius: 5px;
+    font-size: 10px;
+
 }
 
 .flow_theme_zone .action:hover .action-main{
@@ -1140,7 +1238,7 @@ flow_theme_zone
 .flow_theme_zone .action:hover .action-resize{
     display: block;
 }
-.flow_theme_zone .action:hover .btn-remove{
+.flow_theme_zone .action:hover .action-remove-btn{
     display: block;
 }
 
@@ -1172,13 +1270,13 @@ flow_theme_zone
 }
 
 
-.flow_theme_zone  .btn-remove{
+.flow_theme_zone  .action-remove-btn{
+    display: none;
     position: absolute;
     z-index: 21;
     right: 5px;
     top:2px;
     color: #007bff;
-    display: none;
     text-decoration:none;
     cursor: pointer;
 }
@@ -1270,9 +1368,9 @@ flow_theme_zone
 .flow_theme_zone  .ep {
     display: none;
     position: absolute;
-    z-index: 100;
-    right:  3px;
+    z-index: 100; 
     top: calc(50% - 4px);
+    right:  3px;
     border-radius: 3px;
     width: 14px;
     height: 14px;
@@ -1307,7 +1405,7 @@ flow_theme_zone
 .flow_theme_zone .action.begin .action-icon{
     display: none;
 }
-.flow_theme_zone .action.begin .btn-remove{
+.flow_theme_zone .action.begin .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1332,7 +1430,7 @@ flow_theme_zone
 .flow_theme_zone .action.end .action-icon{
     display: none;
 }
-.flow_theme_zone .action.end .btn-remove{
+.flow_theme_zone .action.end .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1357,7 +1455,7 @@ flow_theme_zone
 .flow_theme_zone .action.external .action-icon{
     display: none;
 }
-.flow_theme_zone .action.external .btn-remove{
+.flow_theme_zone .action.external .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1382,7 +1480,7 @@ flow_theme_zone
 .flow_theme_zone .action.custom .action-icon{
     display: none;
 }
-.flow_theme_zone .action.custom .btn-remove{
+.flow_theme_zone .action.custom .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1427,7 +1525,7 @@ flow_theme_zone
     display: none;
 }
 
-.flow_theme_zone .action.error .btn-remove{
+.flow_theme_zone .action.error .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1457,7 +1555,7 @@ flow_theme_zone
     display: none;
 }
 
-.flow_theme_zone .action.success .btn-remove{
+.flow_theme_zone .action.success .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1485,7 +1583,7 @@ flow_theme_zone
 .flow_theme_zone .action.reject .action-icon{
     display: none;
 }
-.flow_theme_zone .action.reject .btn-remove{
+.flow_theme_zone .action.reject .action-remove-btn{
     position: absolute;
     z-index: 21;
     right: 5px;
@@ -1512,25 +1610,30 @@ flow_theme_zone
 
 
 /* group */
-
 .flow_theme_zone .group {
-    position: absolute;  
-    border-radius: 5px;
-    background-color: rgba(128, 128, 128, 0.01);
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    font-size: 12px;
-    cursor:move;
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
 }
+.flow_theme_zone .group-main {
+    width: 200px;
+    height: 200px;
+    border-radius: 5px; 
+    border: 4px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
 .flow_theme_zone .group .group-header {
     position: relative;
     height: 20px;
-    width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    width: 100%; 
     padding-left: 10px;
     color: rgba(128, 128, 128, 1);
-
 } 
+
 .flow_theme_zone .group .group-body {
     position: relative;
     height: calc(100% - 20px);
@@ -1540,10 +1643,10 @@ flow_theme_zone
 }
 
 .flow_theme_zone .group .group-remove-btn{
-    display: inline-block;
+    display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 9;
+    z-index: 4;
     right: 5px;
     top:2px;
     color: rgba(128, 128, 128, 0.5);
@@ -1555,10 +1658,39 @@ flow_theme_zone
     text-decoration:none;
     cursor: pointer;
 }
+.flow_theme_zone .group:hover .group-remove-btn{
+    display: block;
+}
+
+.flow_theme_zone .group .group-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 14px;
+    height: 14px;
+    line-height: 12px;
+    text-align: center;
+    padding: 0px;
+    font-size: 12px;
+    cursor: crosshair;
+    padding: 0px;
+
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+
+.flow_theme_zone .group:hover .group-ep{
+    display: block;
+}
+
 .flow_theme_zone .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 20;
+    z-index: 2;
 
     right: 0px;
     bottom: 0px;
@@ -1573,6 +1705,7 @@ flow_theme_zone
     border-right: 7px solid rgba(128, 128, 128, 0.3);
     border-bottom: 7px solid rgba(128, 128, 128, 0.3);
 }
+
 .flow_theme_zone .group:hover .group-resize {
     display: block;
 }

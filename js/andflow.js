@@ -47,6 +47,7 @@ var andflow = {
 
   event_canvas_changed: null,
 
+  animation_timer: null,
   //语言
   lang: {
     metadata_tag_all: '所有组件', 
@@ -78,7 +79,8 @@ var andflow = {
   _icon_cursor_hand:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAfJJREFUWEft1r+rz1Ecx/HHLdNdlGK4g1gw3IHUNRgw2GxSBuqSDErcJIv8GCySDAqDRUnXaiJhUTJQymJScv+A272Tgd51jo6P637P53z79o186vSp8/mc9/t5Xud93u/3hDE/E2P2768H2IRv+Nqq5DAKvMGu5PghjrRA9AWYxSS24XRy+Ap7E8B6vMCHWpg+AI9xqGM41ofzl535C7heA1ELcAWX8QhrCpASYBl3cRARG1cRc6HG0z/B1ALEDmOn+xCSf08GS4CYj+8ZtvQZMDH/2zNKgHC6FmexgK1Y6hKMGiB2nRXJ6v3C8E8ARMC9xjMcK3acz30oBU5iCns6Qfg26TizQlxFsMaIoIzRDHAfxzsO8jluSfOfKu56E0Ck2Ei1T9LdPt9RoMLvz1+aAM7hRkomYaCbB0YOcCDt/jn2p7QaaTiO4HMf760xEOn2PaaxE+96Oi1/bzqCMJCPYR6HxwGwLqmwEZsbpM/MzQqEgUgml3AHpxpVGAogdh6xEEUlxmIDRJTiHdjQWg1v4Qyu4WJPgAc4ittFB9W7GG1PKnzEiZSgajjyVf6C3Yh3cz9QtmO58RgEkW9R9I6hwIpPbTmOxVGY7iUrNetWDb5MU2OoJC9bsUEK/AeYw82ikR06BgZJ3vS9bww0OVlt0Q8nvokhubPnZQAAAABJRU5ErkJggg==',
   _icon_cursor_auto:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAlZJREFUWEfV10vITWEUxvHfN1IkmRhgIERSiiRKuUwkjMhIbgMmQkpMhFIYuSdKiEgiyTXFRy7lOpOBXDKiyIARoaW1azvOOd85Ovsrq87ofc/7/Pd617P22l2YjiVYqrrYjdu4UCvRhS2YlhuqQpiLb5hSD+AntiZIVQDxkJsxA91lkcjAfwUwAu/xpc1UdSwD5zEGy/GgDYiOAdxK13xIiMstQnQUIDTDut+xDCdbgOg4wHo8SuE12NsDRMcBwk5D8BSD0sJh5UZRCUCI9cFDjMssRDbqRWUAhdg1zMp6WJy9pQxSOUCIHct3SjgjID6VCHoFIPS2Y2P2iIB4mRC9BhB6a7ELLzIjUSNh2/gFyB/R7rsgGlFEuKBZLMIJRMOKTFxvtLkqgNCbjSvZsALidD2IKgFCbxJuoh9W4UBvXUFZZ3hewUhswrbyYtUZKLQG4GpORFGg64qFqgCi4utFCM/D8WIGrQJgGF734JLCSd3NhtIY1WK9iPBwIxvGWuHxvviKG7jfBOT3/hBoZSwvhtZ6AEULjg64MwUPYQUm4FmzbJSfsIWs/ZWBmPfjDXgvrTY+D5mY88I+rK4KoOjv+/Eun34hzqZgXMFk9K8C4BQO4xwWYDTu4g7mp2B0v6j2lbm3Lse/XkHUTUzFU/EjTz6Sg+pYPMdAPMbH7IgdAwjxN1m8b0unzsGlvIooyIgd2ICoiSf1CNrNwMWcfGZm4dWeGdcQfWBojbsafvq1CzAKg2u/70oUUfF7cj0y9QpHEYX6uRMZ6MmqMSGfSUseTPGm//kFAJG9IcmEOX4AAAAASUVORK5CYII=',
   _icon_drag_start:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAhxJREFUWEft1kvITHEYx/HPu2EhRYnEwpawkZV7IgrJZcEKJRGFhcsKK1m4RBZs3BZKSZIUC5QoiY0QCxYkykYWFoqe+o+OMTPv/z9nXi/lqWk6M8//PN/ze26nzyBb3yDH9x+grgJzcadOGksBxuEd9mNOJfCBBDIBb0qAcgHWYR8iwEEsw9YUdBvW4gXCLwAC6GwOSA5ABH2NpXiKW/iGiZUA33Eee7EQZzA+qdWRIwcg5A5rfG9PaoxsAtiBY+m3e/iM4Qn2Mi7iUzPNQAE8x1AswWhcwq5WaRkogI94hRnpiU9iDFZ1o0CjmKLAGhb1cK1yfQQ7K9cPcT0VYyN90TXzSgEuYD6uYnNOVSefSXhW8W+0bRFAHJqKl/haKcICjp+uxQCLU1vNxJqmLvgjAEcxAusRcoZVJS2FKFbgNu7WlL0K+e8BXEnFt7tU6zb+xQrEgolVu7JHAPFA77Eldw5EAcY8P5wWSx2OIfiA2BW/bchOo3h1muEbakKsQCyj6KbYEb9Yf7tgEW5gE053KcPbNLZbTtL+ACJmLJRIxx4cKoSIdo50zsKXVmdzAOLcNJxLIzneBwKok43FCczGctxv55wL0Dgf7RSvZsfxAI9Tu8b/UWwLMD35nEpFHGu5rZUCxI2imDamV7IpGIYniL0RQPGJtruZk65uAJrvOwqT8ahdnnutQM6DZfv0QoHsYHW6oFaQvzoFPwAAmG4hmL5K1gAAAABJRU5ErkJggg==',
-
+  _icon_code:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAf5JREFUWEftl79rFEEUx79v4FotQqwsTB1IZWmRNBYai0BiKRF2392hV8RKsDAH/gdy4e7NgmdrSCFoI0LSpEwRCLZerQimOzhunsw5e2zMSbjcJkvITbXszrz5zPf9mLeEggcVvD+mAKcUiKJokYjWAKwR0ax3kXNuKUmSvXHc5e0YY3bDmg6AxDm3/6+dUwDM/ArAm+xmOQAMzKnqlrX2Wdb2KIDvAO6o6vDEqlo/jwJE9DrdjIgWVfWntfbWWQAaaPestUvjyP6/uXEc73oA/11EThx6lAJTgGusQDZ3fRZcRBAS0Xyr1fo2zI5s5DLzWwDPw7sdEVnNIwvK5fI7VV0PtjZFpD4ECJVvxhizrKqPAMyENHxqrW3nARBF0QNjzOdg65iI9p1z26raIWYeBF1mfAWwXSqVdhqNxq88AJj5JoAqgIcA7p0oRIUDFO6CAoKwLiKbI7Og8DT0VGlMZOsAM98H0ALwPqWv1Wo3ut3uR7+m1+uttNvt32G9P92qMeZls9n85N9NfBkx8wffoADoiMicN1qtVhf6/f6hf3bO3U2S5CAAHAGY/3vxSTkXgGDYK+CL05fUf8w88GXWp5VKZdk590REHqfzJlZg0lpwtQDiOP7hm9EiWzLva87KfqlNaQi4DQAvANwOUX55bfmkATfu+umvWeEK/AFYAJFq0iBzXAAAAABJRU5ErkJggg==',
+  _icon_design:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBBJREFUWEfFl1mIXUUQhv86CAHBxzwEQXxRXNA4JLhBHBRUhEBccERRBLldDerkQSOCC+OOkkwEdZSuvkpQUDBRRxExuCGJGcVM4oYE9zyYgD4p+OTcLik9Zzj3zFnuBGQaDvfC6e7/66rqqjqEFR60wvroBGBmTinN9/v9+eXAOudOjTF+17WmFYCZlYj2qOoGALeLyEzXhvbeey8ppSuJaDWACRHZ2bSuEcDEATwoIg/0er2zsyz7DMB9IjLdBsHMzwM4S0TOZeZrAbzaBlELUBYvxLz3Z6jqXgDbROSxOghmPkhEFEI4p3jfBbEEoE68AvE+ADHLlCGY+SUA4wD+JKKJEMK3JYibAeyos8QQQJt4BeJtAC8WEM65l4noRBEZd849TkQbR4VYBGBmO9EaEfFlsZTSTIzx4vJpc3dYYO0kotNVdbWIXFI68XYAlzVBiMii7uKfXq+3Lsuy/UR0YQhhLhexANpVNXce6RYTcwC+F5H11Zjw3s+o6ngNxO8ANojIIVtTdQEDeArALQDuaRK3hcxscCeIyBVNt6IKwcz7AcyXrVwXhAbxrKruiDH26tyRix8vIhu78oJzbpqILs8Pu7csvsQCxWb5opuIaFPZHUT0gqqeD2CViGzqEi/FxBEAR+pc1ZaINgO4C8Dd5g4ielhVryGi40IIVy9D/HMAB6onL9a3pmLn3BYi2grAWVSrKsUYLbuNNJj5UwBfNok3uqC8u3NulojsGu4WkYmRlP8L0m8AfNImPhKABZwVlRDCUC7oqAd7AJwJYFpEHm2b21UN7apZ3l3OyT8GcEhVnyOi1+w3xritCaItCI9F/MM8Mf2bTb33F6iq7bNVRCy/LBlN1fBYxK1I/Vj1eQ7xJoD7RSRUCeoS0ZT5b5lm301Eh1X1PVW9taZ2mCXetWttZbQMsQTAe/96SumtGKOVz87BzO8AOArABMxyV4nIbHVhbomPAGwuQ9RZ4Id8k6+71L33c6p6GoCHAGxX1UtjjOaK2pFD7EsprS96zGoxOgnA4XK5bNqMmc2vfwD4CcAUEd0QQnilmG+dUJ07mNni4GhRYYcAnHPWSDwhInaHGwczv0FEf4UQbrRJzGzuusgaEeuEmtqwvOeYqu0H8o3uVVVrp62Fqh3MvAvA3yJyfXlCvrlVUkvd1pAMdcN14ra+aoHZLMs+CCE8bS8nJydXLSwsjA0GgzEiGkspnZJl2W8hhOvq6JjZegjLfHeIyJMld1i3NXTy4l0V4Ncsy7aklNYS0VoA9qwB8AuAL/LCMtSMVkGY+U4Aj6SUzuv3+181nbwWgJn3AThZVa29tufAYDA42O/3f+66ERV33AbgmeKjpi2oOz/NliNcnpv3mOuqiae63/8GMCr4igP8A88tOz9MyKreAAAAAElFTkSuQmCC',
   _connectionTypes: {
     Flowchart: {
       anchor: 'Continuous',
@@ -89,17 +91,17 @@ var andflow = {
     },
     Straight: {
       anchor: 'Continuous',
-      connector: ['Straight', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
+      connector: ['Straight', { stub: [5, 15], gap: 5, cornerRadius: 25, alwaysRespectStubs: true }],
     },
     Bezier: {
       anchor: 'Continuous',
-      connector: ['Bezier', { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true }],
+      connector: ['Bezier', { stub: [5, 15], gap: 5, cornerRadius: 25, alwaysRespectStubs: true }],
     },
     StateMachine: {
       anchor: 'Continuous',
       connector: [
         'StateMachine',
-        { stub: [5, 15], gap: 5, cornerRadius: 5, alwaysRespectStubs: true },
+        { stub: [5, 15], gap: 5, cornerRadius: 25, margin: 5, alwaysRespectStubs: true },
       ],
     },
   },
@@ -151,6 +153,7 @@ var andflow = {
     html += '<a class="nav_btn">&nbsp;</a>';
     html += '</div>';
     html += '<div class="right">'; 
+    html += '<a class="code_btn" title="code">&nbsp;</a>';
     html += '<a class="scale_down_btn" title="缩小">-</a>';
     html += '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
     html += '<a class="scale_up_btn"  title="放大">+</a>';
@@ -174,11 +177,14 @@ var andflow = {
     
     html += '<div id="canvasContainer" class="canvasContainer" style="'+bgstyle+'">'; 
     html += '<div id="canvas" class="canvas"></div>';  
-
-    html += '</div>';
-
+    html += '</div>'; 
     //end canvasContainer
  
+    //begin codeContainer
+    html += '<div id="codeContainer" class="codeContainer">'; 
+    html += '<textarea></textarea>';  
+    html += '</div>'; 
+
     html += '</div>';
     //end designer
 
@@ -310,6 +316,32 @@ var andflow = {
       }
     });
 
+    //show code
+    $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_code+')');
+    $('#'+containerId).find('.code_btn').bind('click', function (e) {
+      if($('#codeContainer').is(':visible')){
+        var txt = $('#codeContainer textarea').val();
+        var m = JSON.parse(txt);
+
+        $('#codeContainer').hide();  
+        $this.showFlow(m);
+        $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_code+')');
+
+      }else{
+        var code = $this.getFlow();
+        var content = JSON.stringify(code,null,'\t');
+
+        $('#codeContainer').show(); 
+        $('#codeContainer textarea').val(content);
+        
+        $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_design+')');
+
+      }
+
+      
+
+    });
+
     //thumbnail
     $('#' + containerId)
       .find('.thumbnail_btn')
@@ -335,8 +367,70 @@ var andflow = {
         }
       });
   },
+ 
+  //定时动画
+  _initAnimaction: function(){
+    var $this = this;
+    var dashstyle = ['0 1 1','1 1 1'];
+    
+    this.animation_timer && clearInterval(this.animation_timer); 
+    this.animation_timer =  setInterval(function(){
 
+      var conn_list = $this._plumb.getAllConnections();
+      for(var i in conn_list){
 
+        var conn = conn_list[i]; 
+        var link = $this.getLinkInfo(conn.sourceId, conn.targetId);
+        if(link.animation){
+          var arrow_source = conn.getOverlay("arrow_source"); 
+          var arrow_target = conn.getOverlay("arrow_target"); 
+          //方向
+           
+          var diract = 0;
+          if(!arrow_source.visible  && arrow_target.visible){
+            diract = 1;
+          }else if(arrow_source.visible && !arrow_target.visible){
+            diract = 2;
+          }
+
+          var arrow = conn.getOverlay("animation"); 
+          arrow.setVisible(true); 
+           
+          if(diract == 1){
+            arrow.loc = arrow.loc + 0.05;
+            if (arrow.loc > 0.9) {
+              arrow.loc = 0.1;
+            }
+          }else if(diract == 2){
+            arrow.loc = arrow.loc - 0.05;
+            if (arrow.loc < 0.1) {
+              arrow.loc = 0.9;
+            }
+          } else {
+            if(arrow.diract ==null || arrow.diract == 1){
+              arrow.loc = arrow.loc + 0.05;
+              if (arrow.loc > 0.9) { 
+                arrow.diract = 2;
+              }   
+            }else{
+              arrow.loc = arrow.loc - 0.05;
+              if (arrow.loc < 0.1) { 
+                arrow.diract = 1 ;
+              }   
+            }
+           
+          }
+
+        }else{
+          var arrow = conn.getOverlay("animation"); 
+          arrow.setVisible(false);
+        }
+        
+      }
+
+    },100);
+
+  },
   _initEvents: function () {
     var $this = this;
 
@@ -401,16 +495,15 @@ var andflow = {
     $('#canvas').droppable({
       scope: 'plant',
       drop: function (event, ui) {
-        
-
+           
         var name = $(ui.draggable).attr('action_name'); 
         var left = parseInt(ui.offset.left - $(this).offset().left);
         var top = parseInt(ui.offset.top - $(this).offset().top);
         var metaInfo = $this.getMetadata(name);
 
         if(metaInfo.tp=="group"){
-          var groupId = jsPlumbUtil.uuid().replaceAll('-', '');
-          var group = { id: groupId, left: left, top: top, width: "200px", height: "200px"};
+          var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
+          var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
            
           $this._createGroup(group);
 
@@ -483,7 +576,7 @@ var andflow = {
     this._plumb = jsPlumb.getInstance({
       Endpoint: ['Dot', { radius: 5 }],
       Connector: cc,
-
+      Anchor:"Center",
       EndpointStyle: {
         stroke: endpoint_stroke_color,
         fill: endpoint_fill_color,
@@ -498,7 +591,7 @@ var andflow = {
       },
       PaintStyle: {
         stroke: link_color,
-        radius: endpoint_radius,
+        radius: link_radius,
         strokeWidth: link_strokeWidth,
         outlineStroke: 'transparent',
         outlineWidth: link_outlineWidth,
@@ -513,11 +606,12 @@ var andflow = {
           'Arrow',
           {
             location: 0,
-            id: 'arrow0',
+            id: 'arrow_source',
             length: 10,
             width: 10,
             direction: -1,
             foldback: 0.8,
+            show:false,
           },
           
         ],
@@ -539,14 +633,33 @@ var andflow = {
           'Arrow',
           {
             location: 1,
-            id: 'arrow1',
+            id: 'arrow_target',
             length: 10,
-            width: 10,
-            
+            width: 10, 
+            foldback: 0.8,
+            show:true,
+          }, 
+        ],
+        [
+          'Arrow',
+          {
+            location: 0.5,
+            id: 'arrow_middle',
+            length: 10,
+            width: 10, 
             foldback: 0.8,
             show:false,
-          },
-          
+          }, 
+        ],
+        [
+          'Diamond',
+          {
+            location: 0.5,
+            id: 'animation',
+            length: 10,
+            width: 10,    
+            show:false, 
+          }, 
         ],
       ],
       Container: 'canvas',
@@ -604,12 +717,14 @@ var andflow = {
       }
       return false;
     });
+
     this._plumb.bind('beforeDetach', function (conn) {
       if (!$this.editable) {
         return false;
       }
       return true;
     });
+
     //自动避免重复连线
     this._plumb.bind('beforeDrop', function (conn) {
       if (!$this.editable) {
@@ -664,10 +779,15 @@ var andflow = {
     $("#canvas").bind("click", function(e) {
         if($this.event_canvas_click){
 
-                $this.event_canvas_click(e);
+          $this.event_canvas_click(e);
 
         }
     });
+
+
+    $this._plumb.draggable("standalone");
+
+
   },
   /**
    * 设置左边Action菜单
@@ -749,30 +869,52 @@ var andflow = {
         var title = $(this).attr('action_title');
         var icon = $(this).attr('action_icon');
         var metadata = $this.getMetadata(action_name);
+        
+        var helperEl = $('<div class="action-drag"></div>');
 
-        var html =
-          '<div class="action-drag"><div class="action-header">' +
-          title +
-          '</div><div class="action-icon"><img src="' +
+        var contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
           ($this.img_path || '') +
-          icon +
-          '"/></div></div>';
-        if(metadata.tp=="group"){
-          var html =
-            '<div class="group-drag"><div class="group-header">' +
-            title +
-            '</div><div class="group-body"></div></div>';
+          icon + '"/></div></div>'); 
+
+        if(metadata.tp=="group") {
+          helperEl = $('<div class="group-drag"></div>');
+          contentEl = $('<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>');
         }
 
-
-        if ($this.render_action_helper) {
-          var r = $this.render_action_helper(metadata, html);
+        if(metadata.render) {
+          let r = metadata.render(metadata,null, html);
           if (r != null && r.length > 0) {
-            html = r;
+            contentEl = $(r); 
+          }
+        }else {
+          if (metadata.tp=="group" && $this.render_group_helper) {
+            let r = $this.render_group_helper(metadata, html);
+            if (r != null && r.length > 0) {
+              contentEl = $(r);  
+            }
+          }else if($this.render_action_helper){
+            let r = $this.render_action_helper(metadata, html);
+            if (r != null && r.length > 0) {
+              contentEl = $(r);  
+            }
           }
         }
 
-        return $(html);
+       
+
+        helperEl.append(contentEl);
+        // console.log(contentEl.width());
+        // if(contentEl.css("width")!=null && contentEl.css("width")!='0px' && contentEl.css("width")!='auto' && contentEl.css("width")!=''){
+        //   helperEl.css("width",contentEl.css("width"));
+        // }
+        
+        // if(contentEl.css("height")!=null && contentEl.css("height")!='0px' && contentEl.css("height")!='auto' && contentEl.css("height")!=''){
+        //   helperEl.css("height",contentEl.css("height"));
+        // }
+        
+        // contentEl.css("height","100%"); 
+        // contentEl.css("width","100%"); 
+        return helperEl;
       },
       scope: 'plant',
     });
@@ -784,19 +926,70 @@ var andflow = {
     $this.setGroupInfo(group);
 
     var id = group.id;
-    var actions = group.actions;
-    
-    var html='<div id="group_'+id+'" class="group group-container">';
-    html+='<div class="group-remove-btn">X</div>';
+    var name = group.name;
+    var group_meta = this.getMetadata(name) || {};
 
-    html+='<div class="group-header"></div>';
-    html+='<div class="group-body"></div>';
-    html+='<div class="group-resize"></div>';
-    
+    var actions = group.actions;
+
+
+    var html='<div id="'+id+'" class="group group-container">';
+    html+='<div class="group-remove-btn">X</div>';
+    html+='<div class="group-resize"></div>'; 
     html+='</div>';
     
     var groupElement = $(html);
 
+
+    var group_main_dom = '<div class="group-main"><div class="group-header"></div><div class="group-body"></div></div>';
+
+    //render
+    if(group.render){
+      var r = group.render(group_meta, group, group_main_dom);
+      if (r && r.length > 0) {
+        group_main_dom = r;
+      }
+    }else if(group_meta.render){
+      var r = group_meta.render(group_meta, group, group_main_dom);
+      if (r && r.length > 0) {
+        group_main_dom = r;
+      }
+    }else if ($this.render_group) {
+      var r = $this.render_group(group_meta, group, group_main_dom);
+      if (r && r.length > 0) {
+        group_main_dom = r;
+      }
+    }
+    group_main_element = $(group_main_dom);
+    group_main_element.addClass("group-master");
+    groupElement.append(group_main_element);
+
+    //endpoint
+    var ep = '<div class="group-ep" title="拖拉连线">+</div>'; //拖拉连线焦点
+    if ($this.render_endpoint) {
+      var epr = $this.render_endpoint(action_meta, action, ep);
+      if (epr && epr.length > 0) {
+        ep = epr;
+      }
+    }
+    var epElement = $(ep);
+    epElement.removeClass('group-ep');
+    epElement.addClass('group-ep');
+    groupElement.append(epElement);
+
+    $this._plumb.makeSource(groupElement.get(0), {
+      filter: '.group-ep', 
+      anchor: 'Continuous',
+      extract: {
+        action: 'the-action',
+      }
+    });
+
+    //target
+    $this._plumb.makeTarget(groupElement.get(0), {
+      dropOptions: { hoverClass: 'dragHover' },
+      anchor: 'Continuous', 
+      allowLoopback: true,
+    });
 
     var canvasElement = $('#' + $this.containerId + ' #canvas');
     canvasElement.append(groupElement); 
@@ -806,8 +999,7 @@ var andflow = {
       var sure = confirm('确定删除分组?');
       if (sure) {
         $this.removeGroup(id);
-      } 
-
+      }  
     });
 
     //双击打开配置事件,在设计模式和步进模式下才可以用
@@ -956,13 +1148,14 @@ var andflow = {
         }
         maxWidth = maxWidth+padding_right;
 
-        groupElement.width(maxWidth);
+        group_main_element.width(maxWidth);
       } 
     }else{
       if((group.width+"").indexOf("px")>=0){
-        groupElement.css("width", group.width);
+        console.log(group)
+        group_main_element.css("width", group.width);
       }else{
-        groupElement.css("width", group.width+"px"); 
+        group_main_element.css("width", group.width+"px"); 
       }  
     }
 
@@ -985,24 +1178,24 @@ var andflow = {
         }
         maxHeight = maxHeight+padding_bottom;
 
-        groupElement.height(maxHeight);
+        group_main_element.height(maxHeight);
       } 
     }else{
       if((group.height+"").indexOf("px")>=0){
-        groupElement.css("height", group.height);
+        group_main_element.css("height", group.height);
       }else{
-        groupElement.css("height", group.height+"px"); 
+        group_main_element.css("height", group.height+"px"); 
       }  
     }
 
     //group event
     groupElement.find('.group-resize').mousedown(function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
-      var groupEl = groupElement;
+     
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = groupEl.width();
-      var height = groupEl.height();
+      var width = group_main_element.width();
+      var height = group_main_element.height();
 
       $('#' + $this.containerId).mousemove(function (e) {
         var x2 = e.pageX;
@@ -1010,12 +1203,12 @@ var andflow = {
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        groupEl.css({
+        group_main_element.css({
           width: w,
           height: h,
         });
-        groupEl.attr('width', w);
-        groupEl.attr('height', h);
+        groupElement.attr('width', w);
+        groupElement.attr('height', h);
  
         $this._plumb.repaintEverything();
 
@@ -1026,14 +1219,17 @@ var andflow = {
       e.preventDefault();
     }); 
 
-    //plumb add group
+   
+    
 
+    //plumb add group 
     $this._plumb.addGroup({
       el:groupElement.get(0),
       id:id, 
       orphan:true,
       droppable:true,
       dropOverride: true,
+      revert:true,
       endpoint:["Dot", { radius:3 }]
     }); 
     
@@ -1047,7 +1243,10 @@ var andflow = {
       $this._plumb.addToGroup(id, actionElements);
     }
     
-  },
+ 
+
+
+  },//end createGroup
   /**
    * 添加模型
    * @param ui
@@ -1059,7 +1258,7 @@ var andflow = {
     if (id == null) {
       return;
     }
-
+    
     var name = action.name;
     if (name == null) {
       return;
@@ -1101,10 +1300,8 @@ var andflow = {
 
  
     var action_main_dom = '<div class="action-main">';
-    action_main_dom += '<div class="action-icon"  >' + iconImg + '</div>';
-
-    action_main_dom += '<div class="action-header">' + title + '</div>'; //标题
-
+    action_main_dom += '<div class="action-icon"  >' + iconImg + '</div>'; 
+    action_main_dom += '<div class="action-header">' + title + '</div>'; //标题 
     //begin action-body
     var bodystyle = '';
     if (this.flowModel.show_action_body == 'false') {
@@ -1118,33 +1315,39 @@ var andflow = {
     action_main_dom += '<div class="action-body" ' + bodystyle + '>';
     action_main_dom += '<div class="action-content" ' + contentstyle + '></div>'; //消息内容,html,chart
     action_main_dom += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
-    action_main_dom += '</div>';
-
+    action_main_dom += '</div>'; 
     action_main_dom += '</div>'; //end action-main
 
-    if ($this.render_action) {
+    if(action.render){
+      var r = action.render(action_meta, action, action_main_dom);
+      if (r && r.length > 0) {
+        action_main_dom = r;
+      }
+    }else if(action_meta.render){
+      var r = action_meta.render(action_meta, action, action_main_dom);
+      if (r && r.length > 0) {
+        action_main_dom = r;
+      }
+    }else if ($this.render_action) {
       var r = $this.render_action(action_meta, action, action_main_dom);
       if (r && r.length > 0) {
         action_main_dom = r;
       }
     }
 
-    var actionHtml =
-      '<div class="action action-container ' +
-      css +
-      '" id="' +
-      id +
-      '" name="' +
-      name +
-      '" title="' +
-      title +
-      '" icon="' +
-      icon +
-      '">' +
-      action_main_dom +
-      '</div>';
 
+    var actionHtml =
+      '<div class="action action-container ' + css + '" id="' + id + '" name="' + name +
+      '" title="' + title +
+      '" icon="' + icon + '"></div>'; 
     var actionElement = $(actionHtml);
+
+
+    //main
+    action_main_el = $(action_main_dom);
+    action_main_el.addClass("action-master"); 
+    
+    actionElement.append(action_main_el);
 
     //endpoint
     var ep = '<div class="ep" title="拖拉连线">+</div>'; //拖拉连线焦点
@@ -1174,9 +1377,8 @@ var andflow = {
 
     actionElement.append(resizerElement);
 
-    //remove button
-
-    var removeBtn = '<a href="javascript:void(0)" class="btn-remove"  >X</a>'; //工具栏
+    //remove button 
+    var removeBtn = '<a href="javascript:void(0)" class="action-remove-btn"  >X</a>'; //工具栏
     if ($this.render_btn_remove) {
       var removeBtn_new = $this.render_btn_remove(action_meta, action, removeBtn);
       if (removeBtn_new && removeBtn_new.length > 0) {
@@ -1184,8 +1386,8 @@ var andflow = {
       }
     }
     var removeBtnElement = $(removeBtn);
-    removeBtnElement.removeClass('btn-remove');
-    removeBtnElement.addClass('btn-remove');
+    removeBtnElement.removeClass('action-remove-btn');
+    removeBtnElement.addClass('action-remove-btn');
 
     actionElement.append(removeBtnElement);
 
@@ -1219,13 +1421,14 @@ var andflow = {
     //size
     if (width && width.length > 0) {
       $('#' + id).attr('width', width);
-      $('#' + id).css('width', width);
+      $('#' + id).find(".action-master").css('width', width);
     }
     if (height && height.length > 0) {
       $('#' + id).attr('height', height);
-      $('#' + id).css('height', height);
+      $('#' + id).find(".action-master").css('height', height);
     }
 
+    //body
     if (body_width && body_width.length > 0) {
       $('#' + id).attr('body_width', body_width);
       $('#' + id)
@@ -1247,13 +1450,12 @@ var andflow = {
         .css('height', '');
     }
     
-
     //events
     actionElement.bind('mouseup', function () {
       $this._onCanvasChanged();
     });
 
-    actionElement.find('.btn-remove').bind('click', function () {
+    actionElement.find('.action-remove-btn').bind('click', function () {
       var sure = confirm('确定删除该节点?');
       if (sure) {
         $this.removeAction(id);
@@ -1291,6 +1493,7 @@ var andflow = {
         $(this).find('.ep').show();
       }
     });
+
     actionElement.bind('mouseout', function (e) {
       $(this).find('.ep').hide();
     });
@@ -1301,8 +1504,8 @@ var andflow = {
       var divEl = $(this)[0];
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = $('#' + id).width();
-      var height = $('#' + id).height();
+      var width = $('#' + id).find(".action-master").width();
+      var height = $('#' + id).find(".action-master").height();
 
       $('#' + $this.containerId).mousemove(function (e) {
         var x2 = e.pageX;
@@ -1310,7 +1513,7 @@ var andflow = {
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        $('#' + id).css({
+        $('#' + id).find(".action-master").css({
           width: w,
           height: h,
         });
@@ -1394,8 +1597,8 @@ var andflow = {
 
     //初始化节点
     this._showActionNode($('#' + id).get(0), name);
-
     $this._onCanvasChanged();
+
   },
 
   _showThumbnail: function () {
@@ -1518,13 +1721,20 @@ var andflow = {
     if (name == null || name != 'begin') {
       this._plumb.makeTarget(el, {
         dropOptions: { hoverClass: 'dragHover' },
-        anchor: 'Continuous',
-
+        anchor: 'Continuous', 
         allowLoopback: true,
       });
     }
   },
-
+  _isGroup: function(id){
+    var gs = this._plumb.getGroups();
+    for(var i in gs){
+      if(gs[i].id==id){
+        return true;
+      }
+    }
+    return false;
+  },
   //画连接线基础样式
   _paintConnection: function (conn, link) {
     var linktype = this.flowModel.link_type || 'Flowchart';
@@ -1532,59 +1742,83 @@ var andflow = {
     if (link == null) {
       link == {};
     }
+
     var style = link.lineStyle || 'solid';  //solid、dotted
 
     var active = link.active || 'true';
-
+    
+    var ps = link.paintStyle;
+    var hps = link.hoverPaintStyle;
+    //如果是与group连接的线
+    var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
     //连线样式
-    var paintStyle = {
-      stroke: this._themeObj.default_link_color,
-      radius: this._themeObj.default_link_radius,
-      strokeWidth: this._themeObj.default_link_strokeWidth,
-      outlineStroke: 'transparent',
-      outlineWidth: this._themeObj.default_link_outlineWidth,
+    var paintStyle = ps || { 
+      stroke: isgroup?this._themeObj.default_link_color_g: this._themeObj.default_link_color,
+      radius: isgroup?this._themeObj.default_link_radius_g: this._themeObj.default_link_radius,
+      strokeWidth: isgroup?this._themeObj.default_link_strokeWidth_g:this._themeObj.default_link_strokeWidth,
+      outlineStroke: isgroup?'transparent':'transparent',
+      outlineWidth: isgroup?this._themeObj.default_link_outlineWidth_g:this._themeObj.default_link_outlineWidth,
     };
 
-    var hoverPaintStyle = {
-      stroke: this._themeObj.default_link_color_hover,
-      radius: this._themeObj.default_link_radius_hover,
-      strokeWidth: this._themeObj.default_link_strokeWidth_hover,
-      outlineStroke: 'transparent',
-      outlineWidth: this._themeObj.default_link_outlineWidth_hover,
+    var hoverPaintStyle = hps||{ 
+      stroke: isgroup?this._themeObj.default_link_color_g_hover:this._themeObj.default_link_color_hover,
+      radius: isgroup?this._themeObj.default_link_radius_g_hover:this._themeObj.default_link_radius_hover,
+      strokeWidth: isgroup?this._themeObj.default_link_strokeWidth_g_hover:this._themeObj.default_link_strokeWidth_hover,
+      outlineStroke: isgroup?'transparent':'transparent',
+      outlineWidth: isgroup?this._themeObj.default_link_outlineWidth_g_hover:this._themeObj.default_link_outlineWidth_hover,
     };
-
-
 
     if ( style == 'dotted' || (active != null && active == 'false')) {
-      paintStyle.dashstyle = '1 2';
-      hoverPaintStyle.dashstyle = '1 2';
+      paintStyle.dashstyle = '2 1';
+      hoverPaintStyle.dashstyle = '2 1';
     } else {
       paintStyle.dashstyle = '1 0';
       hoverPaintStyle.dashstyle = '1 0';
     }
-
-
+    
 
     conn.setType(linktype);
     conn.setPaintStyle(paintStyle);
     conn.setHoverPaintStyle(hoverPaintStyle);
-
     //连接箭头
+    if(isgroup){ 
+      conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
+      conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3;
+
+      conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
+    }
+    
+
+    conn.getOverlay('animation').width = this._themeObj.default_link_strokeWidth_g * 2;
+    conn.getOverlay('animation').length = this._themeObj.default_link_strokeWidth_g * 2;
+    conn.getOverlay('animation').setVisible(false);
+    
     if(link.arrows && link.arrows.length>0){
       if(link.arrows[0]){
-        conn.getOverlay('arrow0').setVisible(true);
+        conn.getOverlay('arrow_source').setVisible(true);
       }else{
-        conn.getOverlay('arrow0').setVisible(false);
+        conn.getOverlay('arrow_source').setVisible(false);
       }
 
       if(link.arrows.length>1 && link.arrows[1]){
-        conn.getOverlay('arrow1').setVisible(true);
+        conn.getOverlay('arrow_middle').setVisible(true);
       }else{
-        conn.getOverlay('arrow1').setVisible(false);
+        conn.getOverlay('arrow_middle').setVisible(false);
       }
+
+      if(link.arrows.length>2 && link.arrows[2]){
+        conn.getOverlay('arrow_target').setVisible(true);
+      }else{
+        conn.getOverlay('arrow_target').setVisible(false);
+      }
+
     }else{
-      conn.getOverlay('arrow0').setVisible(false);
-      conn.getOverlay('arrow1').setVisible(true);
+      conn.getOverlay('arrow_source').setVisible(false);
+      conn.getOverlay('arrow_middle').setVisible(false); 
+      conn.getOverlay('arrow_target').setVisible(true);
     }
     
 
@@ -1680,6 +1914,8 @@ var andflow = {
     instance._initPlumb();
 
     instance._initEvents();
+
+    instance._initAnimaction();
 
     return instance;
   },
@@ -1812,9 +2048,15 @@ var andflow = {
   //删除组
   removeGroup: function(groupId){
     var $this = this;
+   
     var group = $this._plumb.getGroup(groupId);
+    var delete_all = $this._groupInfos[group.id].delete_all || false;
+    if(delete_all!=true){
+      delete_all=false;
+    }
+
     group.getEl();
-    $this._plumb.removeGroup(group,false);
+    $this._plumb.removeGroup(group,delete_all);
   },
   //删除节点
   removeAction: function (actionId) {
@@ -1988,6 +2230,7 @@ var andflow = {
         });
       }
     }
+ 
 
     this._plumb.repaintEverything();
   },

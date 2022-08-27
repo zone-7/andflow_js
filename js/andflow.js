@@ -1094,7 +1094,15 @@ var andflow = {
           $this._groupInfos[id].title = value;
           editor.remove();
         });
-        
+        editor.on("keydown",function(e){ 
+          if(e.code=="Enter"){ 
+            var value = editor.val(); 
+            editor.parent().html(value);
+            $this._groupInfos[id].title = value;
+            editor.remove();
+          } 
+         
+        });
       } 
     });
     groupElement.find('.group-body').bind('dblclick',function(event){
@@ -1380,7 +1388,15 @@ var andflow = {
           $this._listInfos[id].title = value;
           editor.remove();
         });
-
+        editor.on("keydown",function(e){ 
+          if(e.code=="Enter"){
+            var value = editor.val(); 
+            editor.parent().html(value);
+            $this._listInfos[id].title = value;
+            editor.remove();
+          } 
+         
+        });
       } 
     });
     listElement.find('.list-body').bind('dblclick',function(event){

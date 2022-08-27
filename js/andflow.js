@@ -66,6 +66,7 @@ var andflow = {
   _link_states: [],
   
   _groupInfos: {},
+  _listInfos:{},
 
   _timer_link: null,
   _timer_group: null,
@@ -507,6 +508,12 @@ var andflow = {
            
           $this._createGroup(group);
 
+        }else if(metaInfo.tp=="list"){
+          var listId = 'list_'+jsPlumbUtil.uuid().replaceAll('-', '');
+          var list = { id: listId, name:metaInfo.name, left: left, top: top, items:[]};
+           
+          $this._createList(list);
+
         }else{
           var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
           var action = { id: actionId, left: left, top: top, name: name, params: {} };
@@ -630,6 +637,36 @@ var andflow = {
           },
         ],
         [
+          'Label',
+          {
+            id: 'label_source', 
+            location: 20, 
+            label: '',
+            cssClass: 'linkLabelSource',
+            visible: false,
+            events: {
+              tap: function (conn, e) {
+                //alert(conn);
+              },
+            },
+          },
+        ],
+        [
+          'Label',
+          {
+            id: 'label_target', 
+            location: -20, 
+            label: '',
+            cssClass: 'linkLabelTarget',
+            visible: false,
+            events: {
+              tap: function (conn, e) {
+                //alert(conn);
+              },
+            },
+          },
+        ],
+        [
           'Arrow',
           {
             location: 1,
@@ -640,6 +677,7 @@ var andflow = {
             show:true,
           }, 
         ],
+
         [
           'Arrow',
           {
@@ -879,6 +917,15 @@ var andflow = {
         if(metadata.tp=="group") {
           helperEl = $('<div class="group-drag"></div>');
           contentEl = $('<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>');
+        }else if(metadata.tp=="list") {
+          helperEl = $('<div class="list-drag"></div>');
+          contentEl = $('<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>');
+        }else{
+          helperEl = $('<div class="action-drag"></div>');
+
+          contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
+          ($this.img_path || '') +
+          icon + '"/></div></div>'); 
         }
 
         if(metadata.render) {
@@ -1047,7 +1094,7 @@ var andflow = {
           $this._groupInfos[id].title = value;
           editor.remove();
         });
-
+        
       } 
     });
     groupElement.find('.group-body').bind('dblclick',function(event){
@@ -1219,9 +1266,6 @@ var andflow = {
       e.preventDefault();
     }); 
 
-   
-    
-
     //plumb add group 
     $this._plumb.addGroup({
       el:groupElement.get(0),
@@ -1232,8 +1276,7 @@ var andflow = {
       revert:true,
       endpoint:["Dot", { radius:3 }]
     }); 
-    
-    
+
     if(actions && actions.length>0){
       var actionElements = [];
       for(var i in actions){
@@ -1242,16 +1285,215 @@ var andflow = {
       }
       $this._plumb.addToGroup(id, actionElements);
     }
+  
+  }, //end createGroup
+
+  //添加列表
+  _createList: function(list){
+    var $this = this;
+    $this.setListInfo(list);
+
+    var id = list.id;
+    var name = list.name;
+    var meta = this.getMetadata(name) || {};
+
+    var items = list.items;
+    var left = list.left;
+    var top = list.top;
+    var width = list.width;
+    var height = list.height;
+
+    var html='<div id="'+id+'" class="list list-container">';
+    html+='<div class="list-remove-btn">X</div>';
+    html+='<div class="list-resize"></div>';
+    html+='<div class="list-main">';//begin main
+    html+='<div class="list-header">'+(list.title||'')+'</div>';
+    html+='<div class="list-body"></div>';
+    html+='</div>'; //end main 
+    html+='</div>'; //end list
     
+
+
+    var listElement = $(html);
+    var canvasElement = $('#' + $this.containerId + ' #canvas');
+    canvasElement.append(listElement);
+
+    
+    
+    //event
+    listElement.find('.list-remove-btn').bind('click', function () {
+      var sure = confirm('确定删除?');
+      if (sure) {
+        $this.removeList(id);
+      }  
+    });
+    
+    //resize
+    var list_main = listElement.find(".list-main");
+    listElement.find('.list-resize').mousedown(function (e) {
+      $('#' + $this.containerId).css('cursor', 'nwse-resize'); 
+      var x1 = e.pageX;
+      var y1 = e.pageY;
+      var width = list_main.width();
+      var height = list_main.height();
+
+      $('#' + $this.containerId).mousemove(function (e) {
+        var x2 = e.pageX;
+        var y2 = e.pageY;
+
+        var w = width + (x2 - x1);
+        var h = height + (y2 - y1);
+        list_main.css({
+          width: w,
+          height: h,
+        });
+        listElement.attr('width', w);
+        listElement.attr('height', h);
  
+        $this._plumb.repaintEverything();
+
+        $this._onCanvasChanged();
+
+        e.preventDefault();
+      });
+      e.preventDefault();
+    }); 
+
+    listElement.find('.list-header').bind('dblclick',function(event){
+     
+      if ($this.editable) {
+        var editor=$('<input  />');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
+        editor.val(listElement.find('.list-header').html());
+        listElement.find('.list-header').append(editor);
+
+        editor.focus();
+        editor.on("blur",function(e){ 
+          var value = editor.val(); 
+          editor.parent().html(value);
+          $this._listInfos[id].title = value;
+          editor.remove();
+        });
+
+      } 
+    });
+    listElement.find('.list-body').bind('dblclick',function(event){
+      
+      if ($this.editable) {
+        var editor=$('<textarea></textarea>');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
+         
+        var items = $this._listInfos[id].items;
+        var rows = '';
+        if(items && items.length>0){
+          for(var i in items){  
+            rows += items[i].title+'\n';
+          } 
+        }
+        editor.val(rows);
+       
+        listElement.find('.list-body').append(editor);
+
+        editor.focus();
+        editor.on("blur",function(e){
+          var value = editor.val(); 
+          editor.remove();
+          var rows = value.split("\n");
+ 
+          var items = [];
+          for(var i in rows){
+            var itemid = 'list_item_'+id+'_'+i;
+            var item = {id: itemid, title:rows[i]};
+            items.push(item);
+          }
+          $this._createListItems(id, items);
+          $this.refresh();
+         
+        });
+
+      } 
+    });
 
 
-  },//end createGroup
-  /**
-   * 添加模型
-   * @param ui
-   * @param selector
-   */
+    //top
+    if((top+"").indexOf("px")>=0){
+      listElement.css("top", top);
+    }else{
+      listElement.css("top", top+"px");
+    }
+    //left
+    if((left+"").indexOf("px")>=0){
+      listElement.css("left", left);
+    }else{
+      listElement.css("left", left+"px");
+    }
+
+    $this._plumb.draggable(listElement.get(0));
+ 
+    $this._plumb.addList(listElement.get(0), {
+      endpoint:["Rectangle", {width:20, height:20}]
+    });
+ 
+    //items
+    $this._createListItems(id,items); 
+
+  }, //end createList
+
+  _createListItems: function(listid, items){
+    var $this = this;
+    
+    $this._listInfos[listid].items = items;
+
+    $('#'+listid).find(".list-body").html("");
+
+    for(var i in items){ 
+      var item = items[i];
+      if(item.id==null || item.title==null || item.title==''){
+        continue;
+      }
+
+      var id=item.id;
+      var itemEl = $('<div id="'+id+'" class="list-item"><div class="list-item-title">'+(item.title||'')+'</div></div>');
+      $("#"+listid).find(".list-body").append(itemEl);
+      
+      var item_dom = itemEl.get(0);
+      $this._plumb.makeSource(item_dom, {
+        allowLoopback: false,
+        anchor: ["Left", "Right" ]
+      });
+      $this._plumb.makeTarget(item_dom, {
+        allowLoopback: false,
+        anchor: ["Left", "Right" ]
+      }); 
+
+    }  
+    
+  },
+
+  _deleteListItem: function(listid, itemid){
+    var $this = this;
+
+    for(var j in $this._listInfos[listid].items){
+      if($this._listInfos[listid].items[j].id==itemid){
+        $this._listInfos[listid].items[j]=null;
+      }
+    }
+
+  },
+
+  //添加节点
   _createAction: function (action) {
     var $this = this;
     var id = action.id;
@@ -1735,7 +1977,7 @@ var andflow = {
     }
     return false;
   },
-  //画连接线基础样式
+  //画连接线基础样式 
   _paintConnection: function (conn, link) {
     var linktype = this.flowModel.link_type || 'Flowchart';
 
@@ -1743,14 +1985,15 @@ var andflow = {
       link == {};
     }
 
-    var style = link.lineStyle || 'solid';  //solid、dotted
-
-    var active = link.active || 'true';
-    
+    var style = link.lineStyle || 'solid';  //solid、dotted 
+    var active = link.active || 'true'; 
     var ps = link.paintStyle;
     var hps = link.hoverPaintStyle;
+     
+
     //如果是与group连接的线
     var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
+    
     //连线样式
     var paintStyle = ps || { 
       stroke: isgroup?this._themeObj.default_link_color_g: this._themeObj.default_link_color,
@@ -1780,22 +2023,21 @@ var andflow = {
     conn.setType(linktype);
     conn.setPaintStyle(paintStyle);
     conn.setHoverPaintStyle(hoverPaintStyle);
-    //连接箭头
-    if(isgroup){ 
-      conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
-      conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3;
 
-      conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
+    //arrow
+    conn.getOverlay('arrow_source').setVisible(false);
+    conn.getOverlay('arrow_middle').setVisible(false); 
+    conn.getOverlay('arrow_target').setVisible(true); 
+
+    
+    if(link.source_id.indexOf("list_")>=0){
+      conn.getOverlay('arrow_source').setVisible(false); 
+      conn.getOverlay('label_source').setVisible(true);  
     }
-    
-
-    conn.getOverlay('animation').width = this._themeObj.default_link_strokeWidth_g * 2;
-    conn.getOverlay('animation').length = this._themeObj.default_link_strokeWidth_g * 2;
-    conn.getOverlay('animation').setVisible(false);
-    
+    if(link.target_id.indexOf("list_")>=0){
+      conn.getOverlay('arrow_target').setVisible(false); 
+      conn.getOverlay('label_target').setVisible(true); 
+    }
     if(link.arrows && link.arrows.length>0){
       if(link.arrows[0]){
         conn.getOverlay('arrow_source').setVisible(true);
@@ -1810,30 +2052,53 @@ var andflow = {
       }
 
       if(link.arrows.length>2 && link.arrows[2]){
-        conn.getOverlay('arrow_target').setVisible(true);
+        conn.getOverlay('arrow_target').setVisible(true); 
       }else{
         conn.getOverlay('arrow_target').setVisible(false);
-      }
+      } 
+    }
 
-    }else{
-      conn.getOverlay('arrow_source').setVisible(false);
-      conn.getOverlay('arrow_middle').setVisible(false); 
-      conn.getOverlay('arrow_target').setVisible(true);
+    //连接箭头
+    if(isgroup){ 
+      conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
+      conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3;
+
+      conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
     }
     
-
+    //动画元素
+    conn.getOverlay('animation').width = this._themeObj.default_link_strokeWidth_g * 2;
+    conn.getOverlay('animation').length = this._themeObj.default_link_strokeWidth_g * 2;
+    conn.getOverlay('animation').setVisible(false);
+   
     //连线文本信息
     var linkLabel = $('<div/>')
       .text(link.title || link.label || '')
       .html();
     conn.getOverlay('label').setVisible(linkLabel.length > 0);
     conn.getOverlay('label').setLabel(linkLabel);
-
-
+    
+    var linkLabelSource = $('<div/>')
+    .text(link.label_source || '')
+    .html();
+    conn.getOverlay('label_source').setVisible(linkLabelSource.length > 0);
+    conn.getOverlay('label_source').setLabel(linkLabelSource);
+    
+    var linkLabelTarget = $('<div/>')
+    .text(link.label_target || '')
+    .html();
+    conn.getOverlay('label_target').setVisible(linkLabelTarget.length > 0);
+    conn.getOverlay('label_target').setLabel(linkLabelTarget);
+   
     conn.data = link; 
     if (this.render_link) {
       this.render_link(conn, linktype, link);
     }
+
+
   },
 
   //画连接线状态
@@ -2015,7 +2280,56 @@ var andflow = {
     groupEl.find('.group-header').html(group.title);
     groupEl.find('.group-body').html(group.des);
   },
-  
+  getGroupTitle: function(id){
+    var group = this._groupInfos[id];
+    return group.title;
+  },
+  setGroupTitle: function(id,title){
+    var group = this._groupInfos[id];
+    if(group==null){
+      return;
+    }
+    group.title = title;
+    this._groupInfos[group.id] = group;
+    var groupEl = $('#'+this.containerId + ' #'+group.id);
+    groupEl.find('.group-header').html(group.title);
+  },
+
+  getListInfo: function(id){
+    return this._listInfos[id];
+  },
+  setListInfo: function(list){
+    this._listInfos[list.id] = list;
+    var listEl = $('#'+this.containerId + ' #'+list.id);
+    listEl.find('.list-header').html(list.title); 
+  },
+  getListTitle: function(id){
+    return (this._listInfos[id]||{}).title;
+  },
+  setListTitle: function(id, title){
+    var list = this._listInfos[id];
+    if(list==null){
+      return;
+    }
+    list.title = title;
+    this._listInfos[list.id] = list;
+    var listEl = $('#'+this.containerId + ' #'+list.id);
+    listEl.find('.list-header').html(list.title); 
+  },
+  getListItems: function(id){
+    return (this._listInfos[id]||{}).items;
+  },
+  setListItems: function(id, items){
+    var list = this._listInfos[id];
+    if(list==null){
+      return;
+    }
+    list.items = items;
+    this._listInfos[id] = list;
+    this._createListItems(id, items);
+    this.refresh();
+  },
+
   getLinkInfo: function (sid, tid) {
     return this._linkInfos[sid + '-' + tid] || {};
   },
@@ -2023,11 +2337,10 @@ var andflow = {
   setLinkInfo: function (link) {
     
     $.extend(this._linkInfos[link.source_id + '-' + link.target_id], link);
-
-    var linkTitle = $('<div/>').text(link.title).html();
-
+ 
     var conn = this.getConnection(link.source_id, link.target_id);
     if (conn != null) {
+      
       this._paintConnection(conn, link);
 
       this._plumb.repaintEverything();
@@ -2038,17 +2351,41 @@ var andflow = {
     this._linkInfos[sid + '-' + tid] = null;
   },
   setLinkTitle: function(source_id,target_id, title){
-    var link = {source_id:source_id,target_id:target_id, title: title};
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
+    link.title = title;
     this.setLinkInfo(link);
   },
   getLinkTitle: function(source_id,target_id){
-    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {};
+    var link = this._linkInfos[source_id + '-' + target_id] || {};
     return link.title;
+  },
+  setLinkLabel: function(source_id,target_id, title){
+    this.setLinkTitle(source_id,target_id, title);
+  },
+  getLinkLabel: function(source_id,target_id){
+    return this.sgtLinkTitle(source_id,target_id);
+  },
+  setLinkSourceLabel: function(source_id,target_id, label){
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
+    link.label_source = label;
+    this.setLinkInfo(link);
+  },
+  getLinkSourceLabel: function(source_id,target_id){
+    var link = this._linkInfos[source_id + '-' + target_id] || {};
+    return link.label_source;
+  },
+  setLinkTargetLabel: function(source_id,target_id, label){
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
+    link.label_target = label;
+    this.setLinkInfo(link);
+  },
+  getLinkTargetLabel: function(source_id,target_id){
+    var link = this._linkInfos[source_id + '-' + target_id] || {};
+    return link.label_target;
   },
   //删除组
   removeGroup: function(groupId){
-    var $this = this;
-   
+    var $this = this; 
     var group = $this._plumb.getGroup(groupId);
     var delete_all = $this._groupInfos[group.id].delete_all || false;
     if(delete_all!=true){
@@ -2150,6 +2487,8 @@ var andflow = {
     this._actionInfos = {};
     this._linkInfos = {};
     this._groupInfos = {};
+    this._listInfos = {};
+    
     this._actionContents = {};
     this._actionCharts = {};
     this._action_states = [];
@@ -2158,6 +2497,14 @@ var andflow = {
     //删除所有连线，重新画
     this._plumb.deleteEveryConnection();
     $('.action').each(function (i, e) {
+      $this._plumb.remove(e);
+      $(e).remove();
+    });
+    $('.group').each(function (i, e) {
+      $this._plumb.remove(e);
+      $(e).remove();
+    });
+    $('.list-item').each(function (i, e) {
       $this._plumb.remove(e);
       $(e).remove();
     });
@@ -2178,8 +2525,7 @@ var andflow = {
         this._createAction(action);
       }
     }
-
-
+ 
     //建立组
     if (obj && obj.groups) {
       for(var k in obj.groups){
@@ -2187,6 +2533,13 @@ var andflow = {
 
         this._createGroup(group);
 
+      }
+    }
+    //建立列表
+    if(obj && obj.lists){
+      for(var k in obj.lists){
+        var list = obj.lists[k]; 
+        this._createList(list); 
       }
     }
    
@@ -2200,9 +2553,10 @@ var andflow = {
         var conn = this._plumb.connect({ source: link.source_id, target: link.target_id });
 
         if (conn == undefined || conn == null) {
+          
           continue;
         }
-
+        
         this._paintConnection(conn, link);
 
         this._linkInfos[link.source_id + '-' + link.target_id] = link;
@@ -2239,10 +2593,12 @@ var andflow = {
     var actions = this.getActions();
     var links = this.getLinks();
     var groups = this.getGroups();
-    
+    var lists = this.getLists();
+
     this.flowModel.actions = actions;
-    this.flowModel.links = links;
     this.flowModel.groups = groups;
+    this.flowModel.lists = lists;
+    this.flowModel.links = links;
 
     return this.flowModel;
   },
@@ -2420,6 +2776,7 @@ var andflow = {
     this.flowModel.link_type = link_type;
     this.refresh();
   },
+
   //获取group
   getGroups: function(){
     var $this = this;
@@ -2464,6 +2821,35 @@ var andflow = {
 
     return groups;
   },
+
+  getLists: function(){
+    var $this = this;
+
+    var lists = [];
+    $("#"+$this.containerId + " #canvas").find(".list").each(function( index, e ){ 
+      var el = $(e);
+      var id = el.attr("id");
+      var list = $this._listInfos[id];
+   
+      let left = el.css("left");
+      list.left = left;
+      
+      let top = el.css("top");
+      list.top = top;
+     
+      let w = el.css('width');
+      list.width = w;
+     
+      let h = el.css('height');
+      list.height = h;
+      
+      lists.push(list);
+    });
+
+    return lists;
+
+  },
+
   //获取Action节点
   getActions: function () {
     var $this = this;
@@ -2696,7 +3082,7 @@ var andflow = {
         .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
       triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
     });
-  },
+  }, 
 
   setActionContents: function (actioncontentMap) {
     if (actioncontentMap) {

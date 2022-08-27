@@ -1,0 +1,43 @@
+body{
+    padding: 0px;
+    margin: 0px;
+}
+.bander{
+    display: inline-block;
+    height: 50px;  
+    width:100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: 1px solid #DEDEDE;
+    box-sizing: border-box;
+}
+.bander>div{
+    display: inline-block;
+}
+.bander a{
+    text-decoration-line: none;  
+    color: #333333;
+}
+.bander a:active{
+    text-decoration-line: none;  
+    color: #333333;
+}
+
+.bander .logo{
+    display: inline-block;
+    height: 50px; 
+    float: left; 
+}
+.bander .logo img{
+    height: 50px; 
+}
+.bander .title{ 
+    display: inline-block;
+    height: 50px; 
+    font-size: 30px; 
+}
+.bander .menus{
+    float: right;
+    font-size: 14px;
+    line-height: 50px;
+}

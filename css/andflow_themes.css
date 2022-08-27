@@ -2,7 +2,7 @@
 flow_theme_default
 */
 
-
+/* action drag begin */
 .flow_theme_default .action-drag { 
     position: absolute;
     z-index: 5; 
@@ -11,7 +11,6 @@ flow_theme_default
     opacity: 0.8;
     cursor: move;
     background-color: transparent;
-   
 }
 .flow_theme_default .action-drag .action-drag-main{
  
@@ -34,7 +33,9 @@ flow_theme_default
     font-weight: bold;
     font-size: 10px;
 }
+/* action drag end */
 
+/* group drag begin */
 .flow_theme_default .group-drag {
     position: absolute;
     z-index: 5;
@@ -72,6 +73,50 @@ flow_theme_default
     box-sizing: border-box;
     text-align: left;
 }
+/* group grag end */
+
+/* list drag begin */
+
+.flow_theme_default .list-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_default .list-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: rgba(255, 255, 255);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+.flow_theme_default .list-drag .list-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.6);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* list drag end */
+
+
 .flow_theme_default .action-container { 
     position: absolute;
     z-index: 4; 
@@ -439,7 +484,23 @@ flow_theme_default
 .flow_theme_default .linkLabel.jtk-hover {
     background-color: #ffc107;
 }
+.flow_theme_default .linkLabelSource { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
 
+.flow_theme_default .linkLabelTarget { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
 
 /* group */
 .flow_theme_default .group {
@@ -548,6 +609,116 @@ flow_theme_default
 .flow_theme_default .group:hover .group-resize {
     display: block;
 }
+/* group end */
+
+/* list */
+.flow_theme_default .list {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_default .list-main {
+    width: 150px;
+    height: 200px;
+    min-width: 100px;
+    min-height: 20px;
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 1);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_default .list .list-header {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 1);
+    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    padding-left: 10px;
+    color: white;
+    box-sizing: border-box;
+} 
+.flow_theme_default .list .list-body {
+    position: relative;
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.flow_theme_default .list .list-body .list-item {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(128, 128, 128, 0.1);
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    cursor: default;
+}
+.flow_theme_default .list .list-body .list-item .list-item-title{
+    width: 100%;
+    height: 100%;
+    color: rgba(128, 128, 128, 1);
+}
+.flow_theme_default .list .list-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: white; 
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_default .list:hover .list-remove-btn{
+    display: block;
+}
+
+ 
+.flow_theme_default .list .list-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_default .list:hover .list-resize {
+    display: block;
+}
+
+/* end list */
+
+
 /*
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1011,6 +1182,24 @@ flow_theme_icon
 }
 .flow_theme_icon .linkLabel.jtk-hover {
     background-color: #ffc107;
+}
+
+.flow_theme_icon .linkLabelSource { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.flow_theme_icon .linkLabelTarget { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
 }
 
 
@@ -1608,6 +1797,23 @@ flow_theme_zone
     background-color: #ffc107;
 }
 
+.flow_theme_zone .linkLabelSource { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.flow_theme_zone .linkLabelTarget { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
 
 /* group */
 .flow_theme_zone .group {

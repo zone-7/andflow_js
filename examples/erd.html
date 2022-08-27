@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>andflow-erd</title>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/jsplumb.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <script src="../js/canvg.js"></script>
+
+    <link rel="stylesheet" href="../css/andflow.css">
+    <link rel="stylesheet" href="../css/andflow_themes.css">
+
+    <script src="../js/andflow.js"></script>
+    <script src="../js/andflow_themes.js"></script> 
+
+</head>
+<body>
+    <link  rel="stylesheet"  href="../css/demo.css" > 
+    <div class="bander">
+        <div class="logo"><img src="../img/logo.jpeg" /></div>
+        <div class="title"><a href="../index.html" >Andflow</a></div>
+        <div class="menus">
+            <a href="../index.html">Demos</a>
+
+            <a href="https://github.com/zone-7/andflow_js">Github</a>
+        </div>
+    </div>
+
+<div id="andflow" style="width: 100%;height: 600px;padding:0px;">
+
+</div>
+ 
+</body>
+<script>
+
+
+</script>
+<script> 
+
+    var tags=['', '通用', '系统'];
+
+    var metadata=[
+        { 
+            "name": "erd",
+            "tp":"list",
+            "title": "数据库实体",
+            "des": "数据库实体",
+            "group": "通用",
+            "tag": "通用",
+            "css": "list",
+            "icon": "list.png", 
+            "params": [],
+            "params_html": "",
+            "params_script": ""
+        }
+    ] ;
+
+    var flowModel= {
+	"code": "",
+	"name": "",
+	"show_action_body": "true",
+	"show_action_content": "true",
+	"theme": "flow_theme_default",
+	"link_type": "Flowchart",
+	"params": [],
+	"actions": [],
+	"links": [
+		{
+			"source_id": "list_item_list_86360da09b96477998fa8eb539a39f51_1",
+			"target_id": "list_item_list_45b0a819cce542169be1d7e124b250e5_0",
+			"label_source": "N",
+			"label_target": "1"
+		},
+		{
+			"source_id": "list_item_list_86360da09b96477998fa8eb539a39f51_0",
+			"target_id": "list_item_list_cdf17f356147444d9108a010c6370cbe_0",
+			"label_source": "N",
+			"label_target": "1"
+		}
+	],
+	"groups": [],
+	"lists": [
+		{
+			"id": "list_cdf17f356147444d9108a010c6370cbe",
+			"name": "erd",
+			"left": "23px",
+			"top": "106px",
+			"items": [
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_0",
+					"title": "id"
+				},
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_1",
+					"title": "name"
+				},
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_2",
+					"title": "age"
+				},
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_3",
+					"title": "grade"
+				},
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_4",
+					"title": "phone"
+				},
+				{
+					"id": "list_item_list_cdf17f356147444d9108a010c6370cbe_5",
+					"title": "address"
+				}
+			],
+			"title": "students",
+			"width": "150px",
+			"height": "200px"
+		},
+		{
+			"id": "list_45b0a819cce542169be1d7e124b250e5",
+			"name": "erd",
+			"left": "543px",
+			"top": "103px",
+			"items": [
+				{
+					"id": "list_item_list_45b0a819cce542169be1d7e124b250e5_0",
+					"title": "id"
+				},
+				{
+					"id": "list_item_list_45b0a819cce542169be1d7e124b250e5_1",
+					"title": "groupname"
+				},
+				{
+					"id": "list_item_list_45b0a819cce542169be1d7e124b250e5_2",
+					"title": ""
+				},
+				{
+					"id": "list_item_list_45b0a819cce542169be1d7e124b250e5_3",
+					"title": ""
+				}
+			],
+			"title": "group",
+			"width": "150px",
+			"height": "200px"
+		},
+		{
+			"id": "list_86360da09b96477998fa8eb539a39f51",
+			"name": "erd",
+			"left": "273px",
+			"top": "114px",
+			"items": [
+				{
+					"id": "list_item_list_86360da09b96477998fa8eb539a39f51_0",
+					"title": "student_id"
+				},
+				{
+					"id": "list_item_list_86360da09b96477998fa8eb539a39f51_1",
+					"title": "group_id"
+				},
+				{
+					"id": "list_item_list_86360da09b96477998fa8eb539a39f51_2",
+					"title": ""
+				}
+			],
+			"title": "student_group",
+			"width": "150px",
+			"height": "200px"
+		}
+	]
+};
+
+
+    var options={
+        tags:tags,            //组件过滤标签列表
+        metadata:metadata,    //组件元素
+        flowModel:flowModel,  //流程模型
+        img_path: "../img/meta/",
+        editable:true,   //是否可编辑，默认true
+        show_toolbar: true,
+        metadata_position: 'default', //top,left,default
+        render_action:function(metadata,action,html){ return html; },//节点渲染
+        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
+        render_state_list: function(datas){return null},             //流程状态列表渲染
+        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
+        event_group_click:function(group){
+ 
+        },
+        event_group_dblclick: function(group){
+            
+        },
+        //节点单击事件
+        event_action_click:function(metadata,action){
+ 
+
+        },
+        //节点双击事件
+        event_action_dblclick:function(metadata,action){
+ 
+
+        },
+        //连线单击事件
+        event_link_click: function (link) {
+           
+        },
+        //连线双击事件
+        event_link_dblclick: function (link) {
+
+            var label = prompt("set link labels, split by ',' ", (link.label_source||'')+","+(link.label_target||''));
+            
+            var labels = label.split(",");
+            if(labels.length>0){
+                link.label_source=labels[0];
+            }
+
+            if(labels.length>1){
+                link.label_target=labels[1];
+            }
+            
+            andflow.setLinkInfo(link);  
+        },
+
+        //画图板单击事件
+        event_canvas_click: function(e){
+            
+        }
+    }
+
+
+    andflow.newInstance("andflow",options);
+    andflow.showFlow();
+
+
+ 
+</script>
+</html>

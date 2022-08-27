@@ -36,6 +36,13 @@ body{
     height: 50px; 
     font-size: 30px; 
 }
+.bander .subtitle{
+    display: inline-block;
+    height: 50px; 
+    font-size: 20px; 
+    padding-left: 20px;
+}
+
 .bander .menus{
     float: right;
     font-size: 14px;

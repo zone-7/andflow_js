@@ -48,3 +48,13 @@ body{
     font-size: 14px;
     line-height: 50px;
 }
+.demo-table{
+    width: 100%;
+}
+.demo-table td{
+    width:50%;
+    vertical-align: top;
+}
+.demo-table img{
+    width:100%;
+}

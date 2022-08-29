@@ -67,6 +67,7 @@ var andflow = {
   
   _groupInfos: {},
   _listInfos:{},
+  _tipInfos:{},
 
   _timer_link: null,
   _timer_group: null,
@@ -514,6 +515,12 @@ var andflow = {
            
           $this._createList(list);
 
+        }else if(metaInfo.tp=="tip"){
+          var tipId = 'tip_'+jsPlumbUtil.uuid().replaceAll('-', '');
+          var tip = { id: tipId, name:metaInfo.name, left: left, top: top, content:""};
+           
+          $this._createTip(tip);
+
         }else{
           var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
           var action = { id: actionId, left: left, top: top, name: name, params: {} };
@@ -920,6 +927,9 @@ var andflow = {
         }else if(metadata.tp=="list") {
           helperEl = $('<div class="list-drag"></div>');
           contentEl = $('<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>');
+        }else if(metadata.tp=="tip") {
+          helperEl = $('<div class="tip-drag"></div>');
+          contentEl = $('<div class="tip-drag-main"><div class="tip-header"></div><div class="tip-body">' + title + '</div></div>');
         }else{
           helperEl = $('<div class="action-drag"></div>');
 
@@ -976,7 +986,7 @@ var andflow = {
     var name = group.name;
     var group_meta = this.getMetadata(name) || {};
 
-    var actions = group.actions;
+    var members = group.members || [];
 
 
     var html='<div id="'+id+'" class="group group-container">';
@@ -1011,7 +1021,7 @@ var andflow = {
     groupElement.append(group_main_element);
 
     //endpoint
-    var ep = '<div class="group-ep" title="拖拉连线">+</div>'; //拖拉连线焦点
+    var ep = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
     if ($this.render_endpoint) {
       var epr = $this.render_endpoint(action_meta, action, ep);
       if (epr && epr.length > 0) {
@@ -1143,11 +1153,11 @@ var andflow = {
 
     //left
     if(group.left==null || group.left=="auto"){
-      if(actions.length>0){
+      if(members.length>0){
         var minLeft = 9999999999999;
-   
-        for(var i in actions){
-          let l = $("#"+actions[i]).offset().left - canvasElement.offset().left;
+        
+        for(var i in members){
+          let l = $("#"+members[i]).offset().left - canvasElement.offset().left;
            if(minLeft>l){
             minLeft = l;
           }  
@@ -1164,11 +1174,11 @@ var andflow = {
     }
     //top
     if(group.top==null || group.top=="auto"){
-      if(actions.length>0){
+      if(members.length>0){
         var minTop = 999999999;
    
-        for(var i in actions){
-          let t = $("#"+actions[i]).offset().top - canvasElement.offset().top;
+        for(var i in members){
+          let t = $("#"+members[i]).offset().top - canvasElement.offset().top;
            if(minTop>t){
             minTop = t;
           }  
@@ -1186,12 +1196,12 @@ var andflow = {
 
     //width
     if( group.width==null || group.width=="auto"){
-      if(actions.length>0){
+      if(members.length>0){
         var maxWidth = 0;
 
-        for(var i in actions){
+        for(var i in members){
 
-          $("#"+actions[i]).find("div").each(function(index,el){
+          $("#"+members[i]).find("div").each(function(index,el){
             
             let w = $(el).offset().left+$(el).width();
             w = w - groupElement.position().left - canvasElement.offset().left;
@@ -1216,12 +1226,12 @@ var andflow = {
 
     //height
     if(group.height==null || group.height=="auto"){
-      if(actions.length>0){
+      if(members.length>0){
         var maxHeight = 0;
 
-        for(var i in actions){
+        for(var i in members){
 
-          $("#"+actions[i]).find("div").each(function(index,el){
+          $("#"+members[i]).find("div").each(function(index,el){
             
             let h = $(el).offset().top+$(el).height();
             h = h - groupElement.position().top - canvasElement.offset().top;
@@ -1247,10 +1257,13 @@ var andflow = {
     groupElement.find('.group-resize').mousedown(function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
      
+      var group_main = groupElement.find(".group-master");
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = group_main_element.width();
-      var height = group_main_element.height();
+      
+      
+      var width = group_main.width();
+      var height = group_main.height();
 
       $('#' + $this.containerId).mousemove(function (e) {
         var x2 = e.pageX;
@@ -1258,7 +1271,7 @@ var andflow = {
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        group_main_element.css({
+        group_main.css({
           width: w,
           height: h,
         });
@@ -1285,11 +1298,10 @@ var andflow = {
       endpoint:["Dot", { radius:3 }]
     }); 
 
-    if(actions && actions.length>0){
+    if(members && members.length>0){
       var actionElements = [];
-      for(var i in actions){
-        actionElements.push($("#"+actions[i]).get(0));
-
+      for(var i in members){
+        actionElements.push($("#"+members[i]).get(0));
       }
       $this._plumb.addToGroup(id, actionElements);
     }
@@ -1608,7 +1620,7 @@ var andflow = {
     actionElement.append(action_main_el);
 
     //endpoint
-    var ep = '<div class="ep" title="拖拉连线">+</div>'; //拖拉连线焦点
+    var ep = '<div class="ep" title="拖拉连线">→</div>'; //拖拉连线焦点
     if ($this.render_endpoint) {
       var epr = $this.render_endpoint(action_meta, action, ep);
       if (epr && epr.length > 0) {
@@ -1859,6 +1871,228 @@ var andflow = {
 
   },
 
+
+  _createTip: function(tip){
+    var $this= this;
+     
+    $this.setTipInfo(tip);
+
+    var id = tip.id;
+    var name = tip.name;
+    var content = tip.content;
+    var tip_meta = this.getMetadata(name) || {};
+
+ 
+
+    var html='<div id="'+id+'" class="tip tip-container">';
+    html+='<div class="tip-remove-btn">X</div>';
+    html+='<div class="tip-resize"></div>'; 
+    html+='</div>';
+    
+    var tipElement = $(html);
+
+    if(content){
+      content = content.replaceAll("\n","<br/>");
+    }
+    var tip_main_dom = '<div class="tip-main"><div class="tip-header"></div><div class="tip-body"></div></div>';
+
+    //render
+    if(tip.render){
+      var r = tip.render(tip_meta, tip, tip_main_dom);
+      if (r && r.length > 0) {
+        tip_main_dom = r;
+      }
+    }else if(tip_meta.render){
+      var r = tip_meta.render(tip_meta, tip, tip_main_dom);
+      if (r && r.length > 0) {
+        tip_main_dom = r;
+      }
+    }else if ($this.render_tip) {
+      var r = $this.render_tip(tip_meta, tip, tip_main_dom);
+      if (r && r.length > 0) {
+        tip_main_dom = r;
+      }
+    }
+    tip_main_element = $(tip_main_dom);
+    tip_main_element.addClass("tip-master");
+    tipElement.append(tip_main_element);
+
+    //endpoint
+    var ep = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+    if ($this.render_endpoint) {
+      var epr = $this.render_endpoint(action_meta, action, ep);
+      if (epr && epr.length > 0) {
+        ep = epr;
+      }
+    }
+    var epElement = $(ep);
+    epElement.removeClass('tip-ep');
+    epElement.addClass('tip-ep');
+    tipElement.append(epElement);
+
+    //draggable
+    this._plumb.getContainer().appendChild(tipElement.get(0));
+    // initialise draggable elements.
+    this._plumb.draggable(tipElement.get(0));
+    //source
+    $this._plumb.makeSource(tipElement.get(0), {
+      filter: '.tip-ep', 
+      anchor: 'Continuous'
+    });
+
+    //target
+    $this._plumb.makeTarget(tipElement.get(0), {
+      dropOptions: { hoverClass: 'dragHover' },
+      anchor: 'Continuous', 
+      allowLoopback: true,
+    });
+
+    var canvasElement = $('#' + $this.containerId + ' #canvas');
+    canvasElement.append(tipElement); 
+
+    //event
+    tipElement.find('.tip-remove-btn').bind('click', function () {
+      var sure = confirm('确定删除?');
+      if (sure) {
+        $this.removeTip(id);
+      }  
+    });
+ 
+    tipElement.find('.tip-header').bind('dblclick',function(event){
+      if ($this.editable) {
+        var editor=$('<input  />');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
+        editor.val(tipElement.find('.tip-header').html());
+        tipElement.find('.tip-header').append(editor);
+
+        editor.focus();
+        editor.on("blur",function(e){ 
+          var value = editor.val(); 
+          editor.parent().html(value);
+          $this._tipInfos[id].title = value;
+          editor.remove();
+        });
+        editor.on("keydown",function(e){ 
+          if(e.code=="Enter"){ 
+            var value = editor.val(); 
+            editor.parent().html(value);
+            $this._tipInfos[id].title = value;
+            editor.remove();
+          } 
+         
+        });
+      } 
+    });
+    tipElement.find('.tip-body').bind('dblclick',function(event){
+      if ($this.editable) {
+        var editor=$('<textarea></textarea>');
+        editor.css("position","absolute");
+        editor.css("z-index","9999");
+        editor.css("left","0px");
+        editor.css("top","0px");
+        editor.css("width","100%");
+        editor.css("height","100%");
+        editor.css("box-sizing","border-box");
+       
+        var content = $this._tipInfos[id].content;
+       
+        editor.val(content);
+
+        tipElement.find('.tip-body').append(editor);
+
+        editor.focus();
+        editor.on("blur",function(e){
+          var value = editor.val(); 
+          
+          $this._tipInfos[id].content = value;
+
+          value = value.replaceAll("\n","<br/>");
+
+          editor.parent().html(value);
+
+          editor.remove();
+        });
+
+      } 
+    });
+
+    //title\body
+    tipElement.find('.tip-header').html(tip.title || '');
+    tipElement.find('.tip-body').html(content||'' );
+
+
+    //位置 
+    //left
+    if((tip.left+"").indexOf("px")>=0){
+      tipElement.css("left", tip.left);
+    }else{
+      tipElement.css("left", tip.left+"px");
+    } 
+    //top
+    if((tip.top+"").indexOf("px")>=0){
+      tipElement.css("top", tip.top);
+    }else{
+      tipElement.css("top", tip.top+"px");
+    }
+
+    //width 
+    if((tip.width+"").indexOf("px")>=0){ 
+      tip_main_element.css("width", tip.width);
+    }else{
+      tip_main_element.css("width", tip.width+"px"); 
+    }  
+     
+
+    //height 
+    if((tip.height+"").indexOf("px")>=0){
+      tip_main_element.css("height", tip.height);
+    }else{
+      tip_main_element.css("height", tip.height+"px"); 
+    }  
+     
+
+    //event
+    tipElement.find('.tip-resize').mousedown(function (e) {
+      $('#' + $this.containerId).css('cursor', 'nwse-resize');
+     
+      var tip_main = tipElement.find(".tip-master");
+      var x1 = e.pageX;
+      var y1 = e.pageY;
+      
+      
+      var width = tip_main.width();
+      var height = tip_main.height();
+
+      $('#' + $this.containerId).mousemove(function (e) {
+        var x2 = e.pageX;
+        var y2 = e.pageY;
+
+        var w = width + (x2 - x1);
+        var h = height + (y2 - y1);
+        tip_main.css({
+          width: w,
+          height: h,
+        });
+        tipElement.attr('width', w);
+        tipElement.attr('height', h);
+ 
+        $this._plumb.repaintEverything();
+
+        $this._onCanvasChanged();
+
+        e.preventDefault();
+      });
+      e.preventDefault();
+    }); 
+ 
+  }, //end createTip
+
   _showThumbnail: function () {
     var $this = this;
 
@@ -2007,25 +2241,24 @@ var andflow = {
     var hps = link.hoverPaintStyle;
      
 
-    //如果是与group连接的线
-    var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
-    
-    //连线样式
-    var paintStyle = ps || { 
-      stroke: isgroup?this._themeObj.default_link_color_g: this._themeObj.default_link_color,
-      radius: isgroup?this._themeObj.default_link_radius_g: this._themeObj.default_link_radius,
-      strokeWidth: isgroup?this._themeObj.default_link_strokeWidth_g:this._themeObj.default_link_strokeWidth,
-      outlineStroke: isgroup?'transparent':'transparent',
-      outlineWidth: isgroup?this._themeObj.default_link_outlineWidth_g:this._themeObj.default_link_outlineWidth,
+     //连线样式
+     var paintStyle = ps || { 
+      stroke:  this._themeObj.default_link_color,
+      radius: this._themeObj.default_link_radius,
+      strokeWidth: this._themeObj.default_link_strokeWidth,
+      outlineStroke: 'transparent',
+      outlineWidth: this._themeObj.default_link_outlineWidth,
     };
 
     var hoverPaintStyle = hps||{ 
-      stroke: isgroup?this._themeObj.default_link_color_g_hover:this._themeObj.default_link_color_hover,
-      radius: isgroup?this._themeObj.default_link_radius_g_hover:this._themeObj.default_link_radius_hover,
-      strokeWidth: isgroup?this._themeObj.default_link_strokeWidth_g_hover:this._themeObj.default_link_strokeWidth_hover,
-      outlineStroke: isgroup?'transparent':'transparent',
-      outlineWidth: isgroup?this._themeObj.default_link_outlineWidth_g_hover:this._themeObj.default_link_outlineWidth_hover,
+      stroke: this._themeObj.default_link_color_hover,
+      radius: this._themeObj.default_link_radius_hover,
+      strokeWidth: this._themeObj.default_link_strokeWidth_hover,
+      outlineStroke: 'transparent',
+      outlineWidth: this._themeObj.default_link_outlineWidth_hover,
     };
+
+
 
     if ( style == 'dotted' || (active != null && active == 'false')) {
       paintStyle.dashstyle = '2 1';
@@ -2039,6 +2272,7 @@ var andflow = {
     conn.setType(linktype);
     conn.setPaintStyle(paintStyle);
     conn.setHoverPaintStyle(hoverPaintStyle);
+
 
     //arrow
     conn.getOverlay('arrow_source').setVisible(false);
@@ -2074,16 +2308,7 @@ var andflow = {
       } 
     }
 
-    //连接箭头
-    if(isgroup){ 
-      conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
-      conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3;
-
-      conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
-      conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
-    }
+ 
     
     //动画元素
     conn.getOverlay('animation').width = this._themeObj.default_link_strokeWidth_g * 2;
@@ -2108,12 +2333,72 @@ var andflow = {
     .html();
     conn.getOverlay('label_target').setVisible(linkLabelTarget.length > 0);
     conn.getOverlay('label_target').setLabel(linkLabelTarget);
-   
+
+
+    //特殊处理
+    //如果与tip连线
+    var istip = link.source_id.indexOf("tip_")>=0 || link.target_id.indexOf("tip_")>=0  ; 
+    //如果是与group连接的线
+    var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
+     
+
+    if(istip){ 
+      paintStyle.stroke = this._themeObj.default_link_color_t;
+      paintStyle.radius = this._themeObj.default_link_radius_t;
+      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_t;
+      paintStyle.outlineStroke = 'transparent';
+      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t;
+ 
+      hoverPaintStyle.stroke = this._themeObj.default_link_color_t_hover;
+      hoverPaintStyle.radius = this._themeObj.default_link_radius_t_hover;
+      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_t_hover;
+      hoverPaintStyle.outlineStroke = 'transparent';
+      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t_hover;
+      
+      paintStyle.dashstyle = '5 3';
+      hoverPaintStyle.dashstyle = '5 3';
+      
+      conn.setType(linktype);
+      conn.setPaintStyle(paintStyle);
+      conn.setHoverPaintStyle(hoverPaintStyle);
+       
+      conn.getOverlay('arrow_source').setVisible(false);
+      conn.getOverlay('arrow_middle').setVisible(false); 
+      conn.getOverlay('arrow_target').setVisible(false); 
+        
+    }else if(isgroup){
+       
+      paintStyle.stroke = this._themeObj.default_link_color_g;
+      paintStyle.radius = this._themeObj.default_link_radius_g;
+      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_g;
+      paintStyle.outlineStroke = 'transparent';
+      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g;
+ 
+      hoverPaintStyle.stroke = this._themeObj.default_link_color_g_hover;
+      hoverPaintStyle.radius = this._themeObj.default_link_radius_g_hover;
+      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_g_hover;
+      hoverPaintStyle.outlineStroke = 'transparent';
+      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g_hover;
+      
+      conn.setType(linktype);
+      conn.setPaintStyle(paintStyle);
+      conn.setHoverPaintStyle(hoverPaintStyle);
+    
+ 
+      conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
+      conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3; 
+      conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
+      conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
+    } 
+ 
+
     conn.data = link; 
+
     if (this.render_link) {
       this.render_link(conn, linktype, link);
-    }
-
+    } 
 
   },
 
@@ -2345,7 +2630,12 @@ var andflow = {
     this._createListItems(id, items);
     this.refresh();
   },
-
+  getTipInfo: function(id){
+    return this._tipInfos[id];
+  },
+  setTipInfo: function(tip){
+    this._tipInfos[tip.id] = tip;
+  },
   getLinkInfo: function (sid, tid) {
     return this._linkInfos[sid + '-' + tid] || {};
   },
@@ -2410,6 +2700,23 @@ var andflow = {
 
     group.getEl();
     $this._plumb.removeGroup(group,delete_all);
+  },
+  removeList: function(id){
+    var $this = this;  
+    var element = $("#"+$this.containerId+" #"+id);
+    
+    $this._plumb.remove(element);
+    element.remove();
+  },
+
+  //删除Tip
+  removeTip: function(id){
+    var $this = this; 
+    
+    var element = $("#"+$this.containerId+" #"+id);
+    
+    $this._plumb.remove(element);
+    element.remove();
   },
   //删除节点
   removeAction: function (actionId) {
@@ -2504,7 +2811,8 @@ var andflow = {
     this._linkInfos = {};
     this._groupInfos = {};
     this._listInfos = {};
-    
+    this._tipInfos = {};
+
     this._actionContents = {};
     this._actionCharts = {};
     this._action_states = [];
@@ -2520,6 +2828,11 @@ var andflow = {
       $this._plumb.remove(e);
       $(e).remove();
     });
+    $('.tip').each(function (i, e) {
+      $this._plumb.remove(e);
+      $(e).remove();
+    });
+    
     $('.list-item').each(function (i, e) {
       $this._plumb.remove(e);
       $(e).remove();
@@ -2541,6 +2854,21 @@ var andflow = {
         this._createAction(action);
       }
     }
+    //建立TIP
+    if(obj && obj.tips){
+      for(var k in obj.tips){
+        var tip = obj.tips[k]; 
+        this._createTip(tip); 
+      }
+    }
+
+    //建立列表
+    if(obj && obj.lists){
+      for(var k in obj.lists){
+        var list = obj.lists[k]; 
+        this._createList(list); 
+      }
+    }
  
     //建立组
     if (obj && obj.groups) {
@@ -2551,13 +2879,7 @@ var andflow = {
 
       }
     }
-    //建立列表
-    if(obj && obj.lists){
-      for(var k in obj.lists){
-        var list = obj.lists[k]; 
-        this._createList(list); 
-      }
-    }
+    
    
     //建立节点连线
     if (obj && obj.links) {
@@ -2610,11 +2932,13 @@ var andflow = {
     var links = this.getLinks();
     var groups = this.getGroups();
     var lists = this.getLists();
+    var tips = this.getTips();
 
     this.flowModel.actions = actions;
     this.flowModel.groups = groups;
     this.flowModel.lists = lists;
     this.flowModel.links = links;
+    this.flowModel.tips = tips;
 
     return this.flowModel;
   },
@@ -2807,11 +3131,11 @@ var andflow = {
       var ms = item.getMembers();
       
       var group = $this._groupInfos[id];
-      //actions
-      group.actions = [];
+      //children
+      group.members = [];
       for(var j in ms){
-        let id = ms[j].id;
-        group.actions.push(id);
+        let memberid = ms[j].id; 
+        group.members.push(memberid);
       }
 
       if(group.left!="auto"){ 
@@ -2843,26 +3167,61 @@ var andflow = {
 
     var lists = [];
     $("#"+$this.containerId + " #canvas").find(".list").each(function( index, e ){ 
+
       var el = $(e);
       var id = el.attr("id");
-      var list = $this._listInfos[id];
+      var item = $this._listInfos[id]||{id:el.attr("id"),left:"",top:"",width:"",height:""};
    
-      let left = el.css("left");
-      list.left = left;
+      let ingroup = el.parent().hasClass("group-container");
+
+      if(ingroup){
+        
+        item.left = (el.position().left+el.parent().position().left)+"px";
+        item.top = (el.position().top+ el.parent().position().top)+"px";
+      }else{ 
+        item.left = el.css("left"); 
+        item.top = el.css("top"); 
+      } 
+
+      item.width = el.css('width'); 
+      item.height = el.css('height');
       
-      let top = el.css("top");
-      list.top = top;
-     
-      let w = el.css('width');
-      list.width = w;
-     
-      let h = el.css('height');
-      list.height = h;
-      
-      lists.push(list);
+      lists.push(item);
     });
 
     return lists;
+
+  },
+
+
+  getTips:function(){
+    var $this = this;
+
+    var tips = [];
+    $("#"+$this.containerId + " #canvas").find(".tip").each(function( index, e ){ 
+
+      var el = $(e);
+      var id = el.attr("id");
+      var item = $this._tipInfos[id]||{id:el.attr("id"),left:"",top:"",width:"",height:""};
+   
+      let ingroup = el.parent().hasClass("group-container");
+
+      if(ingroup){
+        
+        item.left = (el.position().left+el.parent().position().left)+"px";
+        item.top = (el.position().top+ el.parent().position().top)+"px";
+      }else{ 
+        item.left = el.css("left"); 
+        item.top = el.css("top"); 
+      } 
+
+      item.width = el.css('width'); 
+      item.height = el.css('height');
+      
+      tips.push(item);
+    });
+
+    return tips;
 
   },
 

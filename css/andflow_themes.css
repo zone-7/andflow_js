@@ -75,8 +75,7 @@ flow_theme_default
 }
 /* group grag end */
 
-/* list drag begin */
-
+/* list drag begin */ 
 .flow_theme_default .list-drag {
     position: absolute;
     z-index: 5;
@@ -115,6 +114,44 @@ flow_theme_default
     text-align: left;
 }
 /* list drag end */
+
+
+/* tip drag begin */ 
+.flow_theme_default .tip-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_default .tip-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    z-index: 5; 
+    background-color: #fff090; 
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+.flow_theme_default .tip-drag .tip-header{
+    position: relative;
+    height: 20px;
+    width: 100%;  
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* tip drag end */
 
 
 .flow_theme_default .action-container { 
@@ -188,18 +225,18 @@ flow_theme_default
     z-index: 21;
     right: 3px;
     top:2px;
-    color: white;
+    color: #007bff;
     font-size: 10px;
     font-style: normal;
     font-family: normal;
     text-align: center; 
     text-decoration:none;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 1);
     line-height: 15px;
     width: 15px;
     height: 15px;
-    border-radius: 8px;
+    border-radius: 3px;
 }
 
 .flow_theme_default .action-body{
@@ -295,18 +332,18 @@ flow_theme_default
     right:  3px;
 
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
-    font-size: 12px;
-    cursor: crosshair;
-    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair; 
 
     background-color: white;
     border: 1px solid #ffc107;
     color:#ffc107;
+    box-sizing: border-box;
 }
 
 
@@ -571,15 +608,14 @@ flow_theme_default
     right:  3px;
     top: calc(50% - 7px);
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
-    font-size: 12px;
+    font-size: 10px;
     cursor: crosshair;
     padding: 0px;
-
     background-color: white;
     border: 1px solid #ffc107;
     color:#ffc107;
@@ -719,12 +755,147 @@ flow_theme_default
 /* end list */
 
 
+/* tip */
+.flow_theme_default .tip {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_default .tip-main {
+    width: 150px;
+    height: 100px;  
+    min-height: 60px;
+    min-width: 60px;
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+
+    background-color: #fff090; 
+    overflow: hidden;
+}
+
+
+.flow_theme_default .tip-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.flow_theme_default .tip .tip-header {
+    position: relative;
+    height: 20px;
+    width: 100%; 
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box; 
+    font-weight: bold;
+}
+
+.flow_theme_default .tip .tip-body {
+    position: relative; 
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
+
+}
+ 
+.flow_theme_default .tip .tip-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: #ffc107; 
+    background-color: white;
+    border: 1px solid #ffc107;
+    font-size: 10px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 3px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_default .tip:hover .tip-remove-btn{
+    display: block;
+}
+
+
+.flow_theme_default .tip .tip-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair;
+    padding: 0px;
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_default .tip:hover .tip-ep{
+    display: block;
+} 
+
+.flow_theme_default .tip .tip-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+ 
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_default .tip:hover .tip-resize {
+    display: block;
+}
+/* tip end */
+
+
 /*
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 flow_theme_icon
 */
+
+/* action drag begin */
 .flow_theme_icon .action-drag {
     position: absolute;
     z-index: 855;
@@ -764,6 +935,21 @@ flow_theme_icon
     background-color: transparent;
     white-space:nowrap;
 }
+
+
+.flow_theme_icon .action-drag .action-icon{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    text-align: center;
+}
+.flow_theme_icon .action-drag .action-icon img{
+    width: auto;
+    height: 100%;
+}
+
+
+/* group drag begin */
 .flow_theme_icon .group-drag {
     position: absolute;
     z-index: 5;
@@ -798,16 +984,86 @@ flow_theme_icon
     text-align: left;
 }
 
-.flow_theme_icon .action-drag .action-icon{
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
+/* list drag begin */ 
+.flow_theme_icon .list-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_icon .list-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: rgba(255, 255, 255);
+    border-radius: 5px;
+    cursor: pointer;
     text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
 }
-.flow_theme_icon .action-drag .action-icon img{
-    width: auto;
-    height: 100%;
+.flow_theme_icon .list-drag .list-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.6);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
 }
+/* list drag end */
+
+
+
+/* tip drag begin */ 
+.flow_theme_icon .tip-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_icon .tip-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    z-index: 5; 
+    background-color: #fff090; 
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+.flow_theme_icon .tip-drag .tip-header{
+    position: relative;
+    height: 20px;
+    width: 100%;  
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* tip drag end */
+
+
 
 .flow_theme_icon .action-container {
     color: #434343;
@@ -990,13 +1246,13 @@ flow_theme_icon
     z-index: 100;
     top:  calc(50% - 8px); 
     right: 0px;
-    border-radius: 8px;
-    width: 16px;
-    height: 16px;
-    line-height: 14px;
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
-    font-size: 12px;
+    font-size: 10px;
     cursor: crosshair;
 
     background-color: white;
@@ -1244,12 +1500,12 @@ flow_theme_icon
     right:  3px;
     top: calc(50% - 7px);
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
-    font-size: 12px;
+    font-size: 10px;
     cursor: crosshair;
     padding: 0px;
 
@@ -1302,6 +1558,250 @@ flow_theme_icon
     display: block;
 }
 
+
+
+
+/* list */
+.flow_theme_icon .list {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_icon .list-main {
+    width: 150px;
+    height: 200px;
+    min-width: 100px;
+    min-height: 20px;
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 1);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_icon .list .list-header {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 1);
+    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    padding-left: 10px;
+    color: white;
+    box-sizing: border-box;
+} 
+.flow_theme_icon .list .list-body {
+    position: relative;
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.flow_theme_icon .list .list-body .list-item {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(128, 128, 128, 0.1);
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    cursor: default;
+}
+.flow_theme_icon .list .list-body .list-item .list-item-title{
+    width: 100%;
+    height: 100%;
+    color: rgba(128, 128, 128, 1);
+}
+.flow_theme_icon .list .list-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: white; 
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_icon .list:hover .list-remove-btn{
+    display: block;
+}
+
+ 
+.flow_theme_icon .list .list-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_icon .list:hover .list-resize {
+    display: block;
+}
+
+/* end list */
+
+
+/* tip */
+.flow_theme_icon .tip {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_icon .tip-main {
+    width: 150px;
+    height: 100px;  
+    min-height: 60px;
+    min-width: 60px;
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+
+    background-color: #fff090; 
+    overflow: hidden;
+}
+
+
+.flow_theme_icon .tip-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.flow_theme_icon .tip .tip-header {
+    position: relative;
+    height: 20px;
+    width: 100%; 
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box; 
+    font-weight: bold;
+}
+
+.flow_theme_icon .tip .tip-body {
+    position: relative; 
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
+
+}
+ 
+.flow_theme_icon .tip .tip-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: #ffc107; 
+    background-color: white;
+    border: 1px solid #ffc107;
+    font-size: 10px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 3px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_icon .tip:hover .tip-remove-btn{
+    display: block;
+}
+
+
+.flow_theme_icon .tip .tip-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair;
+    padding: 0px;
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_icon .tip:hover .tip-ep{
+    display: block;
+} 
+
+.flow_theme_icon .tip .tip-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+ 
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_icon .tip:hover .tip-resize {
+    display: block;
+}
+/* tip end */
+
+
 /*
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1310,7 +1810,7 @@ flow_theme_icon
 flow_theme_zone
 
 */
-
+/* action drag bein */
 .flow_theme_zone .action-drag {
     position: absolute;
     z-index: 5; 
@@ -1351,7 +1851,7 @@ flow_theme_zone
     writing-mode: tb-lr;/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
 }
 
-
+/* group drag begin */
 .flow_theme_zone .group-drag {
     position: absolute;
     z-index: 5;
@@ -1390,6 +1890,87 @@ flow_theme_zone
     box-sizing: border-box;
     text-align: left;
 }
+
+
+/* list drag begin */ 
+.flow_theme_zone .list-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .list-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: rgba(255, 255, 255);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+.flow_theme_zone .list-drag .list-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.6);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* list drag end */
+
+/* tip drag begin */ 
+.flow_theme_zone .tip-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .tip-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    z-index: 5; 
+    background-color: #fff090; 
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .tip-drag .tip-header{
+    position: relative;
+    height: 20px;
+    width: 100%;  
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* tip drag end */
+
+
+
 
 .flow_theme_zone .action-container{
     position: absolute;
@@ -1561,13 +2142,13 @@ flow_theme_zone
     top: calc(50% - 4px);
     right:  3px;
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
 
-    font-size: 12px;
+    font-size: 10px;
     cursor: crosshair;
 
     background-color: white;
@@ -1875,12 +2456,12 @@ flow_theme_zone
     right:  3px;
     top: calc(50% - 7px);
     border-radius: 3px;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     padding: 0px;
-    font-size: 12px;
+    font-size: 10px;
     cursor: crosshair;
     padding: 0px;
 
@@ -1894,6 +2475,109 @@ flow_theme_zone
 }
 
 .flow_theme_zone .group .group-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+    border-radius: 3px;
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+
+.flow_theme_zone .group:hover .group-resize {
+    display: block;
+}
+
+/* list */
+.flow_theme_zone .list {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .list-main {
+    width: 150px;
+    height: 200px;
+    min-width: 100px;
+    min-height: 20px;
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 1);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_zone .list .list-header {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 1);
+    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    padding-left: 10px;
+    color: white;
+    box-sizing: border-box;
+} 
+.flow_theme_zone .list .list-body {
+    position: relative;
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.flow_theme_zone .list .list-body .list-item {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(128, 128, 128, 0.1);
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    cursor: default;
+}
+.flow_theme_zone .list .list-body .list-item .list-item-title{
+    width: 100%;
+    height: 100%;
+    color: rgba(128, 128, 128, 1);
+}
+.flow_theme_zone .list .list-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: white; 
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_zone .list:hover .list-remove-btn{
+    display: block;
+}
+
+ 
+.flow_theme_zone .list .list-resize {
     display: none;
     position: absolute;
     z-index: 2;
@@ -1911,7 +2595,141 @@ flow_theme_zone
     border-right: 7px solid rgba(128, 128, 128, 0.3);
     border-bottom: 7px solid rgba(128, 128, 128, 0.3);
 }
-
-.flow_theme_zone .group:hover .group-resize {
+.flow_theme_zone .list:hover .list-resize {
     display: block;
 }
+
+/* end list */
+
+/* tip */
+.flow_theme_zone .tip {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+    
+   
+}
+.flow_theme_zone .tip-main {
+    width: 150px;
+    height: 100px;  
+    min-height: 60px;
+    min-width: 60px;
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+
+    background-color: #fff090; 
+    overflow: hidden;
+}
+
+
+.flow_theme_zone .tip-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.flow_theme_zone .tip .tip-header {
+    position: relative;
+    height: 20px;
+    width: 100%; 
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box; 
+    font-weight: bold;
+}
+
+.flow_theme_zone .tip .tip-body {
+    position: relative; 
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
+
+}
+ 
+.flow_theme_zone .tip .tip-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: #ffc107; 
+    background-color: white;
+    border: 1px solid #ffc107;
+    font-size: 10px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 3px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_zone .tip:hover .tip-remove-btn{
+    display: block;
+}
+
+
+.flow_theme_zone .tip .tip-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair;
+    padding: 0px;
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_zone .tip:hover .tip-ep{
+    display: block;
+} 
+
+.flow_theme_zone .tip .tip-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+ 
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_zone .tip:hover .tip-resize {
+    display: block;
+}
+/* tip end */

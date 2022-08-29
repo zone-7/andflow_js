@@ -12,23 +12,37 @@ flow_themes.flow_theme_default={
     default_link_color:"#BBBBBB", 
     default_link_color_hover:"#007bff",
     
-    default_link_color_g:"#DDDDDD",
+    default_link_color_g:"#BBBBBB",
     default_link_color_g_hover:"#007bff",
+
+    default_link_color_t:"#BBBBBB",
+    default_link_color_t_hover:"#007bff",
+
 
     default_link_strokeWidth:2,
     default_link_strokeWidth_hover:2, 
+
     default_link_strokeWidth_g:8, 
     default_link_strokeWidth_g_hover:8,
+
+    default_link_strokeWidth_t:1, 
+    default_link_strokeWidth_t_hover:2,
+
 
     default_link_outlineWidth:8, 
     default_link_outlineWidth_hover:8,
     default_link_outlineWidth_g:8,
     default_link_outlineWidth_g_hover:8,
+    default_link_outlineWidth_t:5,
+    default_link_outlineWidth_t_hover:5,
+
 
     default_link_radius:2,
     default_link_radius_hover:2,
     default_link_radius_g:5,  
     default_link_radius_g_hover:5, 
+    default_link_radius_t:2,  
+    default_link_radius_t_hover:2, 
 
     default_link_color_error:"#b0413f",
     default_link_radius_error:5,
@@ -80,11 +94,15 @@ flow_themes.flow_theme_default={
 flow_themes.flow_theme_icon={
     is_body_resizable:true,
 
-    default_link_color:"#bbbbbb",
+    default_link_color:"#BBBBBB",
     default_link_color_hover:"#007bff",
 
-    default_link_color_g:"#cccccc", 
+    default_link_color_g:"#BBBBBB", 
     default_link_color_g_hover:"#007bff",
+
+    default_link_color_t:"#BBBBBB", 
+    default_link_color_t_hover:"#007bff",
+
 
     default_link_radius:5,
     default_link_radius_hover:5,
@@ -92,19 +110,29 @@ flow_themes.flow_theme_icon={
     default_link_radius_g:5,
     default_link_radius_g_hover:5,
 
+    default_link_radius_t:5,
+    default_link_radius_t_hover:5,
+
+
     default_link_strokeWidth:2,
     default_link_strokeWidth_hover:2,
 
     default_link_strokeWidth_g:8, 
     default_link_strokeWidth_g_hover:8,
 
+    default_link_strokeWidth_t:1, 
+    default_link_strokeWidth_t_hover:2,
+
+
     default_link_outlineWidth:8,
     default_link_outlineWidth_hover:8,
 
     default_link_outlineWidth_g:8,
     default_link_outlineWidth_g_hover:8,
- 
 
+    default_link_outlineWidth_t:5,
+    default_link_outlineWidth_t_hover:5,
+ 
     default_link_color_error:"#b0413f",
     default_link_radius_error:5,
     default_link_strokeWidth_error:2,
@@ -125,7 +153,6 @@ flow_themes.flow_theme_icon={
     default_link_strokeWidth_reject:2,
     default_link_outlineWidth_reject:8,
 
-
     default_endpoint_stroke_color:"transparent",
     default_endpoint_stroke_color_hover:"#007bff",
     default_endpoint_fill_color:"transparent",
@@ -135,7 +162,6 @@ flow_themes.flow_theme_icon={
 
     default_endpoint_strokeWidth:1,
     default_endpoint_strokeWidth_hover:1,
-
 
     default_endpoint_stroke_color_error:"#b0413f",
     default_endpoint_fill_color_error:"#b0413f",
@@ -158,23 +184,40 @@ flow_themes.flow_theme_zone={
 
     default_link_color:"#BBBBBB",
     default_link_color_hover:"#007bff",
-    default_link_color_g:"#DDDDDD",
+    
+    default_link_color_g:"#BBBBBB",
     default_link_color_g_hover:"#007bff",
+
+    default_link_color_t:"#BBBBBB",
+    default_link_color_t_hover:"#007bff",
 
     default_link_radius:5,
     default_link_radius_hover:5,
+
     default_link_radius_g:5,
     default_link_radius_g_hover:5,
 
+    default_link_radius_t:2,
+    default_link_radius_t_hover:2,
+
     default_link_strokeWidth:2,
     default_link_strokeWidth_hover:2,
+
     default_link_strokeWidth_g:8,
     default_link_strokeWidth_g_hover:8,
+
+    default_link_strokeWidth_t:1,
+    default_link_strokeWidth_t_hover:2,
     
     default_link_outlineWidth:8,
     default_link_outlineWidth_hover:8,
+
     default_link_outlineWidth_g:8,
     default_link_outlineWidth_g_hover:8,
+
+
+    default_link_outlineWidth_t:5,
+    default_link_outlineWidth_t_hover:5,
 
     default_link_color_error:"#b0413f",
     default_link_radius_error:5,

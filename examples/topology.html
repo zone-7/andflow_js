@@ -11,7 +11,7 @@
     <script src="../js/jquery-ui.min.js"></script>
     <script src="../js/jsplumb.min.js"></script>
     <script src="../js/html2canvas.min.js"></script>
-    <script src="../js/canvg.js"></script>
+    <!-- <script src="../js/canvg.js"></script> -->
 
     <link rel="stylesheet" href="../css/andflow.css">
     <link rel="stylesheet" href="../css/andflow_themes.css">
@@ -19,15 +19,16 @@
     <script src="../js/andflow.js"></script>
     <script src="../js/andflow_themes.js"></script> 
  
+	<link  rel="stylesheet"  href="../css/demo.css" > 
+    <script  src="../js/demo.js" ></script>
 </head>
-<body>
-    <link  rel="stylesheet"  href="../css/demo.css" > 
+<body> 
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="../index.html" >Andflow</a></div>
+        <div class="title"><a href="index.html" >Andflow</a></div>
 		<div class="subtitle">拓扑图</div>
         <div class="menus">
-            <a href="../index.html">Demos</a>
+            <a href="index.html">Demos</a>
             <a href="https://github.com/zone-7/andflow_js">Github</a>
         </div>
     </div>
@@ -35,14 +36,8 @@
 <div id="andflow" style="width: 100%;height: 500px;padding:0px;">
 </div>
  
-</body>
-<script>
-
-
-</script>
-<script>
-  
-
+</body> 
+<script> 
     var flowModel= {
 	"code": "",
 	"name": "",
@@ -221,7 +216,7 @@
 			"top": "33px",
 			"width": "251px",
 			"height": "310px",
-			"actions": [
+			"members": [
 				"7900d2c450d0459488dd04f4daa0430d",
 				"2b4c16b7d33d4cffb59efa32c57ea4ae",
 				"8d8b301346484b04a29f67e61379fb6b",
@@ -235,7 +230,7 @@
 			"top": "218px",
 			"width": "250px",
 			"height": "144px",
-			"actions": [
+			"members": [
 				"4f2ea312405d4bce9b718b315d89d151",
 				"7b39b46b01914094a0bd206fd9a1d516",
 				"5e4beeb5d8764110857f7a2778ba7d0b"
@@ -247,12 +242,12 @@
 
 
     var options={
-        // tags:tags,            //组件过滤标签列表
-        // metadata:metadata,    //组件元素
+        tags:tags,            //组件过滤标签列表
+        metadata:metadata,    //组件元素
         flowModel:flowModel,  //流程模型
         img_path: "../img/meta/",
-        show_grid: false,
-        editable:false,   //是否可编辑，默认true
+        show_grid: true,
+        editable:true,   //是否可编辑，默认true
         render_action:function(metadata,action,html){ return html; },//节点渲染
         render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
         render_state_list: function(datas){return null},             //流程状态列表渲染

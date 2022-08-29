@@ -661,7 +661,7 @@ div{
     display: none;
 }
 
-.andflow.state .action .btn-remove{
+.andflow.state .action .action-remove-btn{
     display: none;
     visibility: hidden;
 }
@@ -692,9 +692,41 @@ div{
     visibility: hidden;
 }
 
+
+.andflow.state .list .list-remove-btn{
+    display: none;
+    visibility: hidden;
+}
+
+.andflow.state .list .list-resize{
+    display: none;
+    visibility: hidden;
+}
+.andflow.state .list .list-ep{
+    display: none;
+    visibility: hidden;
+}
+
+
+.andflow.state .tip .tip-remove-btn{
+    display: none;
+    visibility: hidden;
+}
+
+.andflow.state .tip .tip-resize{
+    display: none;
+    visibility: hidden;
+}
+.andflow.state .tip .tip-ep{
+    display: none;
+    visibility: hidden;
+} 
+
 .jtk-drag-hover {
     outline:4px solid #ffc107;
 }
+
+
 
 .animationLabel{
  background-color: red;
@@ -707,3 +739,4 @@ div{
     position: absolute;
     z-index: 5;
 }
+

@@ -374,7 +374,7 @@ var andflow = {
     });
 
     $('#' + containerId).find('.flow_thumbnail_mask').mousedown(function (e) {
-           
+        
         var xx = e.offsetX;
         var yy = e.offsetY;
          

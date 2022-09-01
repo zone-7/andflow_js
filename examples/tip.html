@@ -7,11 +7,10 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow-erd</title>
 
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/jquery.min.js"></script> 
     <script src="../js/jsplumb.min.js"></script>
     <script src="../js/html2canvas.min.js"></script>
-    <!-- <script src="../js/canvg.js"></script> -->
+    <script src="../js/canvg.js"></script>
 
     <link rel="stylesheet" href="../css/andflow.css">
     <link rel="stylesheet" href="../css/andflow_themes.css">
@@ -120,23 +119,16 @@
         },
         //连线单击事件
         event_link_click: function (link) {
-           
+			var label = prompt("set link label", (link.label ||'') );
+             
+            link.label=label;
+            
+            andflow.setLinkInfo(link);  
         },
         //连线双击事件
         event_link_dblclick: function (link) {
-
-            var label = prompt("set link labels, split by ',' ", (link.label_source||'')+","+(link.label_target||''));
+		 
             
-            var labels = label.split(",");
-            if(labels.length>0){
-                link.label_source=labels[0];
-            }
-
-            if(labels.length>1){
-                link.label_target=labels[1];
-            }
-            
-            andflow.setLinkInfo(link);  
         },
 
         //画图板单击事件

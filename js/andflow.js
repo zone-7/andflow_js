@@ -72,8 +72,9 @@ var andflow = {
   _timer_link: null,
   _timer_group: null,
   _timer_action: null,
-  _timer_thumbnail: null,
-  _timeout_thumbnail: true,
+  _timer_thumbnail: null, 
+
+  _drag_name: null,
 
   _icon_nav:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
   _icon_eye:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
@@ -168,6 +169,7 @@ var andflow = {
 
     //begin flow_thumbnail
     html += '<div class="flow_thumbnail">';
+    html += '<div class="flow_thumbnail_mask"></div>'
     html += '</div>';
     //end flow_thumbnail
 
@@ -178,6 +180,7 @@ var andflow = {
     }
     
     html += '<div id="canvasContainer" class="canvasContainer" style="'+bgstyle+'">'; 
+ 
     html += '<div id="canvas" class="canvas"></div>';  
     html += '</div>'; 
     //end canvasContainer
@@ -275,26 +278,35 @@ var andflow = {
       masker.attr("drag","true");
       masker.attr("offset_x",e.offsetX);
       masker.attr("offset_y",e.offsetY);
-      masker.css("cursor","move");
+      masker.addClass("canvas-move");
+
       $this._resizeCanvas();
 
     });
     $('#' + containerId).find('.canvas').bind('mouseup',function(e){
       var masker = $('#' + containerId).find('.canvas');
+      
+      var drag = masker.attr("drag");
+      if(drag=="true"){
+        $this._onCanvasChanged();
+      }
 
       masker.attr("drag","false");
       masker.attr("offset_x",e.offsetX);
       masker.attr("offset_y",e.offsetY); 
-      masker.css("cursor","auto");
+      masker.removeClass("canvas-move");
+ 
+
     });
+
     $('#' + containerId).find('.canvas').bind('mouseout',function(e){
       var masker = $('#' + containerId).find('.canvas');
 
       masker.attr("drag","false");
       masker.attr("offset_x",e.offsetX);
       masker.attr("offset_y",e.offsetY); 
-      masker.css("cursor","auto");
     });
+
     $('#' + containerId).find('.canvas').bind('mousemove',function(e){
       var masker = $('#' + containerId).find('.canvas'); 
       var drag = masker.attr("drag");
@@ -312,9 +324,7 @@ var andflow = {
         scrollTop = canvasContainer.scrollTop() - offsetY;
 
         canvasContainer.scrollLeft(scrollLeft); 
-        canvasContainer.scrollTop(scrollTop);
-         
-      
+        canvasContainer.scrollTop(scrollTop); 
       }
     });
 
@@ -345,15 +355,9 @@ var andflow = {
     });
 
     //thumbnail
-    $('#' + containerId)
-      .find('.thumbnail_btn')
-      .css('background-image', 'url(' + this._icon_eye_close + ')');
-    $('#' + containerId)
-      .find('.thumbnail_btn')
-      .attr('state', 'close');
-    $('#' + containerId)
-      .find('.thumbnail_btn')
-      .bind('click', function (e) {
+    $('#' + containerId).find('.thumbnail_btn').css('background-image', 'url(' + this._icon_eye_close + ')');
+    $('#' + containerId).find('.thumbnail_btn').attr('state', 'close');
+    $('#' + containerId).find('.thumbnail_btn').bind('click', function (e) {
         var element = $('#' + $this.containerId).find('.flow_thumbnail');
         var btn = $('#' + $this.containerId).find('.thumbnail_btn');
         var state = btn.attr('state');
@@ -367,8 +371,49 @@ var andflow = {
           element.show();
           $this._showThumbnail();
         }
-      });
+    });
+
+    $('#' + containerId).find('.flow_thumbnail_mask').mousedown(function (e) {
+           
+        var xx = e.offsetX;
+        var yy = e.offsetY;
+         
+        $('#' + $this.containerId).mousemove(function (e) {
+          var el = $('#' + $this.containerId).find('.flow_thumbnail_mask');
+          if(el.length>0){
+            var x = e.pageX - el.parent().offset().left - xx;
+            var y = e.pageY - el.parent().offset().top - yy;
+            if(x<0){
+              x =0 ;
+            }
+            if(y<0){
+              y=0;
+            }
+
+            if(x+el.outerWidth()>el.parent().width()){ 
+              x = (el.parent().width()-el.outerWidth()); 
+            }
+            if(y+el.outerHeight()>el.parent().height()){
+              y= (el.parent().height()-el.outerHeight());
+            }
+          
+            el.css("left",x+"px");
+            el.css("top",y+"px"); 
+
+            var sca = $('#' + $this.containerId).find(".canvas").parent().width()/el.width();
+
+            var l = el.position().left * sca;
+            var t = el.position().top * sca;
+            $('#' + $this.containerId).find(".canvas").parent().scrollLeft(l);
+            $('#' + $this.containerId).find(".canvas").parent().scrollTop(t);
+
+          }
+          
+        });
+    });    
+
   },
+ 
  
   //定时动画
   _initAnimaction: function(){
@@ -437,9 +482,22 @@ var andflow = {
     var $this = this;
 
     $('#' + $this.containerId).mouseup(function (e) {
+      
       $(this).unbind('mousemove');
       $(this).css('cursor', 'default');
+      $this._drag_name=null;
+      $('#drag_helper').remove();
+
     });
+    $(document).mouseup(function(e){
+      
+      $('#' + $this.containerId).unbind('mousemove');
+      $('#' + $this.containerId).css('cursor', 'default');
+      $this._drag_name=null;
+      $('#drag_helper').remove();
+    })
+
+
   },
   //初始化样式
   _initTheme: function (theme) {
@@ -493,70 +551,63 @@ var andflow = {
     } else {
       $this._showMetadata('');
     }
-
-    $('#canvas').droppable({
-      scope: 'plant',
-      drop: function (event, ui) {
-           
-        var name = $(ui.draggable).attr('action_name'); 
-        var left = parseInt(ui.offset.left - $(this).offset().left);
-        var top = parseInt(ui.offset.top - $(this).offset().top);
-        var metaInfo = $this.getMetadata(name);
-
-        if(metaInfo.tp=="group"){
-          var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
-          var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
-           
-          $this._createGroup(group);
-
-        }else if(metaInfo.tp=="list"){
-          var listId = 'list_'+jsPlumbUtil.uuid().replaceAll('-', '');
-          var list = { id: listId, name:metaInfo.name, left: left, top: top, items:[]};
-           
-          $this._createList(list);
-
-        }else if(metaInfo.tp=="tip"){
-          var tipId = 'tip_'+jsPlumbUtil.uuid().replaceAll('-', '');
-          var tip = { id: tipId, name:metaInfo.name, left: left, top: top, content:""};
-           
-          $this._createTip(tip);
-
-        }else{
-          var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
-          var action = { id: actionId, left: left, top: top, name: name, params: {} };
-
-          if (metaInfo != null) {
-            for (var i in metaInfo.params) {
-              var p = metaInfo.params[i];
-              var name = p.name;
-              var defaultValue = p.default;
-              if (defaultValue) {
-                action.params[name] = defaultValue;
-              }
-            }
-          }
-
-          //开始节点只有一个
-          if (name == 'begin') {
-            if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
-              return;
-            }
-          }
-          //结束节点只有一个
-          if (name == 'end') {
-            if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
-              return;
-            }
-          }
-
-          $this._createAction(action);
-
-        }
-
-      },
-    });
+ 
   },
+  _dropComponent:function(name,left,top){
+    var $this = this;
+         
+    var metaInfo = $this.getMetadata(name);
 
+    if(metaInfo.tp=="group"){
+      var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
+        
+      $this._createGroup(group);
+
+    }else if(metaInfo.tp=="list"){
+      var listId = 'list_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var list = { id: listId, name:metaInfo.name, left: left, top: top, items:[]};
+        
+      $this._createList(list);
+
+    }else if(metaInfo.tp=="tip"){
+      var tipId = 'tip_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var tip = { id: tipId, name:metaInfo.name, left: left, top: top, content:""};
+        
+      $this._createTip(tip);
+
+    }else{
+      var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
+      var action = { id: actionId, left: left, top: top, name: name, params: {} };
+
+      if (metaInfo != null) {
+        for (var i in metaInfo.params) {
+          var p = metaInfo.params[i];
+          var name = p.name;
+          var defaultValue = p.default;
+          if (defaultValue) {
+            action.params[name] = defaultValue;
+          }
+        }
+      }
+
+      //开始节点只有一个
+      if (name == 'begin') {
+        if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
+          return;
+        }
+      }
+      //结束节点只有一个
+      if (name == 'end') {
+        if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
+          return;
+        }
+      }
+
+      $this._createAction(action);
+
+    }
+  },
   _initPlumb: function () {
     var $this = this;
 
@@ -632,15 +683,24 @@ var andflow = {
         [
           'Label',
           {
+            label: 'X',
+            id: 'label_remove',
+            cssClass: 'linkBtn',
+            visible: false,
+            events: {
+              tap: function (conn, e) {  
+                $this._plumb.deleteConnection(conn.component); 
+              },
+            },
+          },
+        ],
+        [
+          'Label',
+          {
             label: '',
             id: 'label',
             cssClass: 'linkLabel',
-            visible: false,
-            events: {
-              tap: function (conn, e) {
-                //alert(conn);
-              },
-            },
+            visible: false
           },
         ],
         [
@@ -650,12 +710,7 @@ var andflow = {
             location: 20, 
             label: '',
             cssClass: 'linkLabelSource',
-            visible: false,
-            events: {
-              tap: function (conn, e) {
-                //alert(conn);
-              },
-            },
+            visible: false
           },
         ],
         [
@@ -665,12 +720,7 @@ var andflow = {
             location: -20, 
             label: '',
             cssClass: 'linkLabelTarget',
-            visible: false,
-            events: {
-              tap: function (conn, e) {
-                //alert(conn);
-              },
-            },
+            visible: false
           },
         ],
         [
@@ -790,6 +840,8 @@ var andflow = {
 
     this._plumb.bind('click', function (conn, event) {
       if ($this.editable) {
+        event.preventDefault();
+
         if ($this.event_link_click && $this.event_link_dblclick) {
           $this._timer_link && clearTimeout($this._timer_link);
           $this._timer_link = setTimeout(function () {
@@ -803,19 +855,22 @@ var andflow = {
           var targetId = conn.targetId;
           var link = $this.getLinkInfo(sourceId, targetId);
           $this.event_link_click(link);
+
         }
       }
     });
 
     this._plumb.bind('dblclick', function (conn, event) {
-      if ($this.editable) {
+      event.preventDefault();
+     
+      if ($this.editable) { 
         if ($this.event_link_dblclick) {
           $this._timer_link && clearTimeout($this._timer_link);
           var sourceId = conn.sourceId;
           var targetId = conn.targetId;
           var link = $this.getLinkInfo(sourceId, targetId);
+          $this.event_link_dblclick(link); 
 
-          $this.event_link_dblclick(link);
         }
       }
     });
@@ -880,13 +935,13 @@ var andflow = {
 
         var img = '';
         if (icon && icon.length > 0) {
-          img = '<img src="' + ($this.img_path || '') + icon + '"  />';
+          img = '<img src="' + ($this.img_path || '') + icon + '" draggable="false" />';
         }
 
         var element_str =
           '<li id="' +
           name +
-          '" action_name="' +
+          '"  action_name="' +
           name +
           '" action_title="' +
           title +
@@ -905,78 +960,127 @@ var andflow = {
       index++;
     }
 
-    //初始化拖拽设置
-    $('#actionMenu li.actionMenuItem').draggable({
-      helper: function (event) {
-        var action_name = $(this).attr('action_name');
-        var tp = $(this).attr('action_tp');
+    $('#actionMenu li.actionMenuItem').bind("mousedown", function(e){
+      var el = $(this);  
 
-        var title = $(this).attr('action_title');
-        var icon = $(this).attr('action_icon');
-        var metadata = $this.getMetadata(action_name);
-        
-        var helperEl = $('<div class="action-drag"></div>');
 
-        var contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
-          ($this.img_path || '') +
-          icon + '"/></div></div>'); 
+      //如果是编码状态不可拖动
+      if($('#codeContainer').is(':visible')){
+        return;
+      }
 
-        if(metadata.tp=="group") {
-          helperEl = $('<div class="group-drag"></div>');
-          contentEl = $('<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>');
-        }else if(metadata.tp=="list") {
-          helperEl = $('<div class="list-drag"></div>');
-          contentEl = $('<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>');
-        }else if(metadata.tp=="tip") {
-          helperEl = $('<div class="tip-drag"></div>');
-          contentEl = $('<div class="tip-drag-main"><div class="tip-header"></div><div class="tip-body">' + title + '</div></div>');
-        }else{
-          helperEl = $('<div class="action-drag"></div>');
 
-          contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
-          ($this.img_path || '') +
-          icon + '"/></div></div>'); 
+      var inner_x = e.offsetX;
+      var inner_y = e.offsetY;
+
+      var name = el.attr("action_name");
+      $this._drag_name = name;
+      console.log(name);
+      
+      $('#' + $this.containerId).find(".andflow").mousemove(function (e) {
+        if($this._drag_name==null){
+          return;
         }
+         
 
-        if(metadata.render) {
-          let r = metadata.render(metadata,null, html);
-          if (r != null && r.length > 0) {
-            contentEl = $(r); 
+        var helper=  $('#' + $this.containerId).find(".andflow").find('#drag_helper');
+        if(helper==null || helper.length==0){
+          helper = $this._createHelper($this._drag_name);
+          if(helper==null){
+            return;
           }
-        }else {
-          if (metadata.tp=="group" && $this.render_group_helper) {
-            let r = $this.render_group_helper(metadata, html);
-            if (r != null && r.length > 0) {
-              contentEl = $(r);  
-            }
-          }else if($this.render_action_helper){
-            let r = $this.render_action_helper(metadata, html);
-            if (r != null && r.length > 0) {
-              contentEl = $(r);  
-            }
-          }
+           
+          $('#' + $this.containerId).find(".andflow").append(helper);
+
         }
-
-       
-
-        helperEl.append(contentEl);
-        // console.log(contentEl.width());
-        // if(contentEl.css("width")!=null && contentEl.css("width")!='0px' && contentEl.css("width")!='auto' && contentEl.css("width")!=''){
-        //   helperEl.css("width",contentEl.css("width"));
-        // }
         
-        // if(contentEl.css("height")!=null && contentEl.css("height")!='0px' && contentEl.css("height")!='auto' && contentEl.css("height")!=''){
-        //   helperEl.css("height",contentEl.css("height"));
-        // }
+        var ll = helper.width()/2 || 10;
+        var tt = helper.height()/2 || 10;
+ 
+        var x = e.pageX - $('#' + $this.containerId).find(".andflow").offset().left - ll;
+        var y = e.pageY - $('#' + $this.containerId).find(".andflow").offset().top - tt;
+
+        helper.css("left",x+"px");
+        helper.css("top",y+"px");
         
-        // contentEl.css("height","100%"); 
-        // contentEl.css("width","100%"); 
-        return helperEl;
-      },
-      scope: 'plant',
+        helper.attr("p_x",ll);
+        helper.attr("p_y",tt);
+
+
+      });
+
     });
-  },
 
+ 
+  },
+  _createHelper: function(action_name){
+    var $this = this;
+
+    if(action_name==null)return;
+    var metadata = $this.getMetadata(action_name);
+    if(metadata==null)return;
+    
+
+
+    var icon = metadata.icon;
+    var title = metadata.title;
+
+    var helperEl = $('<div class="action-drag"></div>');
+
+    var contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
+      ($this.img_path || '') +
+      icon + '"  draggable="false"/></div></div>'); 
+
+    if(metadata.tp=="group") {
+      helperEl = $('<div class="group-drag"></div>');
+      contentEl = $('<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>');
+    }else if(metadata.tp=="list") {
+      helperEl = $('<div class="list-drag"></div>');
+      contentEl = $('<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>');
+    }else if(metadata.tp=="tip") {
+      helperEl = $('<div class="tip-drag"></div>');
+      contentEl = $('<div class="tip-drag-main"><div class="tip-header"></div><div class="tip-body">' + title + '</div></div>');
+    }else{
+      helperEl = $('<div class="action-drag"></div>');
+
+      contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
+      ($this.img_path || '') +
+      icon + '" draggable="false"/></div></div>'); 
+    }
+
+    
+    if(metadata.render_helper) {
+      let r = metadata.render_helper(metadata);
+      if (r != null && r.length > 0) {
+        contentEl = $(r); 
+      }
+    }  
+    
+
+
+    helperEl.append(contentEl);
+    helperEl.attr("id","drag_helper");
+    helperEl.css("position","absolute");
+    helperEl.find("img").attr("draggable","false");
+
+    helperEl.bind("mouseup",function(e){
+      
+      var ll = helperEl.attr("p_x")||10;
+      var tt = helperEl.attr("p_y")||10; 
+      var l = e.pageX - $('#' + $this.containerId).find('.canvas').offset().left - ll*1;
+      var t = e.pageY - $('#' + $this.containerId).find('.canvas').offset().top -  tt*1;
+      
+      if(l >= 0 && t>=0){
+        $this._dropComponent($this._drag_name,l,t);
+      }
+
+     
+
+    });
+
+    return helperEl; 
+
+  },
   _createGroup: function(group){
     var $this= this;
      
@@ -1010,12 +1114,8 @@ var andflow = {
       if (r && r.length > 0) {
         group_main_dom = r;
       }
-    }else if ($this.render_group) {
-      var r = $this.render_group(group_meta, group, group_main_dom);
-      if (r && r.length > 0) {
-        group_main_dom = r;
-      }
-    }
+    } 
+
     group_main_element = $(group_main_dom);
     group_main_element.addClass("group-master");
     groupElement.append(group_main_element);
@@ -1052,40 +1152,24 @@ var andflow = {
     canvasElement.append(groupElement); 
 
     //event
+    groupElement.bind('mouseup', function () {
+      $this._onCanvasChanged();
+    });
     groupElement.find('.group-remove-btn').bind('click', function () {
       var sure = confirm('确定删除分组?');
       if (sure) {
         $this.removeGroup(id);
       }  
     });
-
-    //双击打开配置事件,在设计模式和步进模式下才可以用
-    // groupElement.bind('click', function (event) {
-    //   if ($this.editable) {
-    //     if ($this.event_group_click && $this.event_group_dblclick) {
-    //       $this._timer_group && clearTimeout($this._timer_group);
-    //       $this._timer_group = setTimeout(function () {
-    //         $this.event_group_click(group);
-    //       }, 300);
-    //     } else if ($this.event_group_click) {
-    //       $this.event_group_click(group);
-    //     }
-    //   }
-    // });
-
-    // groupElement.bind('dblclick', function (event) {
-    //   if ($this.editable) {
-    //     if ($this.event_group_dblclick) {
-    //       $this._timer_group && clearTimeout($this._timer_group);
-
-    //       $this.event_group_dblclick(group);
-    //     }
-    //   }
-    // });
-
+ 
     groupElement.find('.group-header').bind('dblclick',function(event){
       if ($this.editable) {
-        var editor=$('<input  />');
+        event.preventDefault();
+        if(groupElement.find('.group-header').find('.content_editor').length>0){
+          return;
+        }
+
+        var editor=$('<input class="content_editor"  />');
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -1117,7 +1201,12 @@ var andflow = {
     });
     groupElement.find('.group-body').bind('dblclick',function(event){
       if ($this.editable) {
-        var editor=$('<textarea></textarea>');
+        event.preventDefault();
+        if(groupElement.find('.group-body').find('.content_editor').length>0){
+          return;
+        }
+        
+        var editor=$('<textarea class="content_editor"></textarea>');
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -1305,7 +1394,9 @@ var andflow = {
       }
       $this._plumb.addToGroup(id, actionElements);
     }
-  
+    
+    $this._onCanvasChanged();
+
   }, //end createGroup
 
   //添加列表
@@ -1341,6 +1432,9 @@ var andflow = {
     
     
     //event
+    listElement.bind('mouseup', function () {
+      $this._onCanvasChanged();
+    });
     listElement.find('.list-remove-btn').bind('click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
@@ -1382,7 +1476,12 @@ var andflow = {
     listElement.find('.list-header').bind('dblclick',function(event){
      
       if ($this.editable) {
-        var editor=$('<input  />');
+        event.preventDefault();
+        if(listElement.find('.list-header').find('.content_editor').length>0){
+          return;
+        }
+
+        let editor=$('<input class="content_editor"  />');
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -1399,6 +1498,7 @@ var andflow = {
           editor.parent().html(value);
           $this._listInfos[id].title = value;
           editor.remove();
+          $this._onCanvasChanged();
         });
         editor.on("keydown",function(e){ 
           if(e.code=="Enter"){
@@ -1406,6 +1506,7 @@ var andflow = {
             editor.parent().html(value);
             $this._listInfos[id].title = value;
             editor.remove();
+            $this._onCanvasChanged();
           } 
          
         });
@@ -1414,7 +1515,13 @@ var andflow = {
     listElement.find('.list-body').bind('dblclick',function(event){
       
       if ($this.editable) {
-        var editor=$('<textarea></textarea>');
+        event.preventDefault();
+        if(listElement.find('.list-body').find('.content_editor').length>0){
+          return;
+        }
+         
+        let editor=$('<textarea></textarea>');
+        editor.addClass("content_editor");
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -1433,21 +1540,27 @@ var andflow = {
         editor.val(rows);
        
         listElement.find('.list-body').append(editor);
-
+       
         editor.focus();
         editor.on("blur",function(e){
-          var value = editor.val(); 
-          editor.remove();
+          
+          var value = $(this).val(); 
+          $(this).remove();
           var rows = value.split("\n");
  
           var items = [];
           for(var i in rows){
             var itemid = 'list_item_'+id+'_'+i;
+            var title=rows[i];
+            if(title==null || title.trim()==""){
+              continue;
+            }
             var item = {id: itemid, title:rows[i]};
             items.push(item);
           }
-          $this._createListItems(id, items);
-          $this.refresh();
+          $this._setListItems(id, items);
+         
+          $this._onCanvasChanged();
          
         });
 
@@ -1475,37 +1588,68 @@ var andflow = {
     });
  
     //items
-    $this._createListItems(id,items); 
+    $this._setListItems(id,items); 
 
+    $this._onCanvasChanged();
   }, //end createList
 
-  _createListItems: function(listid, items){
+  _setListItems: function(listid, items){
     var $this = this;
     
     $this._listInfos[listid].items = items;
 
-    $('#'+listid).find(".list-body").html("");
+    
+    if($("#"+listid).find(".list-item").length>0){  
+      var tobe_dels = [];
+      $("#"+listid).find(".list-item").each(function(index, el){
+         
+        let el_id = $(el).attr("id");
+        let exist = false;
+        for(var i in items){ 
+          if(el_id==items[i].id){
+            exist=true;
+          } 
+        }
+        if(!exist){
+          tobe_dels.push($(el)); 
+        }
+      });
+
+      for(var i in tobe_dels){
+        
+        let el_id = tobe_dels[i].attr("id"); 
+        $this.removeLinkBySource(el_id);
+        $this.removeLinkByTarget(el_id); 
+        $this._plumb.remove(tobe_dels[i].get(0));
+        tobe_dels[i].remove();
+      }
+
+    }
 
     for(var i in items){ 
       var item = items[i];
       if(item.id==null || item.title==null || item.title==''){
         continue;
       }
-
       var id=item.id;
-      var itemEl = $('<div id="'+id+'" class="list-item"><div class="list-item-title">'+(item.title||'')+'</div></div>');
-      $("#"+listid).find(".list-body").append(itemEl);
-      
-      var item_dom = itemEl.get(0);
-      $this._plumb.makeSource(item_dom, {
-        allowLoopback: false,
-        anchor: ["Left", "Right" ]
-      });
-      $this._plumb.makeTarget(item_dom, {
-        allowLoopback: false,
-        anchor: ["Left", "Right" ]
-      }); 
 
+      var itemEl = $("#"+listid).find(".list-body").find("#"+id);
+
+      if(itemEl.length==0){
+        itemEl = $('<div id="'+id+'" class="list-item"><div class="list-item-title"></div></div>');
+        $("#"+listid).find(".list-body").append(itemEl); 
+        var item_dom = itemEl.get(0);
+        $this._plumb.makeSource(item_dom, {
+          allowLoopback: false,
+          anchor: ["Left", "Right" ]
+        });
+        $this._plumb.makeTarget(item_dom, {
+          allowLoopback: false,
+          anchor: ["Left", "Right" ]
+        }); 
+      }
+      itemEl.find(".list-item-title").html(item.title||'');
+      
     }  
     
   },
@@ -1598,13 +1742,7 @@ var andflow = {
       if (r && r.length > 0) {
         action_main_dom = r;
       }
-    }else if ($this.render_action) {
-      var r = $this.render_action(action_meta, action, action_main_dom);
-      if (r && r.length > 0) {
-        action_main_dom = r;
-      }
     }
-
 
     var actionHtml =
       '<div class="action action-container ' + css + '" id="' + id + '" name="' + name +
@@ -1951,6 +2089,9 @@ var andflow = {
     canvasElement.append(tipElement); 
 
     //event
+    tipElement.bind('mouseup', function () {
+      $this._onCanvasChanged();
+    });
     tipElement.find('.tip-remove-btn').bind('click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
@@ -1960,7 +2101,11 @@ var andflow = {
  
     tipElement.find('.tip-header').bind('dblclick',function(event){
       if ($this.editable) {
-        var editor=$('<input  />');
+        if(tipElement.find('.tip-header').find('.content_editor').length>0){
+          return;
+        }
+         
+        var editor=$('<input class="content_editor" />');
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -1977,6 +2122,7 @@ var andflow = {
           editor.parent().html(value);
           $this._tipInfos[id].title = value;
           editor.remove();
+          $this._onCanvasChanged();
         });
         editor.on("keydown",function(e){ 
           if(e.code=="Enter"){ 
@@ -1984,6 +2130,7 @@ var andflow = {
             editor.parent().html(value);
             $this._tipInfos[id].title = value;
             editor.remove();
+            $this._onCanvasChanged();
           } 
          
         });
@@ -1991,7 +2138,10 @@ var andflow = {
     });
     tipElement.find('.tip-body').bind('dblclick',function(event){
       if ($this.editable) {
-        var editor=$('<textarea></textarea>');
+        if(tipElement.find('.tip-body').find('.content_editor').length>0){
+          return;
+        }
+        var editor=$('<textarea class="content_editor"></textarea>');
         editor.css("position","absolute");
         editor.css("z-index","9999");
         editor.css("left","0px");
@@ -2008,15 +2158,12 @@ var andflow = {
 
         editor.focus();
         editor.on("blur",function(e){
-          var value = editor.val(); 
-          
-          $this._tipInfos[id].content = value;
-
-          value = value.replaceAll("\n","<br/>");
-
-          editor.parent().html(value);
-
+          var value = editor.val();  
+          $this._tipInfos[id].content = value; 
+          value = value.replaceAll("\n","<br/>"); 
+          editor.parent().html(value); 
           editor.remove();
+          $this._onCanvasChanged();
         });
 
       } 
@@ -2092,7 +2239,7 @@ var andflow = {
     }); 
  
   }, //end createTip
-
+  //缩略图
   _showThumbnail: function () {
     var $this = this;
 
@@ -2103,13 +2250,36 @@ var andflow = {
     ) {
       return;
     }
-    if (!this._timeout_thumbnail) {
-      return;
-    }
-   
+    //视觉框
+    var canvas = $('#' + $this.containerId).find(".canvas");
+    var canvasView = $('#' + $this.containerId).find(".canvas").parent();
+    var thumbnail=$('#' + $this.containerId).find('.flow_thumbnail');
+
+    // console.log(canvas.height(),canvasView.height(), canvasView.scrollLeft(), canvasView.scrollTop());
+    
+    var full_width = canvas.width(); 
+    var full_height = canvas.height();
+    var canvas_width = canvasView.width();
+    var canvas_height = canvasView.height();
+
+    var scale = thumbnail.width()*1.0/full_width*1.0;
+    $('#' + $this.containerId).find('.flow_thumbnail').height(scale*full_height);
+
+    var mask_w=(canvas_width * scale)+"px"; 
+    var mask_h=(canvas_height * scale)+"px";
+    var mask_l = (canvasView.scrollLeft() * scale)+"px";
+    var mask_t = (canvasView.scrollTop() * scale)+"px";
+    
+    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("width",mask_w);
+    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("height",mask_h);
+    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("left",mask_l);
+    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("top",mask_t);
+    
+
+    //缩略图
     $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
     $this._timer_thumbnail = setTimeout(function () {
-      $this._timeout_thumbnail = false;
+      
       $this.getSnapshot(
         function (canvas) {
           try { 
@@ -2122,13 +2292,13 @@ var andflow = {
 
           } catch (e) {
              console.error(e);
-          } finally {
-            $this._timeout_thumbnail = true;
-          }
+          }  
         },
-        { scale: 0.5, backgroundColor: 'transparent' },
+        { scale: 0.5, backgroundColor: 'transparent' ,ignore_svg: true},
       );
-    }, 100);
+    }, 10);
+
+
   },
   _resizeCanvas: function(){
     //调整canvas大小
@@ -2153,17 +2323,17 @@ var andflow = {
   },
   _onCanvasChanged: function () {
     var $this = this;
-    //显示缩略图
-    $this._showThumbnail();
-
-    $this._resizeCanvas();
-
-    if ($this.event_canvas_changed) {
-      $this.event_canvas_changed();
-    }
-
-
-
+    setTimeout(function(){
+      //显示缩略图
+      $this._showThumbnail(); 
+      //调整画布大晓 
+      $this._resizeCanvas(); 
+      if ($this.event_canvas_changed) {
+        $this.event_canvas_changed();
+      }
+    },50);
+   
+    
   },
 
   _formateDateTime: function (value) {
@@ -2190,8 +2360,7 @@ var andflow = {
   },
  
   //初始化节点
-  _showActionNode: function (el, name) {
-    this._plumb.getContainer().appendChild(el);
+  _showActionNode: function (el, name) { 
     // initialise draggable elements.
     this._plumb.draggable(el);
 
@@ -2235,14 +2404,20 @@ var andflow = {
       link == {};
     }
 
+    //如果与tip连线
+    var istip = link.source_id.indexOf("tip_")>=0 || link.target_id.indexOf("tip_")>=0  ; 
+    //如果是与group连接的线
+    var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
+    var islist = link.source_id.indexOf("list_")>=0 || link.target_id.indexOf("list_")>=0  ; 
+
     var style = link.lineStyle || 'solid';  //solid、dotted 
     var active = link.active || 'true'; 
     var ps = link.paintStyle;
     var hps = link.hoverPaintStyle;
      
 
-     //连线样式
-     var paintStyle = ps || { 
+    //连线样式
+    var paintStyle = ps || { 
       stroke:  this._themeObj.default_link_color,
       radius: this._themeObj.default_link_radius,
       strokeWidth: this._themeObj.default_link_strokeWidth,
@@ -2268,13 +2443,50 @@ var andflow = {
       hoverPaintStyle.dashstyle = '1 0';
     }
     
-
+ 
+    //线条样式 
+    if(istip){ 
+      paintStyle.stroke = this._themeObj.default_link_color_t;
+      paintStyle.radius = this._themeObj.default_link_radius_t;
+      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_t;
+      paintStyle.outlineStroke = 'transparent';
+      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t;
+ 
+      hoverPaintStyle.stroke = this._themeObj.default_link_color_t_hover;
+      hoverPaintStyle.radius = this._themeObj.default_link_radius_t_hover;
+      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_t_hover;
+      hoverPaintStyle.outlineStroke = 'transparent';
+      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t_hover;
+      
+      paintStyle.dashstyle = '5 3';
+      hoverPaintStyle.dashstyle = '5 3';
+      
+     
+    }else if(isgroup){
+       
+      paintStyle.stroke = this._themeObj.default_link_color_g;
+      paintStyle.radius = this._themeObj.default_link_radius_g;
+      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_g;
+      paintStyle.outlineStroke = 'transparent';
+      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g;
+ 
+      hoverPaintStyle.stroke = this._themeObj.default_link_color_g_hover;
+      hoverPaintStyle.radius = this._themeObj.default_link_radius_g_hover;
+      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_g_hover;
+      hoverPaintStyle.outlineStroke = 'transparent';
+      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g_hover;
+       
+ 
+    }  
     conn.setType(linktype);
     conn.setPaintStyle(paintStyle);
     conn.setHoverPaintStyle(hoverPaintStyle);
+     
 
 
-    //arrow
+
+
+    //默认arrow
     conn.getOverlay('arrow_source').setVisible(false);
     conn.getOverlay('arrow_middle').setVisible(false); 
     conn.getOverlay('arrow_target').setVisible(true); 
@@ -2307,7 +2519,6 @@ var andflow = {
         conn.getOverlay('arrow_target').setVisible(false);
       } 
     }
-
  
     
     //动画元素
@@ -2331,68 +2542,33 @@ var andflow = {
     var linkLabelTarget = $('<div/>')
     .text(link.label_target || '')
     .html();
+   
     conn.getOverlay('label_target').setVisible(linkLabelTarget.length > 0);
     conn.getOverlay('label_target').setLabel(linkLabelTarget);
-
-
-    //特殊处理
-    //如果与tip连线
-    var istip = link.source_id.indexOf("tip_")>=0 || link.target_id.indexOf("tip_")>=0  ; 
-    //如果是与group连接的线
-    var isgroup = this._isGroup(link.source_id) || this._isGroup(link.target_id) ;
-     
-
-    if(istip){ 
-      paintStyle.stroke = this._themeObj.default_link_color_t;
-      paintStyle.radius = this._themeObj.default_link_radius_t;
-      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_t;
-      paintStyle.outlineStroke = 'transparent';
-      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t;
  
-      hoverPaintStyle.stroke = this._themeObj.default_link_color_t_hover;
-      hoverPaintStyle.radius = this._themeObj.default_link_radius_t_hover;
-      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_t_hover;
-      hoverPaintStyle.outlineStroke = 'transparent';
-      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_t_hover;
-      
-      paintStyle.dashstyle = '5 3';
-      hoverPaintStyle.dashstyle = '5 3';
-      
-      conn.setType(linktype);
-      conn.setPaintStyle(paintStyle);
-      conn.setHoverPaintStyle(hoverPaintStyle);
-       
+
+    //删除按钮 
+    if(link.show_remove || islist){
+      conn.getOverlay('label_remove').setVisible(true); 
+    }else{ 
+      conn.getOverlay('label_remove').setVisible(false); 
+    }
+
+    //箭头
+    if(istip){
       conn.getOverlay('arrow_source').setVisible(false);
       conn.getOverlay('arrow_middle').setVisible(false); 
       conn.getOverlay('arrow_target').setVisible(false); 
         
-    }else if(isgroup){
-       
-      paintStyle.stroke = this._themeObj.default_link_color_g;
-      paintStyle.radius = this._themeObj.default_link_radius_g;
-      paintStyle.strokeWidth = this._themeObj.default_link_strokeWidth_g;
-      paintStyle.outlineStroke = 'transparent';
-      paintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g;
- 
-      hoverPaintStyle.stroke = this._themeObj.default_link_color_g_hover;
-      hoverPaintStyle.radius = this._themeObj.default_link_radius_g_hover;
-      hoverPaintStyle.strokeWidth =  this._themeObj.default_link_strokeWidth_g_hover;
-      hoverPaintStyle.outlineStroke = 'transparent';
-      hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g_hover;
-      
-      conn.setType(linktype);
-      conn.setPaintStyle(paintStyle);
-      conn.setHoverPaintStyle(hoverPaintStyle);
-    
- 
+    }else if(isgroup){ 
       conn.getOverlay('arrow_source').width = this._themeObj.default_link_strokeWidth_g * 3;
       conn.getOverlay('arrow_source').length = this._themeObj.default_link_strokeWidth_g * 3; 
       conn.getOverlay('arrow_target').width = this._themeObj.default_link_strokeWidth_g * 3;
       conn.getOverlay('arrow_target').length = this._themeObj.default_link_strokeWidth_g * 3; 
       conn.getOverlay('arrow_middle').width = this._themeObj.default_link_strokeWidth_g * 3;
       conn.getOverlay('arrow_middle').length = this._themeObj.default_link_strokeWidth_g * 3;
-    } 
- 
+    }
+    
 
     conn.data = link; 
 
@@ -2627,7 +2803,7 @@ var andflow = {
     }
     list.items = items;
     this._listInfos[id] = list;
-    this._createListItems(id, items);
+    this._setListItems(id, items);
     this.refresh();
   },
   getTipInfo: function(id){
@@ -2782,6 +2958,44 @@ var andflow = {
     }
 
     $this._onCanvasChanged();
+  },
+  removeLinkBySource: function (sourceId) {
+    var $this = this;
+    var conns = $this.getConnectionsBySource(sourceId);
+    for(var i in conns){
+      var conn = conns[i];
+      var targetId = conn["targetId"];
+      $this.delLinkInfo(sourceId, targetId);
+
+      $this._plumb.deleteConnection(conn);
+      $this._plumb.repaintEverything();
+  
+      if ($this.event_link_remove) {
+        var link_info = this._linkInfos[sourceId + '-' + targetId];
+        $this.event_link_remove(link_info);
+      }
+  
+      $this._onCanvasChanged(); 
+    } 
+  },
+  removeLinkByTarget: function (targetId) {
+    var $this = this;
+    var conns = $this.getConnectionsByTarget(targetId);
+    for(var i in conns){
+      var conn = conns[i];
+      var sourceId = conn["sourceId"];
+      $this.delLinkInfo(sourceId, targetId);
+
+      $this._plumb.deleteConnection(conn);
+      $this._plumb.repaintEverything();
+  
+      if ($this.event_link_remove) {
+        var link_info = this._linkInfos[sourceId + '-' + targetId];
+        $this.event_link_remove(link_info);
+      }
+  
+      $this._onCanvasChanged(); 
+    } 
   },
 
   setEditable: function (editable) {
@@ -3310,6 +3524,37 @@ var andflow = {
 
     return null;
   },
+  getConnectionsBySource: function (sourceId) {
+    var conn_list = this._plumb.getAllConnections();
+    var conns = [];
+
+    for (var i = 0; i < conn_list.length; i++) {
+      var source_id = conn_list[i]['sourceId'];
+ 
+      if (source_id == sourceId) {
+        conns.push(conn_list[i]);
+      }
+    }
+
+    return conns;
+  },
+  getConnectionsByTarget: function (targetId) {
+    var conn_list = this._plumb.getAllConnections();
+    var conns = [];
+
+    for (var i = 0; i < conn_list.length; i++) {
+      var target_id = conn_list[i]['targetId'];
+ 
+      if (target_id == targetId) {
+        conns.push(conn_list[i]);
+      }
+    }
+
+    return conns;
+  },
+   
+  
+
   //水平对齐
   horizontal: function () {
     var minTop = 999999999;
@@ -3373,30 +3618,33 @@ var andflow = {
 
     var cardBox = document.querySelector('#canvas');
 
-    var nodesToRecover = [];
-    var nodesToRemove = [];
-    var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
-    svgElem.each(function (index, node) {
-      var parentNode = node.parentNode;
-      var svg = node.outerHTML.trim();
-      var subCanvas = document.createElement('canvas');
-      canvg(subCanvas, svg);
-      if (node.style.position) {
-        subCanvas.style.position = node.style.position;
-        subCanvas.style.left = node.style.left;
-        subCanvas.style.top = node.style.top;
-      }
-      nodesToRecover.push({
-        parent: parentNode,
-        child: node,
+    if(options.ignore_svg){ 
+      var nodesToRecover = [];
+      var nodesToRemove = [];
+      var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
+      svgElem.each(function (index, node) {
+        var parentNode = node.parentNode;
+        var svg = node.outerHTML.trim();
+        var subCanvas = document.createElement('canvas');
+        canvg(subCanvas, svg);
+        if (node.style.position) {
+          subCanvas.style.position = node.style.position;
+          subCanvas.style.left = node.style.left;
+          subCanvas.style.top = node.style.top;
+        }
+        nodesToRecover.push({
+          parent: parentNode,
+          child: node,
+        });
+        parentNode.removeChild(node);
+        nodesToRemove.push({
+          parent: parentNode,
+          child: subCanvas,
+        });
+        parentNode.appendChild(subCanvas);
       });
-      parentNode.removeChild(node);
-      nodesToRemove.push({
-        parent: parentNode,
-        child: subCanvas,
-      });
-      parentNode.appendChild(subCanvas);
-    });
+
+    }
      
     let canvas = document.createElement('canvas');
     let w = cardBox.scrollWidth;

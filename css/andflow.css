@@ -309,19 +309,18 @@ div{
 
 .canvasContainer{
     display: block;
-    position: relative;
-
+    position: relative; 
     background-color: transparent; 
     width: 100%;
     height: calc(100% - 25px);
     padding: 0px;
     background-image: url(data:image/gif;base64,R0lGODlhDAAMAJEAAOrq6v////Hx8QAAACH5BAAHAP8ALAAAAAAMAAwAAAIWjI8hycvonomSPtvkwYlDPQniSApAAQA7);
-    overflow: auto;
+    overflow: hidden;
     box-sizing: border-box;
 }
  
 
-#canvas {
+.canvas {
     position: relative;
     min-width: 100%;
     min-height: 100%;
@@ -334,6 +333,15 @@ div{
     display:block; 
     box-sizing: border-box;
 
+    cursor: move;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.canvas-move{
+    cursor: move;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
 }
 
 .flow_tools{
@@ -403,17 +411,34 @@ div{
     display: none;
     position: absolute;
     z-index: 100;
-    right: 0px;
+    top: 45px;
+    right: 20px;
     padding: 0px;
-    top: 25px;
+    
     width: 100px;
     height:100px;
     border: 1px solid #E3E3E3;
     background-color: rgba(255, 255, 255, 0.5);
     background-size: contain;
     background-repeat: no-repeat;
+    overflow: hidden;
+    box-sizing: border-box; 
 
- }
+}
+
+.flow_thumbnail_mask{ 
+    position: absolute;
+    z-index: 100;
+    top: 0px;
+    left: 0px;
+    padding: 0px; 
+    width: 100%;
+    height:100%;
+    border: 1px solid #E3E3E3;
+    background-color: rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; 
+    cursor: move;
+}
 
 /*流程执行结果列表*/
 .flow_state_list{

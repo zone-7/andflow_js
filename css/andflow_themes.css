@@ -42,7 +42,7 @@ flow_theme_default
     background-color: transparent; 
     cursor: pointer; 
     opacity: 0.8;
-    cursor: move; 
+    cursor: move;  
     box-sizing: border-box;
 }
 
@@ -521,6 +521,24 @@ flow_theme_default
 .flow_theme_default .linkLabel.jtk-hover {
     background-color: #ffc107;
 }
+.flow_theme_default .linkBtn{
+    background-color: white; 
+    font: 10px sans-serif;
+    color: #999999;
+    z-index: 21; 
+    cursor: pointer;
+    height: 15px;
+    width: 20px;
+    line-height: 15px;
+    border-radius: 5px;
+    text-align: center;
+
+}
+.flow_theme_default .linkBtn.jtk-hover {
+    border:1px solid #999999;
+}
+
+
 .flow_theme_default .linkLabelSource { 
     padding: 0.4em;
     font: 12px sans-serif;

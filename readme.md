@@ -59,7 +59,6 @@ andflow_js是一个H5流程设计前端组件。可以快速实现各类流程�
 
 ## 3.1 相关js依赖
 * jquery
-* jquery.ui
 * jsplumb
 * canvg.js
 * html2canvas.min.js
@@ -69,7 +68,6 @@ andflow_js是一个H5流程设计前端组件。可以快速实现各类流程�
 ### 3.2.1引用依赖js
 ```html
 <script src="/static/plugins/jquery/jquery.min.js"></script>
-<script src="/static/plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="/static/plugins/jsplumb/js/jsplumb.min.js"></script>
 <script src="/static/plugins/html2canvas/html2canvas.js"></script>
 <script src="/static/plugins/canvg/canvg.js"></script>

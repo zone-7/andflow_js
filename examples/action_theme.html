@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>andflow</title>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jsplumb.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <script src="../js/canvg.js"></script>
+
+    <link rel="stylesheet" href="../css/andflow.css">
+    <link rel="stylesheet" href="../css/andflow_themes.css">
+    <link rel="stylesheet" href="../css/andflow_themes_action.css">
+
+    <script src="../js/andflow.js"></script>
+    <script src="../js/andflow_themes.js"></script> 
+ 
+    <link  rel="stylesheet"  href="../css/demo.css" > 
+    <script  src="../js/demo.js" ></script>
+</head>
+<body> 
+    <div class="bander">
+        <div class="logo"><img src="../img/logo.jpeg" /></div>
+        <div class="title"><a href="index.html" >Andflow</a></div>
+        <div class="subtitle">节点样式</div>
+        
+        <div class="menus">
+            <a href="index.html">Demos</a>
+
+            <a href="https://github.com/zone-7/andflow_js">Github</a>
+        </div>
+    </div>
+
+<div id="andflow" style="width: 100%;height: 600px;padding:0px;"> 
+</div>
+
+<br/>
+ 
+</body>
+<script>
+
+
+</script>
+<script> 
+ 
+    var flowModel= {
+        "code": "",
+        "name": "",
+        "show_action_body": "true",
+        "show_action_content": "true",
+        "theme": "flow_theme_default",
+        "link_type": "Flowchart",
+        "params": [],
+        "actions": [
+            {
+                "id": "4e7fed4b5f90466a856cb743294e383c",
+                "left": "51px",
+                "top": "27px",
+                "name": "begin",
+                "params": {},
+                "title": "开始",
+                "theme": "action_theme_icon",
+                "icon": "begin.png",
+                "width": "65px",
+                "height": "49px"
+            },
+            {
+                "id": "c3747d543b724800ab792de258c9f64e",
+                "left": "35px",
+                "top": "367px",
+                "name": "end",
+                "params": {},
+                "title": "结束",
+                "theme": "action_theme_icon",
+                "icon": "end.png",
+                "width": "60px",
+                "height": "49px"
+            },
+            {
+                "id": "7e56400e9b634045941db181e7aaccb0",
+                "left": "26px",
+                "top": "188px",
+                "name": "script",
+                "params": {},
+                "title": "执行脚本",
+                "theme": "action_theme_zone",
+                "icon": "script.png",
+                "width": "180px",
+                "height": "80px"
+            },
+            {
+                "id": "3aff58a55237434a9a1d3b6253e7f681",
+                "left": "267px",
+                "top": "207px",
+                "name": "script",
+                "params": {},
+                "title": "执行脚本",
+                "theme": "action_theme_icon",
+                "icon": "script.png",
+                "width": "52px",
+                "height": "43px"
+            },
+            {
+                "id": "51de62db588d4993aa2341fde8277f9a",
+                "left": "377px",
+                "top": "189px",
+                "name": "script",
+                "params": {},
+                "title": "执行脚本",
+                "icon": "script.png",
+                "width": "120px",
+                "height": "80px"
+            },
+            {
+                "id": "98cc1c82a40e4e92b6c1b6ab9b56be77",
+                "left": "377px",
+                "top": "350px",
+                "name": "cmd",
+                "params": {
+                    "timeout": "10000"
+                },
+                "title": "系统命令",
+                "icon": "cmd.png",
+                "width": "120px",
+                "height": "80px"
+            }
+        ],
+        "groups": [],
+        "lists": [],
+        "links": [
+            {
+                "source_id": "7e56400e9b634045941db181e7aaccb0",
+                "target_id": "3aff58a55237434a9a1d3b6253e7f681"
+            },
+            {
+                "source_id": "3aff58a55237434a9a1d3b6253e7f681",
+                "target_id": "51de62db588d4993aa2341fde8277f9a"
+            },
+            {
+                "source_id": "4e7fed4b5f90466a856cb743294e383c",
+                "target_id": "7e56400e9b634045941db181e7aaccb0"
+            },
+            {
+                "source_id": "51de62db588d4993aa2341fde8277f9a",
+                "target_id": "98cc1c82a40e4e92b6c1b6ab9b56be77"
+            },
+            {
+                "source_id": "98cc1c82a40e4e92b6c1b6ab9b56be77",
+                "target_id": "c3747d543b724800ab792de258c9f64e"
+            }
+        ],
+        "tips": []
+    };
+
+
+    var options={
+        tags:tags,            //组件过滤标签列表
+        metadata:metadata,    //组件元素
+        flowModel:flowModel,  //流程模型
+        img_path: "../img/meta/",
+        editable:true,   //是否可编辑，默认true
+        show_toolbar: true,
+        metadata_position: 'default', //top,left,default
+        render_action:function(metadata,action,html){ return html; },//节点渲染
+        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
+        render_state_list: function(datas){return null},             //流程状态列表渲染
+        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
+        event_group_click:function(group){
+ 
+        },
+        event_group_dblclick: function(group){ 
+        },
+        //节点单击事件
+        event_action_click:function(metadata,action){
+ 
+
+        },
+        //节点双击事件
+        event_action_dblclick:function(metadata,action){
+ 
+
+        },
+        //连线单击事件
+        event_link_click: function (link) {
+             
+        },
+        //连线双击事件
+        event_link_dblclick: function (link) {
+            
+
+        },
+        //画图板单击事件
+        event_canvas_click: function(e){
+            
+        }
+    }
+
+
+    andflow.newInstance("andflow",options);
+    andflow.showFlow();
+ 
+</script>
+</html>

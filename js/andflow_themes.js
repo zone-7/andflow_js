@@ -264,3 +264,17 @@ flow_themes.flow_theme_zone={
     default_endpoint_fill_color_reject:"#fdcf7c",
 
 };
+
+if("undefined" == typeof action_themes){
+    action_themes={} ;
+}
+
+action_themes.action_theme_default={
+    is_body_resizable:false,
+};
+action_themes.action_theme_icon={
+    is_body_resizable:true,
+};
+action_themes.action_theme_zone={
+    is_body_resizable:false,
+};

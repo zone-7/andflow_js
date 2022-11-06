@@ -765,3 +765,6 @@ div{
     z-index: 5;
 }
 
+.action-container{
+    display: absolute; 
+}

@@ -315,6 +315,7 @@ div{
     height: calc(100% - 25px);
     padding: 0px;
     background-image: url(data:image/gif;base64,R0lGODlhDAAMAJEAAOrq6v////Hx8QAAACH5BAAHAP8ALAAAAAAMAAwAAAIWjI8hycvonomSPtvkwYlDPQniSApAAQA7);
+    background-size:10px 10px;
     overflow: hidden;
     box-sizing: border-box;
 }

@@ -22,6 +22,9 @@ var andflow = {
   show_grid:true,
   metadata_style: '',
   metadata_position: '',
+
+  drag_step: 10, //拖拉步进，<=1表示可以任意拖拉
+
   //渲染器
   render_action: null,
   render_action_helper: null,
@@ -74,8 +77,7 @@ var andflow = {
   _timer_action: null,
   _timer_thumbnail: null, 
 
-  _drag_name: null,
-
+  _drag_name: null, 
   _icon_nav:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
   _icon_eye:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
   _icon_eye_close:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==',
@@ -561,7 +563,7 @@ var andflow = {
     var $this = this;
          
     var metaInfo = $this.getMetadata(name);
-
+     
     if(metaInfo.tp=="group"){
       var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
       var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
@@ -817,15 +819,11 @@ var andflow = {
       return false;
     });
 
-    this._plumb.bind('beforeDetach', function (conn) {
-      if (!$this.editable) {
-        return false;
-      }
-      return true;
-    });
+    
 
     //自动避免重复连线
     this._plumb.bind('beforeDrop', function (conn) {
+     
       if (!$this.editable) {
         return false;
       }
@@ -889,7 +887,7 @@ var andflow = {
     });
 
 
-    $this._plumb.draggable("standalone");
+    // $this._plumb.draggable("standalone");
 
 
   },
@@ -1379,7 +1377,16 @@ var andflow = {
       });
       e.preventDefault();
     }); 
-
+    $this._plumb.draggable(groupElement.get(0),{
+      stop:function(event){
+        if($this.drag_step>1){
+          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          $(event.el).css("left",x+"px");
+          $(event.el).css("top",y+"px");
+        }
+      }
+    });
     //plumb add group 
     $this._plumb.addGroup({
       el:groupElement.get(0),
@@ -1388,8 +1395,10 @@ var andflow = {
       droppable:true,
       dropOverride: true,
       revert:true,
-      endpoint:["Dot", { radius:3 }]
+      endpoint:["Dot", { radius:3 }] 
     }); 
+
+   
 
     if(members && members.length>0){
       var actionElements = [];
@@ -1585,7 +1594,16 @@ var andflow = {
       listElement.css("left", left+"px");
     }
 
-    $this._plumb.draggable(listElement.get(0));
+    $this._plumb.draggable(listElement.get(0),{
+      stop:function(event){
+        if($this.drag_step>1){
+          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          $(event.el).css("left",x+"px");
+          $(event.el).css("top",y+"px");
+        }
+      }
+    });
  
     $this._plumb.addList(listElement.get(0), {
       endpoint:["Rectangle", {width:20, height:20}]
@@ -1750,7 +1768,7 @@ var andflow = {
     }
     
     var actionHtml =
-      '<div id="' + id + '" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +
+      '<div id="' + id + '"  draggable="true" ondragend="alert(event)" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +
       '" title="' + title +
       '" icon="' + icon + '"></div></div>'; 
 
@@ -2008,8 +2026,20 @@ var andflow = {
 
   //初始化节点
   _showActionNode: function (el, name) { 
+    var $this = this;
+
     // initialise draggable elements.
-    this._plumb.draggable(el.get(0));
+    this._plumb.draggable(el.get(0),{ 
+      stop:function(event){
+        if($this.drag_step>1){
+          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          $(event.el).css("left",x+"px");
+          $(event.el).css("top",y+"px");
+        }
+      }
+    });
+ 
 
     if (name == null || name != 'end') {
       this._plumb.makeSource(el.get(0), {
@@ -2096,7 +2126,16 @@ var andflow = {
     //draggable
     this._plumb.getContainer().appendChild(tipElement.get(0));
     // initialise draggable elements.
-    this._plumb.draggable(tipElement.get(0));
+    this._plumb.draggable(tipElement.get(0),{
+      stop:function(event){
+        if($this.drag_step>1){
+          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          $(event.el).css("left",x+"px");
+          $(event.el).css("top",y+"px");
+        }
+      }
+    });
     //source
     $this._plumb.makeSource(tipElement.get(0), {
       filter: '.tip-ep', 

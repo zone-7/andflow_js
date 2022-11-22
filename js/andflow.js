@@ -182,7 +182,6 @@ var andflow = {
     }
     
     html += '<div id="canvasContainer" class="canvasContainer" style="'+bgstyle+'">'; 
- 
     html += '<div id="canvas" class="canvas"></div>';  
     html += '</div>'; 
     //end canvasContainer
@@ -417,9 +416,41 @@ var andflow = {
           
         });
     });    
-
+     
   },
- 
+  // _dragGrid: function(){
+  //   var $this = this;
+  //   var canvasDom = document.getElementById("canvas_bg");
+  //   if(!canvasDom){
+  //     return;
+  //   }
+  //   $(canvasDom).css('width',"100%");
+  //   $(canvasDom).attr('height',"100%");
+   
+   
+  //   if(canvasDom.getContext){ 
+     
+  //     var context = canvasDom .getContext("2d");
+  //     var width=canvasDom.width;
+  //     var height=canvasDom.height;
+  //     context.clearRect(0,0,width,height);  
+
+  //     context.strokeStyle = "red";     //描边颜色
+  //     context.lineWidth = 1;
+  //     context.fillStyle = "rgba(0,0,0,1)";
+  //     context.beginPath();  
+  //     for(var w=0;w<width;w=w+$this.drag_step){
+  //       context.moveTo(w,0);                  //移动绘图游标
+  //       context.lineTo(w,height);                   //绘制直线，从游标位置惠子直线到参数，
+  //       //bezierCurveTo绘制曲线，quadraticCurveTo绘制二次曲线，reac绘制矩形，
+  //       context.stroke();                         //用strokeStyle描边 
+  //     }
+  //     for(var h=0;h<width;h=h+$this.drag_step){
+        
+  //     }
+  //     context.closePath();  
+  //   }
+  // },
  
   //定时动画
   _initAnimaction: function(){
@@ -2791,6 +2822,22 @@ var andflow = {
   delActionInfo: function (id) {
     this._actionInfos[id] = null;
   },
+  setActionParam:function(actionId,key,value){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      if(!this._actionInfos[actionId].params){
+        this._actionInfos[actionId].params={};
+      }
+      this._actionInfos[actionId].params[key]=value;
+    } 
+  },
+  getActionParam:function(actionId,key){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      if(this._actionInfos[actionId].params){
+        return this._actionInfos[actionId].params[key];
+      }
+    } 
+    return null;
+  },
   getGroupInfo: function(id){
     return this._groupInfos[id];
   },
@@ -2919,6 +2966,17 @@ var andflow = {
 
     group.getEl();
     $this._plumb.removeGroup(group,delete_all);
+  },
+  //删除组
+  removeGroup: function(groupId, deleteMembers){
+      var $this = this; 
+      var group = $this._plumb.getGroup(groupId);
+      var all = deleteMembers || false;
+      if(all!=true){
+        all=false;
+      } 
+      group.getEl();
+      $this._plumb.removeGroup(group,all);
   },
   removeList: function(id){
     var $this = this;  
@@ -3225,6 +3283,7 @@ var andflow = {
       $('#' + actionId).find(".action").removeClass('selected');
     }
   },
+  
   //设置节点图标
   setActionIcon: function (actionId, action_icon) {
     if (action_icon != null && action_icon.length > 0) {

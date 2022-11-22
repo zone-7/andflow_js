@@ -542,7 +542,7 @@ andflow.reflow();
 </tr>
 
 <tr>
-<td> andflow.setLinkType(link_type);</td>
+<td>andflow.setLinkType(link_type);</td>
 <td>设置连接线样式名称</td>
 <td>Flowchart、Straight、Bezier、StateMachine</td>  
 <td>null</td>  
@@ -553,25 +553,194 @@ andflow.reflow();
 </tr>
 
 <tr>
-<td> andflow.setEditable(false);</td>
+<td>andflow.setEditable(false);</td>
 <td>设置是否可设计</td>
 <td>true、false</td>  
 <td>null</td>  
 <td></td>
 </tr>
+
 <tr>
-<td> andflow.setActionContentVisible(true);</td>
-<td>设置内容是否可见</td>
-<td>true、false</td>  
-<td>null</td>  
-<td></td>
-</tr>
-<tr>
-<td> andflow.reflow();</td>
+<td>andflow.reflow();</td>
 <td>重新渲染设计器,在改变样式、风格之后需要执行这个函数。</td>
 <td>null</td>  
 <td>null</td>  
 <td></td>
 </tr>
 
+<tr>
+<td>andflow.getLinkInfo(sourceId, targetId);</td>
+<td>获取连线信息</td>
+<td>sourceId：起始节点ID, targetId：目的节点ID</td>  
+<td>连线信息</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setLinkInfo(linkInfo);</td>
+<td>设置连线信息</td>
+<td>linkInfo连线信息</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+
+<tr>
+<td>andflow.getLinkLabel(source_id,target_id);</td>
+<td>获取连线中间标签标题</td>
+<td>sourceId：起始节点ID, targetId：目的节点ID</td>  
+<td>标签标题</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setLinkLabel(source_id,target_id,title);</td>
+<td>设置连线中间标签标题</td>
+<td>sourceId：起始节点ID, targetId：目的节点ID,title:标题</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.removeLink(sourceId, targetId);</td>
+<td>删除链接线</td>
+<td>sourceId：起始节点ID, targetId：目的节点ID</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.getActionInfo(actionId);</td>
+<td>获取节点配置信息</td>
+<td>actionId：节点ID</td>  
+<td>节点信息</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setActionInfo(actionInfo);</td>
+<td>设置节点配置信息</td>
+<td> actionInfo：节点信息</td>  
+<td>null</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setActionContentVisible(true);</td>
+<td>设置内容是否可见</td>
+<td>true、false</td>  
+<td>null</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setActionParam(actionId,key,value);</td>
+<td>设置节点参数。</td>
+<td>actionId：节点ID,key：参数名,value：参数值</td>  
+<td>null</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.getActionParam(actionId,key);</td>
+<td>设置节点参数。</td>
+<td>actionId：节点ID,key：参数名</td>  
+<td>参数值</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.removeAction(actionId);</td>
+<td>删除节点</td>
+<td>actionId：节点ID</td>  
+<td></td>  
+<td></td>
+</tr>
+
+<td>andflow.getGroupInfo(groupId);</td>
+<td>获取组配置信息</td>
+<td>groupId：组ID</td>  
+<td>组信息</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setGroupInfo(groupInfo);</td>
+<td>设置组配置信息</td>
+<td>groupInfo：组信息</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<td>andflow.getGroupTitle(groupId);</td>
+<td>获取组标题</td>
+<td>groupId：组ID</td>  
+<td>组标题</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.setGroupTitle(groupId,title);</td>
+<td>设置组标题</td>
+<td>groupId：组ID, title:组标题</td>  
+<td>null</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.removeGroup(groupId,deleteMembers);</td>
+<td>设置组标题</td>
+<td>groupId：组ID, deleteMembers: 是否删除子元素（true,false)</td>  
+<td>null</td>  
+<td></td>
+</tr> 
 </table>
+
+
+## 4.3 事件
+<table>
+<tr>
+<td>事件</td>
+<td>名称</td>
+<td>事件函数签名</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>event_action_click</td>
+<td>节点单击</td>
+<td>event_action_click(action_meta, action)  </td>
+<td>action_meta节点配置信息, action:节点信息  </td>
+</tr>
+<tr>
+<td>event_action_dblclick</td>
+<td>节点双击</td>
+<td>event_action_dblclick(action_meta, action)  </td>
+<td>action_meta节点配置信息, action:节点信息  </td>
+</tr>
+<tr>
+<td>event_action_remove</td>
+<td>节点被删除</td>
+<td>event_action_remove( action)  </td>
+<td> action:节点信息  </td>
+</tr>
+<tr>
+<td>event_link_click</td>
+<td>连接线单击</td>
+<td>event_link_click(linkinfo)  </td>
+<td>linkinfo:链接线信息  </td>
+</tr>
+<tr>
+<td>event_link_dblclick</td>
+<td>连接线双击</td>
+<td>event_link_dblclick(linkinfo)  </td>
+<td>linkinfo:链接线信息  </td>
+</tr>
+<tr>
+<td>event_link_remove</td>
+<td>连接线被删除</td>
+<td>event_link_remove(linkinfo)  </td>
+<td>linkinfo:链接线信息  </td>
+</tr>
+<tr>
+<td>event_canvas_click</td>
+<td>设计面板单击</td>
+<td>event_canvas_click(event)  </td>
+<td>event:事件  </td>
+</tr>
+<tr>
+<td>event_canvas_changed</td>
+<td>设计面板被调整</td>
+<td>event_canvas_changed()  </td>
+<td>null</td>
+</tr>
+</table>   

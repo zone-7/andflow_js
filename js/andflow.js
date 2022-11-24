@@ -1866,13 +1866,13 @@ var andflow = {
     canvasElement.append(actionElement);
      
     //content
-    if(content && content.content && content.content_type){
-      this.setActionContent(id,content.content,content.content_type );
-    } else if(content && content.content){
-      this.setActionContent(id,content.content, "");
-    } else if(content){
-      this.setActionContent(id,content, "");
-    }
+    if(content){
+      if(typeof content === 'string'){
+        content={ content_type: "msg", content: content};
+      } 
+
+      this.setActionContent(id, content.content ||'',content.content_type ||'msg' );
+    }  
 
     
     //position
@@ -3841,6 +3841,7 @@ var andflow = {
     return actioncontent;
   },
   setActionContent: function (action_id, content, content_type) {
+     
     this._actionInfos[action_id].content =  { content_type: content_type, content: content };
     this._actionContents[action_id] = { content_type: content_type, content: content };
 

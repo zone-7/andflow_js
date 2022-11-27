@@ -2199,6 +2199,7 @@ flow_theme_zone
 }
 .action_theme_zone .action.begin .action-header{
     border-left: 4px solid #17a2b8;
+    background-color: transparent;
     color:  #17a2b8;
 }
 
@@ -2221,9 +2222,9 @@ flow_theme_zone
 .action_theme_zone .action.end .action-main{
     border: 1px solid #17a2b8;
 }
-.action_theme_zone .action.end .action-header{
-
+.action_theme_zone .action.end .action-header{ 
     border-left: 4px solid #17a2b8;
+    background-color: transparent;
     color:  #17a2b8;
 }
 

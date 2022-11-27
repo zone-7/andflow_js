@@ -239,3 +239,128 @@ var metadata=[
         }
     },
 ] ;
+
+
+
+
+
+
+
+var currentLinkInfo;
+var currentActionInfo; 
+
+//打开连接线配置对话框
+function openLinkDialog(link){
+    currentLinkInfo = link;
+    var dialog = $("#linkDialog");
+    dialog.find("input[name='source_id']").val(link.source_id);
+    dialog.find("input[name='target_id']").val(link.target_id);
+    dialog.find("input[name='title']").val(link.title||"");
+    dialog.find("input[name='label_source']").val(link.label_source||"");
+    dialog.find("input[name='label_target']").val(link.label_target||"");
+    dialog.find("select[name='animation']").val(link.animation?"true":"false");
+
+    var arrows = link.arrows||[false,false,true];
+
+    dialog.find("select[name='arrows1']").val(arrows[0]?"true":"false");
+    dialog.find("select[name='arrows2']").val(arrows[1]?"true":"false");
+    dialog.find("select[name='arrows3']").val(arrows[2]?"true":"false");
+
+
+    dialog.find("select[name='active']").val(link.active||"true");
+    dialog.find("textarea[name='filter']").val(link.filter||"");
+    
+
+    var modalLink = new Custombox.modal({
+        content: {
+            id:'linkModal',
+            effect: 'fadein',
+            target: '#linkDialog'
+        }
+    });
+    modalLink.open();
+}
+function closeLinkDialog(){ 
+    Custombox.modal.close();
+}
+function saveLinkDialog(){ 
+    if(currentLinkInfo==null){
+        return;
+    }
+    var dialog = $("#linkDialog");
+    currentLinkInfo.title = dialog.find("input[name='title']").val();
+    currentLinkInfo.label_target = dialog.find("input[name='label_target']").val();
+    currentLinkInfo.label_source = dialog.find("input[name='label_source']").val();
+    currentLinkInfo.animation = dialog.find("select[name='animation']").val()=="true"?true:false;
+    var arrows=[false,false,true];
+    if(dialog.find("select[name='arrows1']").val()=="true"){
+        arrows[0]=true
+    }
+    if(dialog.find("select[name='arrows2']").val()=="true"){
+        arrows[1]=true
+    }
+    if(dialog.find("select[name='arrows3']").val()=="true"){
+        arrows[2]=true
+    }
+    currentLinkInfo.arrows = arrows;
+    currentLinkInfo.active = dialog.find("select[name='active']").val();
+    currentLinkInfo.filter = dialog.find("textarea[name='filter']").val();
+
+    andflow.setLinkInfo(currentLinkInfo);
+    Custombox.modal.close();
+}
+
+//打开节点配置对话框
+function openActionDialog(action){
+    currentActionInfo = action;
+    var dialog = $("#actionDialog");
+    dialog.find("input[name='name']").val(action.name);
+    dialog.find("input[name='title']").val(action.title||"");
+    dialog.find("input[name='des']").val(action.des||"");
+    dialog.find("select[name='theme']").val(action.theme||"andflow_theme_default");
+    dialog.find("select[name='once']").val(action.once||"false");
+    dialog.find("select[name='collect']").val(action.collect||"false"); 
+    if(action.content==null){
+        action.content={};
+    }
+    dialog.find("textarea[name='content']").val(action.content.content||""); 
+    dialog.find("textarea[name='script']").val(action.script||"");
+    var modalAction = new Custombox.modal({ 
+        content: { 
+            id:'actionModal',
+            effect: 'fadein',
+            target: '#actionDialog'
+        }
+    });
+    modalAction.open();
+}
+function closeActionDialog(){ 
+    Custombox.modal.close(); 
+}
+function saveActionDialog(){
+    if(currentActionInfo==null){
+        return;
+    }
+    var dialog = $("#actionDialog");
+  
+    currentActionInfo.title = dialog.find("input[name='title']").val();
+    currentActionInfo.des = dialog.find("select[name='des']").val();
+    currentActionInfo.theme = dialog.find("select[name='theme']").val(); 
+    currentActionInfo.once = dialog.find("select[name='once']").val();
+    currentActionInfo.collect = dialog.find("select[name='collect']").val(); 
+    if(currentActionInfo.content==null){
+        currentActionInfo.content={};
+    }
+    currentActionInfo.content.content = dialog.find("textarea[name='content']").val(); 
+    currentActionInfo.script = dialog.find("textarea[name='script']").val();
+
+    andflow.setActionInfo(currentActionInfo);
+
+    Custombox.modal.close(); 
+}
+
+//截图
+function snap(){
+
+    andflow.snap("流程");
+}

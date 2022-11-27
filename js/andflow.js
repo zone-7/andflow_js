@@ -2811,12 +2811,32 @@ var andflow = {
     return this._actionInfos[id];
   },
   setActionInfo: function (action) {
+
     this._actionInfos[action.id] = action;
 
+    
+    //标题
     $('#'+this.containerId + ' #' + action.id)
       .find('.action-header')
       .html(action.title || action.des || '');
 
+    //样式 
+    for (var k in action_themes) { 
+      $('#'+this.containerId + ' #' + action.id).removeClass(k);
+    }   
+    $('#'+this.containerId + ' #' + action.id).addClass(action.theme||""); 
+    
+    //图标
+    var action_icon = action.icon;
+    if (action_icon != null && action_icon.length > 0) {
+      $('#'+this.containerId + ' #' + action.id).find('.action-icon img')
+        .attr('src', this.img_path + action_icon);
+    }
+    //内容 
+    if(action.content){
+      this.setActionContent(action.id,action.content.content,action.content.content_type);
+    }
+     
     this._plumb.repaintEverything();
   },
   delActionInfo: function (id) {
@@ -3835,6 +3855,20 @@ var andflow = {
   setActionTitle:function(action_id, title){
     this._actionInfos[action_id].title = title;
     $('#'+this.containerId+' #canvas').find("#"+action_id).find(".action-header").html(title);
+  },
+  setActionTheme: function (action_id, theme) {
+    this._actionInfos[action_id].theme = theme;
+ 
+    for (var k in flow_themes) {
+      $('#' + this.containerId).find("#"+action_id).removeClass(k);
+    }
+ 
+    $('#' + this.containerId).find("#"+action_id).addClass(theme);
+    
+    if(this._plumb){
+      this._plumb.repaintEverything();
+    }
+    
   },
   getActionContent: function(action_id){
     var actioncontent = this._actionContents[action_id];

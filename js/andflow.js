@@ -171,7 +171,7 @@ var andflow = {
 
     //begin flow_thumbnail
     html += '<div class="flow_thumbnail">';
-    html += '<div class="flow_thumbnail_mask"></div>'
+    html += '<div class="flow_thumbnail_mask"></div>';
     html += '</div>';
     //end flow_thumbnail
 
@@ -1007,9 +1007,7 @@ var andflow = {
       var inner_y = e.offsetY;
 
       var name = el.attr("action_name");
-      $this._drag_name = name;
-      console.log(name);
-      
+      $this._drag_name = name; 
       $('#' + $this.containerId).find(".andflow").mousemove(function (e) {
         if($this._drag_name==null){
           return;
@@ -1339,7 +1337,6 @@ var andflow = {
       } 
     }else{
       if((group.width+"").indexOf("px")>=0){
-        console.log(group)
         group_main_element.css("width", group.width);
       }else{
         group_main_element.css("width", group.width+"px"); 
@@ -2349,9 +2346,7 @@ var andflow = {
     var canvas = $('#' + $this.containerId).find(".canvas");
     var canvasView = $('#' + $this.containerId).find(".canvas").parent();
     var thumbnail=$('#' + $this.containerId).find('.flow_thumbnail');
-
-    // console.log(canvas.height(),canvasView.height(), canvasView.scrollLeft(), canvasView.scrollTop());
-    
+ 
     var full_width = canvas.width(); 
     var full_height = canvas.height();
     var canvas_width = canvasView.width();

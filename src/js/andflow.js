@@ -616,7 +616,7 @@ var andflow = {
     }else{
       var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
       var action = { id: actionId, left: left, top: top, name: name, params: {} };
-
+      
       if (metaInfo != null) {
         for (var i in metaInfo.params) {
           var p = metaInfo.params[i];
@@ -640,6 +640,7 @@ var andflow = {
           return;
         }
       }
+      action.title=action.title||metaInfo.title;
 
       $this._createAction(action);
 
@@ -1050,9 +1051,7 @@ var andflow = {
     if(action_name==null)return;
     var metadata = $this.getMetadata(action_name);
     if(metadata==null)return;
-    
-
-
+     
     var icon = metadata.icon;
     var title = metadata.title;
 
@@ -1079,15 +1078,14 @@ var andflow = {
       icon + '" draggable="false"/></div></div>'); 
     }
 
-    
-    if(metadata.render_helper) {
-      let r = metadata.render_helper(metadata);
+    var render = metadata.render_helper || metadata.render;
+    if(render) {
+      let r = render(metadata);
       if (r != null && r.length > 0) {
         contentEl = $(r); 
       }
-    }  
+    }
     
-
 
     helperEl.append(contentEl);
     helperEl.attr("id","drag_helper");
@@ -1727,18 +1725,20 @@ var andflow = {
     if (name == null) {
       return;
     }
-
+     
     this.setActionInfo(action);
 
     var action_meta = this.getMetadata(name) || {};
  
     var title =  action.title || action.des || action_meta.title || action_meta.des || '';
+   
+
     var icon = action.icon || action_meta.icon || '';
     var des = action.des || action_meta.des || '';
     var css = action.css || action_meta.css || '';
     var actionThemeName = action.theme || action_meta.theme  || '';
-    
      
+
     var action_themeObj = action_themes[actionThemeName||''] || this._themeObj;
 
     var content = action.content;
@@ -1750,7 +1750,7 @@ var andflow = {
 
     var body_width = '';
     var body_height = '';
-
+     
     if (action_themeObj.is_body_resizable) {
       body_width = action.body_width;
       body_height = action.body_height;
@@ -1796,7 +1796,7 @@ var andflow = {
     }
     
     var actionHtml =
-      '<div id="' + id + '"  draggable="true" ondragend="alert(event)" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +
+      '<div id="' + id + '"  draggable="true" ondragend="" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +
       '" title="' + title +
       '" icon="' + icon + '"></div></div>'; 
 
@@ -1833,8 +1833,7 @@ var andflow = {
 
     var resizerElement = $(resizer);
     resizerElement.removeClass('action-resize');
-    resizerElement.addClass('action-resize');
-
+    resizerElement.addClass('action-resize'); 
     actionElement.find(".action").append(resizerElement);
 
     //remove button 
@@ -1963,13 +1962,29 @@ var andflow = {
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        $('#' + id).find(".action-master").css({
-          width: w,
-          height: h,
-        });
-        $('#' + id).width(w);
-        $('#' + id).height(h);
 
+        var mw=$('#' + id).find(".action-master").css("min-width").replace("px","")*1;
+        var mh=$('#' + id).find(".action-master").css("min-height").replace("px","")*1;
+         
+        if(mw==null || w>mw){
+          $('#' + id).find(".action-master").css({
+            width: w+"px"
+          });
+   
+          $('#' + id).css({
+            width: w+"px"
+          }); 
+        }
+        if(mh==null || h>mh){
+          $('#' + id).find(".action-master").css({ 
+            height: h+"px"
+          });
+   
+          $('#' + id).css({
+            height: h+"px"
+          }); 
+        }
+ 
 
         var chart = $this._actionCharts[id];
         if (chart != null) {
@@ -2814,7 +2829,7 @@ var andflow = {
     $('#'+this.containerId + ' #' + action.id)
       .find('.action-header')
       .html(action.title || action.des || '');
-
+    
     //样式 
     for (var k in action_themes) { 
       $('#'+this.containerId + ' #' + action.id).removeClass(k);

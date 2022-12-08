@@ -86,6 +86,7 @@ andflow_js是一个H5流程设计前端组件，是作为流程系统前端的�
 ```html 
     <link rel="stylesheet" href="/static/flow/css/andflow.css">
     <link rel="stylesheet" href="/static/flow/css/andflow_themes.css">
+    <link rel="stylesheet" href="/static/flow/css/andflow_themes_action.css">
 
     <script src="/static/flow/js/andflow.js"></script>
     <script src="/static/flow/js/andflow_themes.js"></script>
@@ -466,7 +467,7 @@ var metadata=[
 <tr>
 <td>theme</td>
 <td>组件节点样式</td>
-<td>flow_theme_default、flow_theme_icon、flow_theme_zone、也可以自定义</td>  
+<td>flow_theme_default、flow_theme_icon、flow_theme_zone、flow_theme_box,也可以自定义</td>  
 <td>flow_theme_default</td>  
 </tr>
 <tr>
@@ -540,7 +541,7 @@ var metadata=[
 <tr>
 <td>andflow.setTheme(theme);</td>
 <td>设置组件节点样式名称</td>
-<td>flow_theme_default、flow_theme_icon、flow_theme_zone、或者其他自定义</td>  
+<td>flow_theme_default、flow_theme_icon、flow_theme_zone、flow_theme_box、或者其他自定义</td>  
 <td>null</td>  
 <td>
 andflow.setTheme(theme);
@@ -629,6 +630,16 @@ andflow.reflow();
 <td></td>
 </tr>
 <tr>
+<td>andflow.setActionTheme(actionId, theme);</td>
+<td>设置节点样式</td>
+<td> 
+actionId: 节点ID<br/>
+theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,action_theme_box 等</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
 <td>andflow.setActionContentVisible(true);</td>
 <td>设置内容是否可见</td>
 <td>true、false</td>  
@@ -649,6 +660,7 @@ andflow.reflow();
 <td>参数值</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.removeAction(actionId);</td>
 <td>删除节点</td>

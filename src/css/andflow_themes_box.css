@@ -1,0 +1,920 @@
+
+/* action drag begin */
+.flow_theme_box .action-drag { 
+    position: absolute;
+    z-index: 5; 
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    background-color: transparent;
+}
+.flow_theme_box .action-drag .action-drag-main{
+ 
+    width: 150px;
+    height: 50px;
+    border: 1px solid #6c757d;
+    border-radius: 5px;
+    color: #434343; 
+    font-size: 10px;
+}
+.flow_theme_box .action-drag .action-header{
+    position: absolute;
+    z-index: 21;
+    left: 30%;
+    top:50%; 
+    transform: translate(0%, -50%);
+    text-align: center; 
+    width: 70%;  
+    height:auto;
+    border:0px;
+    overflow: hidden;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 10px;
+    color: #007bff;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+/* action drag end */
+
+/* group drag begin */
+.flow_theme_box .group-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move;  
+    box-sizing: border-box;
+}
+
+.flow_theme_box .group-drag-main {
+    color: #434343;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.01);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+.flow_theme_box .group-drag .group-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* group grag end */
+
+/* list drag begin */ 
+.flow_theme_box .list-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_box .list-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 200px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: rgba(255, 255, 255);
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+.flow_theme_box .list-drag .list-header{
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.6);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* list drag end */
+
+
+/* tip drag begin */ 
+.flow_theme_box .tip-drag {
+    position: absolute;
+    z-index: 5;
+    background-color: transparent; 
+    cursor: pointer; 
+    opacity: 0.8;
+    cursor: move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_box .tip-drag-main {
+    color: #434343;
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    z-index: 5; 
+    background-color: #fff090; 
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.8;
+    cursor: move;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+.flow_theme_box .tip-drag .tip-header{
+    position: relative;
+    height: 20px;
+    width: 100%;  
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
+}
+/* tip drag end */
+
+
+.flow_theme_box .action-container { 
+    position: absolute;
+    z-index: 4;  
+    width: 150px;
+    height: 50px; 
+}
+.flow_theme_box .action {  
+    cursor: pointer;
+    text-align: center;
+    cursor: move;
+    background-color: transparent; 
+    padding: 0px;  
+    border-radius: 10px; 
+}
+
+
+.flow_theme_box .action-main{
+    position: relative;
+    color: #434343; 
+    min-width: 30px;
+    min-height: 30px;
+    width: 150px;
+    height: 50px;  
+    display: block; 
+    background-color: white;
+    border: 1px solid #007bff;
+    border-radius: 10px;
+    font-size: 10px;
+}
+
+.flow_theme_box .action:hover .action-main{
+    box-shadow: 2px 2px 10px #444;
+    -o-box-shadow: 2px 2px 10px #444;
+    -webkit-box-shadow: 2px 2px 10px #444;
+    -moz-box-shadow: 2px 2px 10px #444;
+}
+.flow_theme_box .action:hover .action-remove-btn{
+    display: block;
+}
+
+.flow_theme_box .action:hover .action-resize{
+    display: block;
+}
+.flow_theme_box .action:hover .body-resize{
+    display: block;
+}
+
+/* selected */
+.flow_theme_box .action.selected .action-main{
+    box-shadow: 2px 2px 10px #444;
+    -o-box-shadow: 2px 2px 10px #444;
+    -webkit-box-shadow: 2px 2px 10px #444;
+    -moz-box-shadow: 2px 2px 10px #444;
+}
+
+
+.flow_theme_box .action-header{
+    position: absolute;
+    z-index: 21;
+    left: 30%;
+    top:50%; 
+    transform: translate(0%, -50%);
+    text-align: center; 
+    width: 70%;  
+    overflow: hidden;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 10px;
+    color: #007bff;
+    background-color: transparent;
+}
+
+.flow_theme_box .action-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 21;
+    right: 3px;
+    top:2px;
+    color: #007bff;
+    font-size: 10px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center; 
+    text-decoration:none;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 1);
+    line-height: 15px;
+    width: 15px;
+    height: 15px;
+    border-radius: 7px;
+}
+
+.flow_theme_box .action-body{
+    position: absolute;
+    z-index: 22;
+    padding: 0px; 
+    width: 100%;
+    height: auto;
+    left: 0px;
+    top: calc(100% + 10px);
+    background-color: transparent;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.flow_theme_box .action-content{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    color: black;
+}
+.flow_theme_box .action-html{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+.flow_theme_box .action-msg{ 
+    width: 100%;
+    text-align: center; 
+    color: rgba(128, 128, 128,1);
+    font-size: 12px;
+}
+
+.flow_theme_box .action-icon{
+    display: block;
+    position: absolute;
+    z-index: 20;
+    top: 50%;
+    left: 5px;   
+    transform: translate(0%, -50%);
+    width: 30%;
+    height: auto;
+    border-radius: 10px;
+    text-align: center;
+}
+.flow_theme_box .action-icon img{
+    display:block;
+    max-width: 100%; 
+    height: auto; 
+    width: auto;
+}
+
+.flow_theme_box .action-resize{
+    display: none;
+    position: absolute;
+    z-index: 30;
+    right: 0px;
+    bottom: 0px;
+    width: 0px;
+    height: 0px;
+    cursor: nwse-resize;
+    border-radius: 5px;
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid #007bff;
+    border-bottom: 7px solid #007bff;
+}
+
+.flow_theme_box .body-resize{
+    display: none;
+    position: absolute;
+    z-index: 20;
+    right: 0px;
+    bottom: 0px;
+    width: 0px;
+    height: 0px;
+    cursor: nwse-resize;
+    border-left:5px solid transparent;
+    border-top:5px solid transparent;
+    border-right: 5px solid #007bff;
+    border-bottom: 5px solid #007bff;
+}
+
+
+.flow_theme_box .ep {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    top: calc(50% - 7px);
+    right:  3px;
+
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair; 
+
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+    box-sizing: border-box;
+}
+
+
+/*各类状态*/
+
+/*开始节点*/
+.flow_theme_box .action.begin .action-main{
+    border: 1px solid #17a2b8;  
+}
+.flow_theme_box .action.begin .action-header{ 
+    color: #17a2b8;
+    left: 0px;
+    width: 100%;
+}
+.flow_theme_box .action.begin .action-resize{
+    border-right-color:  #17a2b8;
+    border-bottom-color: #17a2b8;
+}
+.flow_theme_box .action.begin .action-icon{
+    display: none;
+}
+/*结束节点*/
+.flow_theme_box .action.end .action-main{
+    border: 1px solid #17a2b8; 
+}
+.flow_theme_box .action.end .action-header{
+    color: #17a2b8;
+    left: 0px;
+    width: 100%;
+}
+.flow_theme_box .action.end .action-resize{
+    border-right-color: #17a2b8;
+    border-bottom-color:  #17a2b8;
+}
+.flow_theme_box .action.end .action-icon{
+    display: none;
+}
+
+/* external */
+.flow_theme_box .action.external .action-main{
+    border: 1px solid #a7a2ff;
+}
+.flow_theme_box .action.external .action-header{
+    background-color: #a7a2ff;
+}
+.flow_theme_box .action.external .action-resize{
+    border-right-color: #a7a2ff;
+    border-bottom-color: #a7a2ff;
+}
+.flow_theme_box .action.external .action-icon{
+    display: none;
+}
+/* custom */
+.flow_theme_box .action.custom .action-main{
+    border: 1px solid #b67fb6;
+}
+.flow_theme_box .action.custom .action-header{
+    background-color: #b67fb6;
+}
+.flow_theme_box .action.custom .action-resize{
+    border-right-color:   #b67fb6;
+    border-bottom-color:  #b67fb6;
+}
+.flow_theme_box .action.custom .action-icon{
+    position: absolute;
+    z-index: 20;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+/*execute*/
+.flow_theme_box .action.execute{
+    background: repeating-linear-gradient(135deg,transparent,transparent 3px,#17a2b8 3px,#17a2b8 8px);
+    animation: execute_shine 1s infinite linear;
+}
+@keyframes execute_shine {
+    0% {
+        background-position: -1px -1px;
+    }
+    100% {
+        background-position: -12px -12px;
+    }
+}
+
+/*error*/
+.flow_theme_box .action.error .action-main{
+    border: 1px solid #b0413f;
+    color: #b0413f;
+    background-color: white;
+}
+.flow_theme_box .action.error .action-header{
+    color: #b0413f;
+    left: 0px;
+    width: 100%;
+}
+
+.flow_theme_box .action.error .action-resize{
+    border-right-color:  #b0413f;
+    border-bottom-color: #b0413f;
+}
+.flow_theme_box .action.error .action-icon{
+    display: none;
+}
+
+
+/*success*/
+.flow_theme_box .action.success .action-main{
+    border: 1px solid #7AB02C;
+    color: #7AB02C;
+    background-color: white;
+}
+
+.flow_theme_box .action.success .action-header{
+    color: #7AB02C;
+    left: 0px;
+    width: 100%;
+}
+
+.flow_theme_box .action.success .action-resize{
+    border-right-color: #7AB02C;
+    border-bottom-color: #7AB02C;
+}
+.flow_theme_box .action.success .action-icon{
+    display: none;
+}
+.flow_theme_box .action.success .action-main{
+    border: 1px solid #7AB02C;
+    color: #7AB02C;
+    background-color: white;
+}
+
+.flow_theme_box .action.success .action-header{
+    background-color: #7AB02C;
+}
+
+.flow_theme_box .action.success .action-resize{
+    border-right-color: #7AB02C;
+    border-bottom-color: #7AB02C;
+}
+.flow_theme_box .action.success .action-icon{
+    display: none;
+}
+
+
+/*action reject*/
+.flow_theme_box .action.reject .action-main{
+    border: 1px solid #fdcf7c;
+    color: #fdcf7c;
+    background-color: white;
+}
+
+.flow_theme_box .action.reject .action-header{
+    left: 0px;
+    width: 100%;
+    color: #fdcf7c;
+}
+
+.flow_theme_box .action.reject .action-resize{
+    border-right-color: #fdcf7c;
+    border-bottom-color: #fdcf7c;
+}
+.flow_theme_box .action.reject .action-icon{
+    display: none;
+}
+
+/*连接线标签*/
+/*link label*/
+.flow_theme_box .linkLabel {
+    background-color: white;
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21;
+    border: 1px dotted gray;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.flow_theme_box .linkLabel.jtk-hover {
+    background-color: #ffc107;
+}
+.flow_theme_box .linkBtn{
+    background-color: white; 
+    font: 10px sans-serif;
+    color: #999999;
+    z-index: 21; 
+    cursor: pointer;
+    height: 15px;
+    width: 20px;
+    line-height: 15px;
+    border-radius: 5px;
+    text-align: center;
+
+}
+.flow_theme_box .linkBtn.jtk-hover {
+    border:1px solid #999999;
+}
+
+
+.flow_theme_box .linkLabelSource { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.flow_theme_box .linkLabelTarget { 
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21; 
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+/* group */
+.flow_theme_box .group {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_box .group-main {
+    width: 200px;
+    height: 200px;
+    border-radius: 5px;
+    background-color: #ffc10740;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_box .group .group-header {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+}
+
+.flow_theme_box .group .group-body {
+    position: relative;
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
+}
+ 
+.flow_theme_box .group .group-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: rgba(128, 128, 128, 1); 
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_box .group:hover .group-remove-btn{
+    display: block;
+}
+
+
+.flow_theme_box .group .group-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair;
+    padding: 0px;
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_box .group:hover .group-ep{
+    display: block;
+}
+
+.flow_theme_box .group .group-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_box .group:hover .group-resize {
+    display: block;
+}
+/* group end */
+
+/* list */
+.flow_theme_box .list {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_box .list-main {
+    width: 150px;
+    height: 200px;
+    min-width: 100px;
+    min-height: 20px;
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 1);
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+}
+
+.flow_theme_box .list .list-header {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 1);
+    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    padding-left: 10px;
+    color: white;
+    box-sizing: border-box;
+} 
+.flow_theme_box .list .list-body {
+    position: relative;
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.flow_theme_box .list .list-body .list-item {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(128, 128, 128, 0.1);
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    cursor: default;
+}
+.flow_theme_box .list .list-body .list-item .list-item-title{
+    width: 100%;
+    height: 100%;
+    color: rgba(128, 128, 128, 1);
+}
+.flow_theme_box .list .list-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: white; 
+    font-size: 12px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 8px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_box .list:hover .list-remove-btn{
+    display: block;
+}
+
+ 
+.flow_theme_box .list .list-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+
+    border-radius: 3px;
+
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_box .list:hover .list-resize {
+    display: block;
+}
+
+/* end list */
+
+
+/* tip */
+.flow_theme_box .tip {
+    position: absolute;    
+    cursor:move; 
+    box-sizing: border-box;
+   
+}
+.flow_theme_box .tip-main {
+    width: 150px;
+    height: 100px;  
+    min-height: 60px;
+    min-width: 60px;
+    font-size: 12px;
+    cursor:move; 
+    box-sizing: border-box;
+
+    background-color: #fff090; 
+    overflow: hidden;
+}
+
+
+.flow_theme_box .tip-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.flow_theme_box .tip .tip-header {
+    position: relative;
+    height: 20px;
+    width: 100%; 
+    padding-left: 10px;
+    color: rgba(128, 128, 128, 1);
+    box-sizing: border-box; 
+    font-weight: bold;
+}
+
+.flow_theme_box .tip .tip-body {
+    position: relative; 
+    height: calc(100% - 20px);
+    width: 100%;
+    padding: 10px;
+    color: rgba(128, 128, 128, 0.7);
+    box-sizing: border-box;
+
+}
+ 
+.flow_theme_box .tip .tip-remove-btn{
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    z-index: 4;
+    right: 3px;
+    top:2px;
+    color: #ffc107; 
+    background-color: white;
+    border: 1px solid #ffc107;
+    font-size: 10px;
+    font-style: normal;
+    font-family: normal;
+    text-align: center;
+    line-height: 15px;
+    height: 15px;
+    width: 15px; 
+    border-radius: 3px;
+    text-decoration:none;
+    cursor: pointer;
+}
+.flow_theme_box .tip:hover .tip-remove-btn{
+    display: block;
+}
+
+
+.flow_theme_box .tip .tip-ep{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    right:  3px;
+    top: calc(50% - 7px);
+    border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    padding: 0px;
+    font-size: 10px;
+    cursor: crosshair;
+    padding: 0px;
+    background-color: white;
+    border: 1px solid #ffc107;
+    color:#ffc107;
+}
+.flow_theme_box .tip:hover .tip-ep{
+    display: block;
+} 
+
+.flow_theme_box .tip .tip-resize {
+    display: none;
+    position: absolute;
+    z-index: 2;
+
+    right: 0px;
+    bottom: 0px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+ 
+    border-left:7px solid transparent;
+    border-top:7px solid transparent;
+    border-right: 7px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+}
+.flow_theme_box .tip:hover .tip-resize {
+    display: block;
+}
+/* tip end */

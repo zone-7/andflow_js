@@ -313,6 +313,7 @@ function saveLinkDialog(){
 //打开节点配置对话框
 function openActionDialog(action){
     currentActionInfo = action;
+     
     var dialog = $("#actionDialog");
     dialog.find("input[name='name']").val(action.name);
     dialog.find("input[name='title']").val(action.title||"");

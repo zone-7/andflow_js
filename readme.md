@@ -200,6 +200,10 @@ var metadata=[
 
 ] ;
 
+
+
+//初始化流程模型
+//这个部分也是设计完成之后的JSON，可以参考examples下的例子
 var flowModel= {
     "code":"",
     "name":"",
@@ -211,7 +215,7 @@ var flowModel= {
    
     };
 
-
+//设计器配置选项
 var options={
     //组件过滤标签列表
     tags:tags,            

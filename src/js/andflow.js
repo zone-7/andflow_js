@@ -1118,13 +1118,14 @@ var andflow = {
     var id = group.id;
     var name = group.name;
     var group_meta = this.getMetadata(name) || {};
+    var theme = group.theme;
 
     var members = group.members || [];
 
 
-    var html='<div id="'+id+'" class="group group-container">';
-    html+='<div class="group-remove-btn">X</div>';
-    html+='<div class="group-resize"></div>'; 
+    var html='<div id="'+id+'" class="group group-container '+theme+'">';
+    // html+='<div class="group-remove-btn">X</div>';
+    // html+='<div class="group-resize"></div>'; 
     html+='</div>';
     
     var groupElement = $(html);
@@ -1147,7 +1148,13 @@ var andflow = {
 
     group_main_element = $(group_main_dom);
     group_main_element.addClass("group-master");
-    groupElement.append(group_main_element);
+
+
+    //removebtn 
+    group_main_element.append('<div class="group-remove-btn">X</div>');
+    //resize
+    group_main_element.append('<div class="group-resize"></div>');
+
 
     //endpoint
     var ep = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
@@ -1160,7 +1167,12 @@ var andflow = {
     var epElement = $(ep);
     epElement.removeClass('group-ep');
     epElement.addClass('group-ep');
-    groupElement.append(epElement);
+    group_main_element.append(epElement);
+
+
+
+    groupElement.append(group_main_element);
+
 
     $this._plumb.makeSource(groupElement.get(0), {
       filter: '.group-ep', 
@@ -1177,6 +1189,7 @@ var andflow = {
       allowLoopback: true,
     });
 
+ 
     var canvasElement = $('#' + $this.containerId + ' #canvas');
     canvasElement.append(groupElement); 
 

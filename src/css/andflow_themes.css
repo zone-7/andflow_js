@@ -48,22 +48,17 @@ flow_theme_default
 }
 
 .flow_theme_default .group-drag-main {
-    color: #434343;
+     
     width: 200px;
     height: 200px;
-    position: absolute;
-    z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    background-color: rgba(128, 128, 128, 0.01);
     border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    opacity: 0.8;
-    cursor: move;
-    font-size: 10px;
+    background-color: #ffc10740;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    font-size: 12px;
+    cursor:move; 
     box-sizing: border-box;
 }
-.flow_theme_default .group-drag .group-header{
+.flow_theme_default .group-drag-main .group-header{
     position: relative;
     height: 20px;
     width: 100%;
@@ -145,6 +140,26 @@ flow_theme_default
     box-sizing: border-box;
 }
 
+.flow_theme_default .tip-drag-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
 .flow_theme_default .tip-drag .tip-header{
     position: relative;
     height: 20px;
@@ -594,7 +609,7 @@ flow_theme_default
     box-sizing: border-box;
 }
 
-.flow_theme_default .group .group-header {
+.flow_theme_default .group-main .group-header {
     position: relative;
     height: 20px;
     width: 100%;
@@ -606,7 +621,7 @@ flow_theme_default
     transform: inherit;
 }
 
-.flow_theme_default .group .group-body {
+.flow_theme_default .group-main .group-body {
     position: relative;
     height: calc(100% - 20px);
     width: 100%;
@@ -1013,13 +1028,17 @@ flow_theme_icon
     cursor:move; 
     box-sizing: border-box;
 }
-.flow_theme_icon .group-drag .group-header{
-
+.flow_theme_icon .group-drag-main .group-header{
+ 
     position: relative;
     height: 20px;
-    width: 100%;  
-    padding: 0px;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 0px;
+    padding-left: 10px;
     color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
     transform: inherit;
 }
 
@@ -1092,6 +1111,26 @@ flow_theme_icon
     box-sizing: border-box;
 }
 
+.flow_theme_icon .tip-drag-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
 .flow_theme_icon .tip-drag .tip-header{
     position: relative;
     height: 20px;
@@ -1526,16 +1565,20 @@ flow_theme_icon
     box-sizing: border-box;
 }
 
-.flow_theme_icon .group .group-header {
+.flow_theme_icon .group-main .group-header {
     position: relative;
     height: 20px;
-    width: 100%;  
-    padding: 0px;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 0px;
+    padding-left: 10px;
     color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
     transform: inherit;
 
 } 
-.flow_theme_icon .group .group-body {
+.flow_theme_icon .group-main .group-body {
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
@@ -1929,7 +1972,7 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
-.flow_theme_zone .group-drag .group-header{
+.flow_theme_zone .group-drag-main .group-header{
     position: relative;
     height: 20px;
     width: 100%;
@@ -2010,6 +2053,26 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
+.flow_theme_zone .tip-drag-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
 .flow_theme_zone .tip-drag .tip-header{
     position: relative;
     height: 20px;
@@ -2478,16 +2541,20 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
-.flow_theme_zone .group .group-header {
+.flow_theme_zone .group-main .group-header {
     position: relative;
     height: 20px;
-    width: 100%; 
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 0px;
     padding-left: 10px;
     color: rgba(128, 128, 128, 1);
+    box-sizing: border-box;
+    text-align: left;
     transform: inherit;
 } 
 
-.flow_theme_zone .group .group-body {
+.flow_theme_zone .group-main .group-body {
     position: relative;
     height: calc(100% - 20px);
     width: 100%;
@@ -2870,7 +2937,7 @@ flow_theme_zone
     font-size: 10px;
     box-sizing: border-box;
 }
-.flow_theme_box .group-drag .group-header{
+.flow_theme_box .group-drag-main .group-header{
     position: relative;
     height: 20px;
     width: 100%;
@@ -2950,6 +3017,26 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
+.flow_theme_box .tip-drag-main:before {
+    content:"";
+    
+    display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
+    
+    border-width:0 20px 20px 0; /*设置边框宽度*/
+    border-color:#fff #fff transparent transparent; 
+    background:transparent;
+    border-style:solid; /*设置边框为固体的*/
+    width:0; /*设定新创建的元素*/
+    
+    position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
+    top:0;
+    right:0;
+    
+    /*设置元素的阴影效果*/
+    -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+    box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+}
 .flow_theme_box .tip-drag .tip-header{
     position: relative;
     height: 20px;
@@ -3395,7 +3482,7 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
-.flow_theme_box .group .group-header {
+.flow_theme_box .group-main .group-header {
     position: relative;
     height: 20px;
     width: 100%;
@@ -3406,7 +3493,7 @@ flow_theme_zone
     box-sizing: border-box;
 }
 
-.flow_theme_box .group .group-body {
+.flow_theme_box .group-main .group-body {
     position: relative;
     height: calc(100% - 20px);
     width: 100%;

@@ -317,10 +317,7 @@ var andflow = {
         let offsetX = e.offsetX - startX;
         let offsetY = e.offsetY - startY;
         
-        // $('#' + containerId).find('.canvas').width(canvasContainer.get(0).scrollWidth);
-        // $('#' + containerId).find('.canvas').height(canvasContainer.get(0).scrollHeight);
          
-
         scrollLeft = canvasContainer.scrollLeft() - offsetX;
         scrollTop = canvasContainer.scrollTop() - offsetY;
 
@@ -417,41 +414,7 @@ var andflow = {
         });
     });    
      
-  },
-  // _dragGrid: function(){
-  //   var $this = this;
-  //   var canvasDom = document.getElementById("canvas_bg");
-  //   if(!canvasDom){
-  //     return;
-  //   }
-  //   $(canvasDom).css('width',"100%");
-  //   $(canvasDom).attr('height',"100%");
-   
-   
-  //   if(canvasDom.getContext){ 
-     
-  //     var context = canvasDom .getContext("2d");
-  //     var width=canvasDom.width;
-  //     var height=canvasDom.height;
-  //     context.clearRect(0,0,width,height);  
-
-  //     context.strokeStyle = "red";     //描边颜色
-  //     context.lineWidth = 1;
-  //     context.fillStyle = "rgba(0,0,0,1)";
-  //     context.beginPath();  
-  //     for(var w=0;w<width;w=w+$this.drag_step){
-  //       context.moveTo(w,0);                  //移动绘图游标
-  //       context.lineTo(w,height);                   //绘制直线，从游标位置惠子直线到参数，
-  //       //bezierCurveTo绘制曲线，quadraticCurveTo绘制二次曲线，reac绘制矩形，
-  //       context.stroke();                         //用strokeStyle描边 
-  //     }
-  //     for(var h=0;h<width;h=h+$this.drag_step){
-        
-  //     }
-  //     context.closePath();  
-  //   }
-  // },
- 
+  }, 
   //定时动画
   _initAnimaction: function(){
     var $this = this;
@@ -3762,15 +3725,21 @@ var andflow = {
       return;
     }
 
-    var options = { backgroundColor: 'white' };
+    var options = { backgroundColor: 'white', ignore_svg:false };
 
     if (opts) {
       $.extend(options, opts);
     }
 
-    var cardBox = document.querySelector('#canvas');
+    const cardBox = document.querySelector('#canvas');
+    const rect = cardBox.getBoundingClientRect() 
+    const offsetX = $(cardBox).offset().left; 
+    const offsetY = $(cardBox).offset().top; 
+    const w = cardBox.scrollWidth;
+    const h = cardBox.scrollHeight;
 
-    if(options.ignore_svg){ 
+
+    if(!options.ignore_svg){ 
       var nodesToRecover = [];
       var nodesToRemove = [];
       var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
@@ -3797,32 +3766,27 @@ var andflow = {
       });
 
     }
-     
-    let canvas = document.createElement('canvas');
-    let w = cardBox.scrollWidth;
-    let h = cardBox.scrollHeight;
-    let scale = options.scale || 1;
-    canvas.width = w * scale;
-    canvas.height = h * scale;
-
-    canvas.style.width = w * scale + 'px';
-    canvas.style.height = h * scale + 'px';
-
-    $(canvas).css('position', 'relative');
-    $(canvas).css('box-sizing', 'border-box');
-    $(canvas).css('font-size', '12px');
-    $(canvas).css('padding', '0px');
-
     
+    
+    let scale = options.scale || 1; 
+    let canvas = document.createElement('canvas');
+ 
+    canvas.style.width = w   + 'px';
+    canvas.style.height = h    + 'px'; 
+  
     html2canvas(cardBox, {
       canvas: canvas,
-      scale: scale,
-      dpi: 96,
+      scale: scale,  
+      allowTaint: true,
+      foreignObjectRendering: true,
       backgroundColor: options.backgroundColor || 'transparent',
+      dpi: 300,
       width: w,
-      height: h,
+      height: h, 
+      x: -offsetX,
+      y: -offsetY, 
+      scrollX: 0, 
       scrollY: 0,
-      scrollX: 0,
       useCORS: true,
     }).then(function (cvs) {
        
@@ -3833,7 +3797,7 @@ var andflow = {
       for (var k in nodesToRecover) {
         var node = nodesToRecover[k];
         node.parent.appendChild(node.child);
-      }
+      } 
 
       if (callback) {
         callback(cvs);
@@ -3844,19 +3808,26 @@ var andflow = {
 
   //截图,并保存为
   snap: function (name) {
+    var $this=this;
+
     name = name || 'andflow';
 
-    var ext = 'jpg';
+    var ext = 'jpeg';
 
-    this.getSnapshot(function (canvas) {
+    this.getSnapshot(
+      function (canvas) {
       
-      var url = canvas.toDataURL('image/jpeg'); //生成下载的url
+        var url = canvas.toDataURL('image/jpeg'); //生成下载的url
 
-      var triggerDownload = $('<a></a>')
-        .attr('href', url)
-        .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
-      triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
-    });
+        var triggerDownload = $('<a></a>')
+          .attr('href', url)
+          .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
+        triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
+      },
+      { scale: 1, backgroundColor: 'white' ,ignore_svg: false}
+    );
+ 
+
   }, 
 
   setActionContents: function (actioncontentMap) {

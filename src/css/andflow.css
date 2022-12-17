@@ -261,9 +261,8 @@ div{
 
 
 .andflow .designer{
-    /* display: inline-block; */
-    float: right;
-
+    display: inline-block; 
+    overflow: hidden;
     width: calc(100% - 200px);
     height: 100%;
 
@@ -308,8 +307,8 @@ div{
 }
 
 .canvasContainer{
-    display: block;
     position: relative; 
+    display: block; 
     background-color: transparent; 
     width: 100%;
     height: calc(100% - 25px);
@@ -319,16 +318,10 @@ div{
     overflow: hidden;
     box-sizing: border-box;
 }
- 
-.canvasContainer #canvas_bg{
-    position: absolute;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-}
-
+  
 .canvas {
     position: relative;
+    display:block; 
     min-width: 100%;
     min-height: 100%;
     width:100%;
@@ -336,10 +329,8 @@ div{
     padding:0px;
     margin:0px;
     background-color: transparent;
-    overflow:visible;
-    display:block; 
+    overflow:visible; 
     box-sizing: border-box;
-
     cursor: move;
     cursor: -moz-grab;
     cursor: -webkit-grab;
@@ -442,7 +433,7 @@ div{
     width: 100%;
     height:100%;
     border: 1px solid #E3E3E3;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.01);
     box-sizing: border-box; 
     cursor: move;
 }

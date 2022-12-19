@@ -2652,8 +2652,6 @@ var andflow = {
   //画连接线状态
   _paintConnectionState: function (conn, state) {
      
-
-
     if (state == -1 || state == 'error') {
       conn.setPaintStyle({
         stroke: this._themeObj.default_link_color_error,
@@ -3327,13 +3325,13 @@ var andflow = {
       return;
     }
  
-
+    
     if (state == -1 || state == 'error') {
       element.removeClass('error');
       element.removeClass('execute');
       element.removeClass('reject');
       element.removeClass('success');
-
+      
       if (!element.hasClass('error')) {
         element.addClass('error');
       }
@@ -3420,6 +3418,13 @@ var andflow = {
 
   //修改连线状态
   setLinkStates: function (link_states) {
+
+    var conn_list = this._plumb.getAllConnections(); 
+    for (var i = 0; i < conn_list.length; i++) { 
+      this._paintConnectionState(conn_list[i], 9);
+    }
+
+
     if (link_states == undefined || link_states == null) {
       link_states = this._link_states;
     }
@@ -3580,10 +3585,10 @@ var andflow = {
 
 
         action['id'] = id;
-        action['name'] = actionEl.attr('name');
-        action['title'] = actionEl.attr('title');
-        action['icon'] = actionEl.attr('icon');
-        action['des'] = actionEl.attr('des');
+        action['name'] = actionEl.attr('name')||action.name;
+        action['title'] = actionEl.attr('title')||action.title;
+        action['icon'] = actionEl.attr('icon')||action.icon;
+        action['des'] = actionEl.attr('des')||action.des;
         
        
         if(ingroup){

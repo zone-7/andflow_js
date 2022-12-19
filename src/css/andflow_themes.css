@@ -304,8 +304,6 @@ flow_theme_default
     font-size: 12px;
 }
 
-
-
 .flow_theme_default .action-icon{
     display: none;
     position: absolute;
@@ -438,13 +436,7 @@ flow_theme_default
     border-bottom-color:  #b67fb6;
 }
 .flow_theme_default .action.custom .action-icon{
-    position: absolute;
-    z-index: 20;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border-radius: 10px;
+    display: none;
 }
 
 /*execute*/
@@ -481,23 +473,6 @@ flow_theme_default
 
 
 /*success*/
-.flow_theme_default .action.success .action-main{
-    border: 1px solid #7AB02C;
-    color: #7AB02C;
-    background-color: white;
-}
-
-.flow_theme_default .action.success .action-header{
-    background-color: #7AB02C;
-}
-
-.flow_theme_default .action.success .action-resize{
-    border-right-color: #7AB02C;
-    border-bottom-color: #7AB02C;
-}
-.flow_theme_default .action.success .action-icon{
-    display: none;
-}
 .flow_theme_default .action.success .action-main{
     border: 1px solid #7AB02C;
     color: #7AB02C;
@@ -1291,7 +1266,6 @@ flow_theme_icon
 .flow_theme_icon .action-icon img{
     width: auto;
     height: 100%;
-    
 }
 
 .flow_theme_icon .action-resize{
@@ -1392,10 +1366,14 @@ flow_theme_icon
 
 /*external*/
 .flow_theme_icon .action.external .action-main{
-
+    border: 0px;
+    color: #a7a2ff;
+    background-color: transparent;
 }
 .flow_theme_icon .action.external .action-header{
     color:  #a7a2ff;
+    background-color: transparent;
+
 }
 
 .flow_theme_icon .action.external .action-resize{
@@ -1403,7 +1381,7 @@ flow_theme_icon
     border-bottom-color: #a7a2ff;
 }
 .flow_theme_icon .action.external .action-icon{
-
+    display: block;
 }
 .flow_theme_icon .action.external .action-remove-btn{
 
@@ -1412,10 +1390,14 @@ flow_theme_icon
 
 /* custom */
 .flow_theme_icon .action.custom .action-main{
-
+    border: 0px;
+    color: #b67fb6;
+    background-color: transparent;
 }
 .flow_theme_icon .action.custom .action-header{
     color:  #b67fb6;
+    background-color: transparent;
+
 }
 
 .flow_theme_icon .action.custom .action-resize{
@@ -1423,7 +1405,7 @@ flow_theme_icon
     border-bottom-color: #b67fb6;
 }
 .flow_theme_icon .action.custom .action-icon{
-
+    display: block;
 }
 .flow_theme_icon .action.custom .action-remove-btn{
 
@@ -1449,10 +1431,14 @@ flow_theme_icon
 
 /*error*/
 .flow_theme_icon .action.error .action-main{
-
+    border: 0px;
+    color: #b0413f;
+    background-color: transparent;
 }
 .flow_theme_icon .action.error .action-header{
     color:  #b0413f;
+    background-color: transparent;
+
 }
 
 .flow_theme_icon .action.error .action-resize{
@@ -1460,7 +1446,7 @@ flow_theme_icon
     border-bottom-color: #b0413f;
 }
 .flow_theme_icon .action.error .action-icon{
-
+    display: block;
 }
 
 .flow_theme_icon .action.error .action-remove-btn{
@@ -1471,12 +1457,14 @@ flow_theme_icon
 
 /*success*/
 .flow_theme_icon .action.success .action-main{
-
+    border: 0px;
+    color: #7AB02C;
+    background-color: transparent;
 }
 
 .flow_theme_icon .action.success .action-header{
     color:  #7AB02C;
-
+    background-color: transparent;
 }
 
 .flow_theme_icon .action.success .action-resize{
@@ -1484,7 +1472,7 @@ flow_theme_icon
     border-bottom-color:  #7AB02C;
 }
 .flow_theme_icon .action.success .action-icon{
-
+    display: block;
 }
 
 .flow_theme_icon .action.success .action-remove-btn{
@@ -1494,11 +1482,14 @@ flow_theme_icon
 
 /*action reject*/
 .flow_theme_icon .action.reject .action-main{
-
+    border: 0px;
+    color: #fdcf7c;
+    background-color: transparent;
 }
 
 .flow_theme_icon .action.reject .action-header{
     color:  #fdcf7c;
+    background-color: transparent;
 }
 
 
@@ -1507,7 +1498,7 @@ flow_theme_icon
     border-bottom-color: #fdcf7c;
 }
 .flow_theme_icon .action.reject .action-icon{
-
+    display: block;
 }
 .flow_theme_icon .action.reject .action-remove-btn{
 
@@ -3265,7 +3256,7 @@ flow_theme_zone
     border-bottom-color: #17a2b8;
 }
 .flow_theme_box .action.begin .action-icon{
-    display: none;
+    display: block;
 }
 /*结束节点*/
 .flow_theme_box .action.end .action-main{
@@ -3281,7 +3272,7 @@ flow_theme_zone
     border-bottom-color:  #17a2b8;
 }
 .flow_theme_box .action.end .action-icon{
-    display: none;
+    display: block;
 }
 
 /* external */
@@ -3289,34 +3280,32 @@ flow_theme_zone
     border: 1px solid #a7a2ff;
 }
 .flow_theme_box .action.external .action-header{
-    background-color: #a7a2ff;
+    color: #a7a2ff;
+    left: 0px;
+    width: 100%;
 }
 .flow_theme_box .action.external .action-resize{
     border-right-color: #a7a2ff;
     border-bottom-color: #a7a2ff;
 }
 .flow_theme_box .action.external .action-icon{
-    display: none;
+    display: block;
 }
 /* custom */
 .flow_theme_box .action.custom .action-main{
     border: 1px solid #b67fb6;
-}
+} 
 .flow_theme_box .action.custom .action-header{
-    background-color: #b67fb6;
+    color: #b67fb6;
+    left: 0px;
+    width: 100%;
 }
 .flow_theme_box .action.custom .action-resize{
     border-right-color:   #b67fb6;
     border-bottom-color:  #b67fb6;
 }
 .flow_theme_box .action.custom .action-icon{
-    position: absolute;
-    z-index: 20;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border-radius: 10px;
+    display: block;
 }
 
 /*execute*/
@@ -3350,7 +3339,7 @@ flow_theme_zone
     border-bottom-color: #b0413f;
 }
 .flow_theme_box .action.error .action-icon{
-    display: none;
+    display: block;
 }
 
 
@@ -3372,25 +3361,8 @@ flow_theme_zone
     border-bottom-color: #7AB02C;
 }
 .flow_theme_box .action.success .action-icon{
-    display: none;
-}
-.flow_theme_box .action.success .action-main{
-    border: 1px solid #7AB02C;
-    color: #7AB02C;
-    background-color: white;
-}
-
-.flow_theme_box .action.success .action-header{
-    background-color: #7AB02C;
-}
-
-.flow_theme_box .action.success .action-resize{
-    border-right-color: #7AB02C;
-    border-bottom-color: #7AB02C;
-}
-.flow_theme_box .action.success .action-icon{
-    display: none;
-}
+    display: block;
+} 
 
 
 /*action reject*/
@@ -3411,7 +3383,7 @@ flow_theme_zone
     border-bottom-color: #fdcf7c;
 }
 .flow_theme_box .action.reject .action-icon{
-    display: none;
+    display: block;
 }
 
 /*连接线标签*/

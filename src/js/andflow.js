@@ -1688,7 +1688,21 @@ var andflow = {
     }
 
   },
-
+  _getBase64Image: function(img) {
+    try{
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      var dataURL = canvas.toDataURL("image/png");
+      return dataURL;
+    }catch(e){
+      return null;
+    }
+    
+  },
+   
   //添加节点
   _createAction: function (action) {
     var $this = this;
@@ -1732,13 +1746,17 @@ var andflow = {
       body_height = action.body_height;
     }
 
-    var iconImg = '';
-    if (icon && icon.length > 0) {
-      iconImg = '<img src="' + ($this.img_path || '') + icon + '" >';
+    var iconImgPath = '';
+    if(icon && icon.length > 0 && icon.indexOf("base64")>=0){
+      iconImgPath = icon;
+    }else if (icon && icon.length > 0) {
+      iconImgPath = ($this.img_path || '') + icon;
     } else {
-      iconImg = '<img src="' + ($this.img_path || '') + 'node.png">';
+      iconImgPath = ($this.img_path || '') + 'node.png'; 
     }
 
+    
+    var iconImg = '<img src="' + iconImgPath + '"  >';
  
     var action_main_dom = '<div class="action-main">';
     action_main_dom += '<div class="action-icon"  >' + iconImg + '</div>'; 
@@ -1825,15 +1843,7 @@ var andflow = {
     removeBtnElement.addClass('action-remove-btn');
 
     actionElement.find(".action").append(removeBtnElement);
-
-    // actionElement.removeClass('action');
-    // actionElement.addClass('action');
-
-    // actionElement.attr('id', id);
-    // actionElement.attr('name', name);
-    // actionElement.attr('title', title);
-    // actionElement.attr('icon', icon);
-
+ 
     var canvasElement = $('#' + $this.containerId + ' #canvas');
     canvasElement.append(actionElement);
      
@@ -1851,7 +1861,6 @@ var andflow = {
     actionElement.css('position', 'absolute').css('left', left).css('top', top);
     
     //size
-    
     if (width && width.length > 0) {
       actionElement.css("width",width);
       actionElement.find(".action-master").css('width', width);
@@ -1873,6 +1882,15 @@ var andflow = {
       actionElement.find('.action-body').css('height', body_height);
     } else {
       actionElement.find('.action-body').css('height', '');
+    }
+    //icon to base64
+    if(iconImgPath.indexOf("data:image/")<0){ 
+      actionElement.find(".action-icon img").bind('load',function(){ 
+        var data = $this._getBase64Image(this);
+        if(data!=null){
+          this.src=data;
+        }  
+      });
     }
     
     //events
@@ -2633,6 +2651,9 @@ var andflow = {
 
   //画连接线状态
   _paintConnectionState: function (conn, state) {
+     
+
+
     if (state == -1 || state == 'error') {
       conn.setPaintStyle({
         stroke: this._themeObj.default_link_color_error,
@@ -2641,15 +2662,7 @@ var andflow = {
         outlineStroke: 'transparent',
         outlineWidth: this._themeObj.default_link_outlineWidth_error,
       });
-    } else if (state == 1 || state == 'execute') {
-      conn.setPaintStyle({
-        stroke: this._themeObj.default_link_color_run,
-        radius: this._themeObj.default_link_radius_run,
-        strokeWidth: this._themeObj.default_link_strokeWidth_run,
-        outlineStroke: 'transparent',
-        outlineWidth: this._themeObj.default_link_outlineWidth_run,
-      });
-    } else if (state == 2 || state == 'success') {
+    } else if (state == 1 || state == 'success') {
       conn.setPaintStyle({
         stroke: this._themeObj.default_link_color_success,
         radius: this._themeObj.default_link_radius_success,
@@ -2657,7 +2670,7 @@ var andflow = {
         outlineStroke: 'transparent',
         outlineWidth: this._themeObj.default_link_outlineWidth_success,
       });
-    } else if (state == 3 || state == 'reject') {
+    } else if (state == 0 || state == 'reject') {
       conn.setPaintStyle({
         stroke: this._themeObj.default_link_color_reject,
         radius: this._themeObj.default_link_radius_reject,
@@ -3304,7 +3317,7 @@ var andflow = {
       return;
     }
 
-    var element = $('#' + this.containerId).find('#' + actionId);
+    var element = $('#' + this.containerId).find('#' + actionId).find('.action');
 
     if (state == null || state == '' || state == 0) {
       element.removeClass('error');
@@ -3313,6 +3326,7 @@ var andflow = {
       element.removeClass('success');
       return;
     }
+ 
 
     if (state == -1 || state == 'error') {
       element.removeClass('error');
@@ -3323,11 +3337,7 @@ var andflow = {
       if (!element.hasClass('error')) {
         element.addClass('error');
       }
-    } else if (state == 1 || state == 'execute') {
-      if (!element.hasClass('execute')) {
-        element.addClass('execute');
-      }
-    } else if (state == 2 || state == 'success') {
+    } else if (state == 1 || state == 'success') {
       element.removeClass('error');
       element.removeClass('execute');
       element.removeClass('reject');
@@ -3336,7 +3346,7 @@ var andflow = {
       if (!element.hasClass('success')) {
         element.addClass('success');
       }
-    } else if (state == 3 || state == 'reject') {
+    } else if (state == 0 || state == 'reject') {
       element.removeClass('error');
       element.removeClass('execute');
       element.removeClass('reject');
@@ -3869,6 +3879,9 @@ var andflow = {
     return actioncontent;
   },
   setActionContent: function (action_id, content, content_type) {
+    if(action_id==undefined || action_id==null || action_id=="" || this._actionInfos[action_id]==null){
+      return;
+    }
      
     this._actionInfos[action_id].content =  { content_type: content_type, content: content };
     this._actionContents[action_id] = { content_type: content_type, content: content };

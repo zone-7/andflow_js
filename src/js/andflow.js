@@ -3763,7 +3763,7 @@ var andflow = {
     }
 
     const cardBox = document.querySelector('#canvas');
-    const rect = cardBox.getBoundingClientRect() 
+    const rect = cardBox.getBoundingClientRect();
     const offsetX = $(cardBox).offset().left; 
     const offsetY = $(cardBox).offset().top; 
     const w = cardBox.scrollWidth;

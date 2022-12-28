@@ -1401,7 +1401,6 @@ var andflow = {
     }); 
 
    
-
     if(members && members.length>0){
       var actionElements = [];
       for(var i in members){
@@ -1425,9 +1424,7 @@ var andflow = {
 
     var items = list.items;
     var left = list.left;
-    var top = list.top;
-    var width = list.width;
-    var height = list.height;
+    var top = list.top; 
 
     var html='<div id="'+id+'" class="list list-container">';
     html+='<div class="list-remove-btn">X</div>';
@@ -1439,12 +1436,44 @@ var andflow = {
     html+='</div>'; //end list
     
 
-
     var listElement = $(html);
+   
+    //width
+    if(list.width!=undefined && list.width!=null){
+      if((list.width+"").indexOf("px")>=0){
+        listElement.find(".list-main").css("width", list.width);
+      }else{
+        listElement.find(".list-main").css("width", list.width+"px"); 
+      }  
+    }
+
+    //height
+    if(list.height!=undefined && list.height!=null){
+      
+      if((list.height+"").indexOf("px")>=0){
+        listElement.find(".list-main").css("height", list.height);
+      }else{
+        listElement.find(".list-main").css("height", list.height+"px"); 
+      }  
+    }
+
+
+    //top
+    if((top+"").indexOf("px")>=0){
+      listElement.css("top", top);
+    }else{
+      listElement.css("top", top+"px");
+    }
+    //left
+    if((left+"").indexOf("px")>=0){
+      listElement.css("left", left);
+    }else{
+      listElement.css("left", left+"px");
+    }
+
+
     var canvasElement = $('#' + $this.containerId + ' #canvas');
     canvasElement.append(listElement);
-
-    
     
     //event
     listElement.bind('mouseup', function () {
@@ -1582,19 +1611,6 @@ var andflow = {
       } 
     });
 
-
-    //top
-    if((top+"").indexOf("px")>=0){
-      listElement.css("top", top);
-    }else{
-      listElement.css("top", top+"px");
-    }
-    //left
-    if((left+"").indexOf("px")>=0){
-      listElement.css("left", left);
-    }else{
-      listElement.css("left", left+"px");
-    }
 
     $this._plumb.draggable(listElement.get(0),{
       stop:function(event){

@@ -1041,7 +1041,7 @@ var andflow = {
       icon + '" draggable="false"/></div></div>'); 
     }
 
-    var render = metadata.render_helper || metadata.render;
+    var render = metadata.render_helper || metadata.render || $this.render_action_helper;
     if(render) {
       let r = render(metadata);
       if (r != null && r.length > 0) {
@@ -1793,17 +1793,14 @@ var andflow = {
     action_main_dom += '</div>'; 
     action_main_dom += '</div>'; //end action-main
 
-    if(action.render){
-      var r = action.render(action_meta, action, action_main_dom);
+    var render = action.render || action_meta.render || $this.render_action;
+
+    if(render){
+      var r = render(action_meta, action, action_main_dom);
       if (r && r.length > 0) {
         action_main_dom = r;
       }
-    }else if(action_meta.render){
-      var r = action_meta.render(action_meta, action, action_main_dom);
-      if (r && r.length > 0) {
-        action_main_dom = r;
-      }
-    }
+    } 
     
     var actionHtml =
       '<div id="' + id + '"  draggable="true" ondragend="" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +

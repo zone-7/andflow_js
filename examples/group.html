@@ -14,10 +14,10 @@
 
 
     <link rel="stylesheet" href="../src/css/andflow.css">
-    <link rel="stylesheet" href="../dist/css/andflow_themes.min.css">
+    <link rel="stylesheet" href="../src/css/andflow_themes.css">
     <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
 
-    <script src="../dist/js/andflow.min.js"></script>
+    <script src="../src/js/andflow.js"></script>
     <script src="../src/js/andflow_themes.js"></script> 
  
     <link  rel="stylesheet"  href="../src/css/demo.css" > 
@@ -27,7 +27,7 @@
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
         <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle">设计器</div>
+        <div class="subtitle">分组</div>
         
         <div class="menus">
             <a href="index.html">Demos</a>
@@ -63,6 +63,7 @@
     <option value="flow_theme_default"  selected >默认样式</option>
     <option value="flow_theme_zone"  >右置标题</option>
     <option value="flow_theme_icon" >大图标</option>
+    <option value="flow_theme_box" >方框</option>
 </select>
 <label>是否显示内容</label>
 <select id="showcontent_select" onchange="changeShowContent()">
@@ -95,8 +96,8 @@
         "actions": [
             {
                 "id": "f7a6ec0031784f5a80d8633a6418fd52",
-                "left": "77px",
-                "top": "101px",
+                "left": "50px",
+                "top": "100px",
                 "name": "begin",
                 "theme": "action_theme_icon",
                 "params": {},
@@ -136,8 +137,7 @@
                 "id": "f558687ca5f34a6c89732eb50749a15a",
                 "left": "540px",
                 "top": "280px",
-                "name": "end",
-                "theme": "action_theme_icon",
+                "name": "end", 
                 "params": {},
                 "title": "结束",
                 "icon": "end.png",
@@ -163,6 +163,7 @@
             {
                 "id": "group1",
                 "title": "组",
+                "name": "group",
                 "theme":"action_theme_icon",
                 "members": [
                     "793a2a11cf8b40e9afd8bd8f04405e64",

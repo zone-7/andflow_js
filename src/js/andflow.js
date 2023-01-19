@@ -1076,65 +1076,79 @@ var andflow = {
   _createGroup: function(group){
     var $this= this;
      
-    $this.setGroupInfo(group);
-
-    var id = group.id;
+    var id = group.id; 
     var name = group.name;
-    var group_meta = this.getMetadata(name) || {};
-    var theme = group.theme;
+    if (id == null) {
+      return;
+    } 
+    if (name == null) {
+      return;
+    } 
 
     var members = group.members || [];
 
-
-    var html='<div id="'+id+'" class="group group-container '+theme+'">';
-    // html+='<div class="group-remove-btn">X</div>';
-    // html+='<div class="group-resize"></div>'; 
-    html+='</div>';
+    var group_meta = this.getMetadata(name) || {};
     
-    var groupElement = $(html);
+    var groupElement = $('#' + $this.containerId+ ' #' + group.id);
+    if(!groupElement || !groupElement.length || groupElement.length<=0){
+      var html='<div id="'+group.id+'" class="group group-container" > </div>';  
+      groupElement = $(html);
+     
+      var group_main_dom = '<div class="group-main group-master"><div class="group-header"></div><div class="group-body"></div></div>';
 
+      //render
+      if(group.render){
+        var r = group.render(group_meta, group, group_main_dom);
+        if (r && r.length > 0) {
+          group_main_dom = r;
+        }
+      }else if(group_meta.render){
+        var r = group_meta.render(group_meta, group, group_main_dom);
+        if (r && r.length > 0) {
+          group_main_dom = r;
+        }
+      } 
 
-    var group_main_dom = '<div class="group-main"><div class="group-header"></div><div class="group-body"></div></div>';
+      group_main_element = $(group_main_dom); 
 
-    //render
-    if(group.render){
-      var r = group.render(group_meta, group, group_main_dom);
-      if (r && r.length > 0) {
-        group_main_dom = r;
+      //removebtn 
+      group_main_element.append('<div class="group-remove-btn">X</div>');
+      //resize
+      group_main_element.append('<div class="group-resize"></div>');
+
+      //endpoint
+      var ep = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      if ($this.render_endpoint) {
+        var epr = $this.render_endpoint(action_meta, action, ep);
+        if (epr && epr.length > 0) {
+          ep = epr;
+        }
       }
-    }else if(group_meta.render){
-      var r = group_meta.render(group_meta, group, group_main_dom);
-      if (r && r.length > 0) {
-        group_main_dom = r;
-      }
-    } 
+      var epElement = $(ep);
+      epElement.removeClass('group-ep');
+      epElement.addClass('group-ep');
+      group_main_element.append(epElement);
 
-    group_main_element = $(group_main_dom);
-    group_main_element.addClass("group-master");
+      groupElement.append(group_main_element); 
 
-
-    //removebtn 
-    group_main_element.append('<div class="group-remove-btn">X</div>');
-    //resize
-    group_main_element.append('<div class="group-resize"></div>');
-
-
-    //endpoint
-    var ep = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
-    if ($this.render_endpoint) {
-      var epr = $this.render_endpoint(action_meta, action, ep);
-      if (epr && epr.length > 0) {
-        ep = epr;
-      }
+      var canvasElement = $('#' + $this.containerId + ' #canvas');
+      canvasElement.append(groupElement); 
+       
     }
-    var epElement = $(ep);
-    epElement.removeClass('group-ep');
-    epElement.addClass('group-ep');
-    group_main_element.append(epElement);
-
-
-
-    groupElement.append(group_main_element);
+    
+    $this.setGroupInfo(group);
+   
+ 
+    //plumb add group 
+    $this._plumb.addGroup({
+      el:groupElement.get(0),
+      id:group.id, 
+      orphan:true,
+      droppable:true,
+      dropOverride: true,
+      revert:true,
+      endpoint:["Dot", { radius:3 }] 
+    }); 
 
 
     $this._plumb.makeSource(groupElement.get(0), {
@@ -1152,10 +1166,26 @@ var andflow = {
       allowLoopback: true,
     });
 
- 
-    var canvasElement = $('#' + $this.containerId + ' #canvas');
-    canvasElement.append(groupElement); 
-
+    $this._plumb.draggable(groupElement.get(0),{
+      stop:function(event){
+        if($this.drag_step>1){
+          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          $(event.el).css("left",x+"px");
+          $(event.el).css("top",y+"px");
+        }
+      }
+    });
+    
+   
+    if(members && members.length>0){
+      var actionElements = [];
+      for(var i in members){
+        actionElements.push($("#"+members[i]).get(0));
+      }
+      $this._plumb.addToGroup(id, actionElements);
+    }
+    
     //event
     groupElement.bind('mouseup', function () {
       $this._onCanvasChanged();
@@ -1234,118 +1264,7 @@ var andflow = {
       } 
     });
 
-    //title\body
-    groupElement.find('.group-header').html(group.title || '');
-    groupElement.find('.group-body').html(group.des || '');
-
-
-    //位置
-    var padding_top=30;
-    var padding_left=10;
-    var padding_right=10;
-    var padding_bottom=10;
-
-    //left
-    if(group.left==null || group.left=="auto"){
-      if(members.length>0){
-        var minLeft = 9999999999999;
-        
-        for(var i in members){
-          let l = $("#"+members[i]).offset().left - canvasElement.offset().left;
-           if(minLeft>l){
-            minLeft = l;
-          }  
-        }
-        minLeft = minLeft - padding_left;
-        groupElement.css("left",minLeft+"px");
-      } 
-    }else{
-      if((group.left+"").indexOf("px")>=0){
-        groupElement.css("left", group.left);
-      }else{
-        groupElement.css("left", group.left+"px");
-      } 
-    }
-    //top
-    if(group.top==null || group.top=="auto"){
-      if(members.length>0){
-        var minTop = 999999999;
-   
-        for(var i in members){
-          let t = $("#"+members[i]).offset().top - canvasElement.offset().top;
-           if(minTop>t){
-            minTop = t;
-          }  
-        }
-        minTop = minTop - padding_top;
-        groupElement.css("top",minTop+"px");
-      } 
-    }else{ 
-      if((group.top+"").indexOf("px")>=0){
-        groupElement.css("top", group.top);
-      }else{
-        groupElement.css("top", group.top+"px");
-      }
-    }
-
-    //width
-    if( group.width==null || group.width=="auto"){
-      if(members.length>0){
-        var maxWidth = 0;
-
-        for(var i in members){
-
-          $("#"+members[i]).find("div").each(function(index,el){
-            
-            let w = $(el).offset().left+$(el).width();
-            w = w - groupElement.position().left - canvasElement.offset().left;
-
-            if(w > maxWidth){
-              maxWidth = w;
-            }
-          }); 
-        }
-        maxWidth = maxWidth+padding_right;
-
-        group_main_element.width(maxWidth);
-      } 
-    }else{
-      if((group.width+"").indexOf("px")>=0){
-        group_main_element.css("width", group.width);
-      }else{
-        group_main_element.css("width", group.width+"px"); 
-      }  
-    }
-
-    //height
-    if(group.height==null || group.height=="auto"){
-      if(members.length>0){
-        var maxHeight = 0;
-
-        for(var i in members){
-
-          $("#"+members[i]).find("div").each(function(index,el){
-            
-            let h = $(el).offset().top+$(el).height();
-            h = h - groupElement.position().top - canvasElement.offset().top;
-
-            if(h > maxHeight){
-              maxHeight = h;
-            }
-          }); 
-        }
-        maxHeight = maxHeight+padding_bottom;
-
-        group_main_element.height(maxHeight);
-      } 
-    }else{
-      if((group.height+"").indexOf("px")>=0){
-        group_main_element.css("height", group.height);
-      }else{
-        group_main_element.css("height", group.height+"px"); 
-      }  
-    }
-
+    
     //group event
     groupElement.find('.group-resize').mousedown(function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
@@ -1379,35 +1298,6 @@ var andflow = {
       });
       e.preventDefault();
     }); 
-    $this._plumb.draggable(groupElement.get(0),{
-      stop:function(event){
-        if($this.drag_step>1){
-          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
-          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
-          $(event.el).css("left",x+"px");
-          $(event.el).css("top",y+"px");
-        }
-      }
-    });
-    //plumb add group 
-    $this._plumb.addGroup({
-      el:groupElement.get(0),
-      id:id, 
-      orphan:true,
-      droppable:true,
-      dropOverride: true,
-      revert:true,
-      endpoint:["Dot", { radius:3 }] 
-    }); 
-
-   
-    if(members && members.length>0){
-      var actionElements = [];
-      for(var i in members){
-        actionElements.push($("#"+members[i]).get(0));
-      }
-      $this._plumb.addToGroup(id, actionElements);
-    }
     
     $this._onCanvasChanged();
 
@@ -1416,65 +1306,31 @@ var andflow = {
   //添加列表
   _createList: function(list){
     var $this = this;
-    $this.setListInfo(list);
 
-    var id = list.id;
-    var name = list.name;
     var meta = this.getMetadata(name) || {};
 
-    var items = list.items;
-    var left = list.left;
-    var top = list.top; 
+    var listElement = $('#' + $this.containerId+ ' #' + list.id);
+    if(!listElement || !listElement.length || listElement.length<=0){
+      var html='<div id="'+list.id+'" class="list list-container">';
+      html+='<div class="list-remove-btn">X</div>';
+      html+='<div class="list-resize"></div>';
+      html+='<div class="list-main">';//begin main
+      html+='<div class="list-header"></div>';
+      html+='<div class="list-body"></div>';
+      html+='</div>'; //end main 
+      html+='</div>'; //end list 
+      listElement = $(html);
 
-    var html='<div id="'+id+'" class="list list-container">';
-    html+='<div class="list-remove-btn">X</div>';
-    html+='<div class="list-resize"></div>';
-    html+='<div class="list-main">';//begin main
-    html+='<div class="list-header">'+(list.title||'')+'</div>';
-    html+='<div class="list-body"></div>';
-    html+='</div>'; //end main 
-    html+='</div>'; //end list
-    
-
-    var listElement = $(html);
-   
-    //width
-    if(list.width!=undefined && list.width!=null){
-      if((list.width+"").indexOf("px")>=0){
-        listElement.find(".list-main").css("width", list.width);
-      }else{
-        listElement.find(".list-main").css("width", list.width+"px"); 
-      }  
-    }
-
-    //height
-    if(list.height!=undefined && list.height!=null){
+      var canvasElement = $('#' + $this.containerId + ' #canvas');
+      canvasElement.append(listElement);
       
-      if((list.height+"").indexOf("px")>=0){
-        listElement.find(".list-main").css("height", list.height);
-      }else{
-        listElement.find(".list-main").css("height", list.height+"px"); 
-      }  
     }
 
 
-    //top
-    if((top+"").indexOf("px")>=0){
-      listElement.css("top", top);
-    }else{
-      listElement.css("top", top+"px");
-    }
-    //left
-    if((left+"").indexOf("px")>=0){
-      listElement.css("left", left);
-    }else{
-      listElement.css("left", left+"px");
-    }
+    $this.setListInfo(list);
 
-
-    var canvasElement = $('#' + $this.containerId + ' #canvas');
-    canvasElement.append(listElement);
-    
+   
+   
     //event
     listElement.bind('mouseup', function () {
       $this._onCanvasChanged();
@@ -1611,7 +1467,6 @@ var andflow = {
       } 
     });
 
-
     $this._plumb.draggable(listElement.get(0),{
       stop:function(event){
         if($this.drag_step>1){
@@ -1627,18 +1482,13 @@ var andflow = {
       endpoint:["Rectangle", {width:20, height:20}]
     });
  
-    //items
-    $this._setListItems(id,items); 
-
+    
     $this._onCanvasChanged();
   }, //end createList
 
   _setListItems: function(listid, items){
     var $this = this;
-    
-    $this._listInfos[listid].items = items;
-
-    
+     
     if($("#"+listid).find(".list-item").length>0){  
       var tobe_dels = [];
       $("#"+listid).find(".list-item").each(function(index, el){
@@ -1690,6 +1540,19 @@ var andflow = {
       }
       itemEl.find(".list-item-title").html(item.title||'');
       
+      if(item.item_color){
+        itemEl.css("background-color",item.item_color);
+      }
+      if(item.item_text_color){
+        itemEl.find(".list-item-title").css("color",item.item_text_color);
+      }
+      if(item.style){
+         
+        for(var n in item.style){ 
+          itemEl.css(n,item.style[n]);
+        } 
+      }
+
     }  
     
   },
@@ -1730,183 +1593,98 @@ var andflow = {
     var name = action.name;
     if (name == null) {
       return;
-    }
-     
-    this.setActionInfo(action);
-
-    var action_meta = this.getMetadata(name) || {};
- 
-    var title =  action.title || action.des || action_meta.title || action_meta.des || '';
-   
-
-    var icon = action.icon || action_meta.icon || '';
-    var des = action.des || action_meta.des || '';
-    var css = action.css || action_meta.css || '';
-    var actionThemeName = action.theme || action_meta.theme  || '';
-     
-
-    var action_themeObj = action_themes[actionThemeName||''] || this._themeObj;
-
-    var content = action.content;
-
-    var left = action.left;
-    var top = action.top;
-    var width = action.width;
-    var height = action.height;
-
-    var body_width = '';
-    var body_height = '';
-     
-    if (action_themeObj.is_body_resizable) {
-      body_width = action.body_width;
-      body_height = action.body_height;
-    }
-
-    var iconImgPath = '';
-    if(icon && icon.length > 0 && icon.indexOf("base64")>=0){
-      iconImgPath = icon;
-    }else if (icon && icon.length > 0) {
-      iconImgPath = ($this.img_path || '') + icon;
-    } else {
-      iconImgPath = ($this.img_path || '') + 'node.png'; 
-    }
-
-    
-    var iconImg = '<img src="' + iconImgPath + '"  >';
- 
-    var action_main_dom = '<div class="action-main">';
-    action_main_dom += '<div class="action-icon"  >' + iconImg + '</div>'; 
-    action_main_dom += '<div class="action-header">' + title + '</div>'; //标题 
-    //begin action-body
-    var bodystyle = '';
-    if (this.flowModel.show_action_body == 'false') {
-      bodystyle = 'style="visibility: hidden"';
-    }
-    var contentstyle = '';
-    if (this.flowModel.show_action_content == 'false') {
-      contentstyle = 'style="visibility: hidden"';
-    }
-
-    action_main_dom += '<div class="action-body" ' + bodystyle + '>';
-    action_main_dom += '<div class="action-content" ' + contentstyle + '></div>'; //消息内容,html,chart
-    action_main_dom += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
-    action_main_dom += '</div>'; 
-    action_main_dom += '</div>'; //end action-main
-
-    var render = action.render || action_meta.render || $this.render_action;
-
-    if(render){
-      var r = render(action_meta, action, action_main_dom);
-      if (r && r.length > 0) {
-        action_main_dom = r;
-      }
     } 
-    
-    var actionHtml =
-      '<div id="' + id + '"  draggable="true" ondragend="" class="action-container '+actionThemeName+'"><div  class="action  ' + css + '" name="' + name +
-      '" title="' + title +
-      '" icon="' + icon + '"></div></div>'; 
-
-    var actionElement = $(actionHtml);
-
-
-    //main
-    action_main_el = $(action_main_dom);
-    action_main_el.addClass("action-master"); 
-    
-    actionElement.find(".action").append(action_main_el);
-
-    //endpoint
-    var ep = '<div class="ep" title="拖拉连线">→</div>'; //拖拉连线焦点
-    if ($this.render_endpoint) {
-      var epr = $this.render_endpoint(action_meta, action, ep);
-      if (epr && epr.length > 0) {
-        ep = epr;
-      }
-    }
-    var epElement = $(ep);
-    epElement.removeClass('ep');
-    epElement.addClass('ep');
-    actionElement.append(epElement);
-
-    //resizer
-    var resizer = '<div class="action-resize"></div>'; //改变大小的三角形框
-    if ($this.render_btn_resize) {
-      var resizer_new = $this.render_btn_resize(action_meta, action, resizer);
-      if (resizer_new && resizer_new.length > 0) {
-        resizer = resizer_new;
-      }
-    }
-
-    var resizerElement = $(resizer);
-    resizerElement.removeClass('action-resize');
-    resizerElement.addClass('action-resize'); 
-    actionElement.find(".action").append(resizerElement);
-
-    //remove button 
-    var removeBtn = '<a href="javascript:void(0)" class="action-remove-btn"  >X</a>'; //工具栏
-    if ($this.render_btn_remove) {
-      var removeBtn_new = $this.render_btn_remove(action_meta, action, removeBtn);
-      if (removeBtn_new && removeBtn_new.length > 0) {
-        removeBtn = removeBtn_new;
-      }
-    }
-    var removeBtnElement = $(removeBtn);
-    removeBtnElement.removeClass('action-remove-btn');
-    removeBtnElement.addClass('action-remove-btn');
-
-    actionElement.find(".action").append(removeBtnElement);
- 
-    var canvasElement = $('#' + $this.containerId + ' #canvas');
-    canvasElement.append(actionElement);
+    var action_meta = this.getMetadata(name) || {};
      
-    //content
-    if(content){
-      if(typeof content === 'string'){
-        content={ content_type: "msg", content: content};
-      } 
-
-      this.setActionContent(id, content.content ||'',content.content_type ||'msg' );
-    }  
-
+    var actionElement = $('#'+this.containerId + ' #' + action.id);
+    if(actionElement==0 || !actionElement.length || actionElement.length<=0){
     
-    //position
-    actionElement.css('position', 'absolute').css('left', left).css('top', top);
-    
-    //size
-    if (width && width.length > 0) {
-      actionElement.css("width",width);
-      actionElement.find(".action-master").css('width', width);
-    }
-    if (height && height.length > 0) {
-      actionElement.css("height",height);
-      actionElement.find(".action-master").css('height', height);
-    }
+      var actionHtml ='<div id="' + id + '"  draggable="true" ondragend="" class="action-container"><div  class="action" ></div></div>'; 
 
-    //body
-    if (body_width && body_width.length > 0) {
-      actionElement.attr('body_width', body_width);
-      actionElement.find('.action-body').css('width', body_width);
-    } else {
-      actionElement.find('.action-body').css('width', '');
+      actionElement = $(actionHtml); 
+
+      //main
+      var action_main_dom = '<div class="action-main action-master" >';
+      action_main_dom += '<div class="action-icon"  ><img src=""  ></div>'; 
+      action_main_dom += '<div class="action-header"></div>'; //标题  
+      action_main_dom += '<div class="action-body" >';
+      action_main_dom += '<div class="action-content" ></div>'; //消息内容,html,chart
+      action_main_dom += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
+      action_main_dom += '</div>'; 
+      action_main_dom += '</div>'; //end action-main
+
+      var render = action.render || action_meta.render || $this.render_action;
+
+      if(render){
+        var r = render(action_meta, action, action_main_dom);
+        if (r && r.length > 0) {
+          action_main_dom = r;
+        }
+      }
+      var action_main_el = $(action_main_dom);
+      action_main_el.addClass("action-master"); 
+      actionElement.find(".action").append(action_main_el);
+
+      //ep
+      var ep = '<div class="ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      if ($this.render_endpoint) {
+        var epr = $this.render_endpoint(action_meta, action, ep);
+        if (epr && epr.length > 0) {
+          ep = epr;
+        }
+      }
+      var epElement = $(ep); 
+      epElement.removeClass('ep');
+      epElement.addClass('ep');
+      actionElement.append(epElement);
+      
+      //resizer
+      var resizer = '<div class="action-resize"></div>'; //改变大小的三角形框
+      if ($this.render_btn_resize) {
+        var resizer_new = $this.render_btn_resize(action_meta, action, resizer);
+        if (resizer_new && resizer_new.length > 0) {
+          resizer = resizer_new;
+        }
+      }
+
+      var resizerElement = $(resizer);
+      resizerElement.removeClass('action-resize');
+      resizerElement.addClass('action-resize'); 
+      actionElement.find(".action").append(resizerElement);
+
+      //remove button 
+      var removeBtn = '<a href="javascript:void(0)" class="action-remove-btn"  >X</a>'; //工具栏
+      if ($this.render_btn_remove) {
+        var removeBtn_new = $this.render_btn_remove(action_meta, action, removeBtn);
+        if (removeBtn_new && removeBtn_new.length > 0) {
+          removeBtn = removeBtn_new;
+        }
+      }
+      var removeBtnElement = $(removeBtn);
+      removeBtnElement.removeClass('action-remove-btn');
+      removeBtnElement.addClass('action-remove-btn');
+
+      actionElement.find(".action").append(removeBtnElement);
+  
+      var canvasElement = $('#' + $this.containerId + ' #canvas');
+      canvasElement.append(actionElement);
     }
-    if (body_height && body_height.length > 0) {
-      actionElement.attr('body_height', body_height);
-      actionElement.find('.action-body').css('height', body_height);
-    } else {
-      actionElement.find('.action-body').css('height', '');
-    }
-    //icon to base64
-    if(iconImgPath.indexOf("data:image/")<0){ 
-      actionElement.find(".action-icon img").bind('load',function(){ 
+   
+    this.setActionInfo(action);
+ 
+    
+    //事件
+    //image load
+    actionElement.find(".action-icon img").bind('load',function(){ 
+      var d =  $(this).attr("src");
+      if(d.indexOf("data:image/")<0){
         var data = $this._getBase64Image(this);
         if(data!=null){
           this.src=data;
         }  
-      });
-    }
-    
-    //events
+      } 
+    });
+    //mouseup
     actionElement.bind('mouseup', function () {
       $this._onCanvasChanged();
     });
@@ -2118,61 +1896,67 @@ var andflow = {
   _createTip: function(tip){
     var $this= this;
      
-    $this.setTipInfo(tip);
+    
 
     var id = tip.id;
     var name = tip.name;
-    var content = tip.content;
+
     var tip_meta = this.getMetadata(name) || {};
 
- 
+    var tipElement = $('#'+this.containerId + ' #' + tip.id);
+    if(tipElement==0 || !tipElement.length || tipElement.length<=0){
+      var html='<div id="'+tip.id+'" class="tip tip-container">';
+      html+='<div class="tip-remove-btn">X</div>';
+      html+='<div class="tip-resize"></div>'; 
+      html+='</div>'; 
+      tipElement = $(html);
 
-    var html='<div id="'+id+'" class="tip tip-container">';
-    html+='<div class="tip-remove-btn">X</div>';
-    html+='<div class="tip-resize"></div>'; 
-    html+='</div>';
-    
-    var tipElement = $(html);
+      //main
+      var tip_main_dom = '<div class="tip-main"><div class="tip-header"></div><div class="tip-body"></div></div>';
 
-    if(content){
-      content = content.replaceAll("\n","<br/>");
+      //render
+      if(tip.render){
+        var r = tip.render(tip_meta, tip, tip_main_dom);
+        if (r && r.length > 0) {
+          tip_main_dom = r;
+        }
+      }else if(tip_meta.render){
+        var r = tip_meta.render(tip_meta, tip, tip_main_dom);
+        if (r && r.length > 0) {
+          tip_main_dom = r;
+        }
+      }else if ($this.render_tip) {
+        var r = $this.render_tip(tip_meta, tip, tip_main_dom);
+        if (r && r.length > 0) {
+          tip_main_dom = r;
+        }
+      }
+      tip_main_element = $(tip_main_dom);
+      tip_main_element.addClass("tip-master");
+      tipElement.append(tip_main_element);
+  
+      //endpoint
+      var ep = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      if ($this.render_endpoint) {
+        var epr = $this.render_endpoint(action_meta, tip, ep);
+        if (epr && epr.length > 0) {
+          ep = epr;
+        }
+      }
+      var epElement = $(ep);
+      epElement.removeClass('tip-ep');
+      epElement.addClass('tip-ep');
+      tipElement.append(epElement);
+
+
+      var canvasElement = $('#' + $this.containerId + ' #canvas');
+      canvasElement.append(tipElement); 
+  
     }
-    var tip_main_dom = '<div class="tip-main"><div class="tip-header"></div><div class="tip-body"></div></div>';
 
-    //render
-    if(tip.render){
-      var r = tip.render(tip_meta, tip, tip_main_dom);
-      if (r && r.length > 0) {
-        tip_main_dom = r;
-      }
-    }else if(tip_meta.render){
-      var r = tip_meta.render(tip_meta, tip, tip_main_dom);
-      if (r && r.length > 0) {
-        tip_main_dom = r;
-      }
-    }else if ($this.render_tip) {
-      var r = $this.render_tip(tip_meta, tip, tip_main_dom);
-      if (r && r.length > 0) {
-        tip_main_dom = r;
-      }
-    }
-    tip_main_element = $(tip_main_dom);
-    tip_main_element.addClass("tip-master");
-    tipElement.append(tip_main_element);
-
-    //endpoint
-    var ep = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
-    if ($this.render_endpoint) {
-      var epr = $this.render_endpoint(action_meta, action, ep);
-      if (epr && epr.length > 0) {
-        ep = epr;
-      }
-    }
-    var epElement = $(ep);
-    epElement.removeClass('tip-ep');
-    epElement.addClass('tip-ep');
-    tipElement.append(epElement);
-
+    $this.setTipInfo(tip);
+   
+   
     //draggable
     this._plumb.getContainer().appendChild(tipElement.get(0));
     // initialise draggable elements.
@@ -2198,9 +1982,6 @@ var andflow = {
       anchor: 'Continuous', 
       allowLoopback: true,
     });
-
-    var canvasElement = $('#' + $this.containerId + ' #canvas');
-    canvasElement.append(tipElement); 
 
     //event
     tipElement.bind('mouseup', function () {
@@ -2283,40 +2064,7 @@ var andflow = {
       } 
     });
 
-    //title\body
-    tipElement.find('.tip-header').html(tip.title || '');
-    tipElement.find('.tip-body').html(content||'' );
-
-
-    //位置 
-    //left
-    if((tip.left+"").indexOf("px")>=0){
-      tipElement.css("left", tip.left);
-    }else{
-      tipElement.css("left", tip.left+"px");
-    } 
-    //top
-    if((tip.top+"").indexOf("px")>=0){
-      tipElement.css("top", tip.top);
-    }else{
-      tipElement.css("top", tip.top+"px");
-    }
-
-    //width 
-    if((tip.width+"").indexOf("px")>=0){ 
-      tip_main_element.css("width", tip.width);
-    }else{
-      tip_main_element.css("width", tip.width+"px"); 
-    }  
-     
-
-    //height 
-    if((tip.height+"").indexOf("px")>=0){
-      tip_main_element.css("height", tip.height);
-    }else{
-      tip_main_element.css("height", tip.height+"px"); 
-    }  
-     
+   
 
     //event
     tipElement.find('.tip-resize').mousedown(function (e) {
@@ -2820,35 +2568,153 @@ var andflow = {
   getActionInfo: function (id) {
     return this._actionInfos[id];
   },
-  setActionInfo: function (action) {
-
-    this._actionInfos[action.id] = action;
-
+  setActionInfo: function (action) { 
+    this._actionInfos[action.id] = action; 
+    //渲染
+    this.renderAction(action);
+  },
+  renderAction: function (action) { 
+    var $this = this;
+    var actionElement = $('#'+this.containerId + ' #' + action.id);
+    if(actionElement==0 || !actionElement.length || actionElement.length<=0){
+      return;
+    }
+    var id = action.id;
+    if (id == null) {
+      return;
+    }
     
-    //标题
-    $('#'+this.containerId + ' #' + action.id)
-      .find('.action-header')
-      .html(action.title || action.des || '');
+    var name = action.name;
+    if (name == null) {
+      return;
+    } 
+
+    var action_meta = this.getMetadata(name) || {};
+
+    var title =  action.title || action.des || action_meta.title || action_meta.des || '';
     
+    var icon = action.icon || action_meta.icon || '';
+    var des = action.des || action_meta.des || '';
+    var css = action.css || action_meta.css || '';
+
+    var border_color = action.border_color ;
+    var header_color = action.header_color;
+    var header_text_color=action.header_text_color;
+    var body_color = action.body_color;
+    var body_text_color = action.body_text_color;
+
+    var actionThemeName = action.theme || action_meta.theme  || '';
+ 
+    var action_themeObj = action_themes[actionThemeName||''] || this._themeObj;
+
+    var content = action.content;
+
+    var left = action.left;
+    var top = action.top;
+    var width = action.width;
+    var height = action.height;
+
+    var body_width = '';
+    var body_height = '';
+    
+    if (action_themeObj.is_body_resizable) {
+      body_width = action.body_width;
+      body_height = action.body_height;
+    }
+
+    //action
+    actionElement.find('.action').addClass(css); 
+    actionElement.find('.action').attr("title",title);
+    actionElement.find('.action').attr("name",name);
+    actionElement.find('.action').attr("icon",icon);
+
     //样式 
     for (var k in action_themes) { 
-      $('#'+this.containerId + ' #' + action.id).removeClass(k);
+      actionElement.removeClass(k);
     }   
-    $('#'+this.containerId + ' #' + action.id).addClass(action.theme||""); 
+    actionElement.addClass(actionThemeName||""); 
     
     //图标
-    var action_icon = action.icon;
-    if (action_icon != null && action_icon.length > 0) {
-      $('#'+this.containerId + ' #' + action.id).find('.action-icon img')
-        .attr('src', this.img_path + action_icon);
+    var iconImgPath = '';
+    if(icon && icon.length > 0 && icon.indexOf("base64")>=0) {
+      iconImgPath = icon;
+    } else if (icon && icon.length > 0) {
+      iconImgPath = ($this.img_path || '') + icon;
+    } else {
+      iconImgPath = ($this.img_path || '') + 'node.png'; 
     }
-    //内容 
-    if(action.content){
-      this.setActionContent(action.id,action.content.content,action.content.content_type);
+    
+    actionElement.find('.action-icon img').attr("src",iconImgPath);
+    actionElement.find('.action-header').html(title);
+    actionElement.find('.action-header').html(title);
+    var bodystyle = '';
+    if (this.flowModel.show_action_body == 'false') {
+      bodystyle = 'style="visibility: hidden"';
     }
-     
-    this._plumb.repaintEverything();
+    actionElement.find('.action-body').addClass(bodystyle);
+
+    var contentstyle = '';
+    if (this.flowModel.show_action_content == 'false') {
+      contentstyle = 'style="visibility: hidden"';
+    }
+    actionElement.find('.action-content').addClass(contentstyle);
+
+    //color
+    if(border_color){
+      actionElement.get(0).style.setProperty("--action-border-color", border_color);
+    }
+    if(header_color){
+      actionElement.get(0).style.setProperty("--action-header-color", header_color);
+    }
+    if(header_text_color){
+      actionElement.get(0).style.setProperty("--action-header-text-color", header_text_color);
+    }
+    if(body_color){
+      actionElement.get(0).style.setProperty("--action-body-color", body_color);
+    }
+    if(body_text_color){
+      actionElement.get(0).style.setProperty("--action-body-text-color", body_text_color);
+    }
+
+ 
+    //content
+    if(content){
+      if(typeof content === 'string'){
+        content={ content_type: "msg", content: content};
+      } 
+
+      this.setActionContent(action.id, content.content ||'',content.content_type ||'msg' );
+    }  
+
+    
+    //position
+    actionElement.css('position', 'absolute').css('left', left).css('top', top);
+    
+    //size
+    if (width && width.length > 0) {
+      actionElement.css("width",width);
+      actionElement.find(".action-master").css('width', width);
+    }
+    if (height && height.length > 0) {
+      actionElement.css("height",height);
+      actionElement.find(".action-master").css('height', height);
+    }
+
+    //body
+    if (body_width && body_width.length > 0) {
+      actionElement.attr('body_width', body_width);
+      actionElement.find('.action-body').css('width', body_width);
+    } else {
+      actionElement.find('.action-body').css('width', '');
+    }
+    if (body_height && body_height.length > 0) {
+      actionElement.attr('body_height', body_height);
+      actionElement.find('.action-body').css('height', body_height);
+    } else {
+      actionElement.find('.action-body').css('height', '');
+    }
   },
+  
   delActionInfo: function (id) {
     this._actionInfos[id] = null;
   },
@@ -2868,14 +2734,200 @@ var andflow = {
     } 
     return null;
   },
+  setActionBorderColor: function(actionId, color){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      this._actionInfos[actionId].border_color = color;
+      this.renderAction(this._actionInfos[actionId]);
+    } 
+  },
+  setActionHeaderColor: function(actionId, color){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      this._actionInfos[actionId].header_color = color;
+      this.renderAction(this._actionInfos[actionId]);
+    }
+  },
+  setActionHeaderTextColor: function(actionId, color){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      this._actionInfos[actionId].header_text_color = color;
+      this.renderAction(this._actionInfos[actionId]);
+    }
+  },
+  setActionBodyColor: function(actionId, color){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      this._actionInfos[actionId].body_color = color;
+      this.renderAction(this._actionInfos[actionId]);
+    }
+  },
+  setActionBodyTextColor: function(actionId, color){
+    if(this._actionInfos && this._actionInfos[actionId]){
+      this._actionInfos[actionId].body_text_color = color;
+      this.renderAction(this._actionInfos[actionId]);
+    }
+  },
   getGroupInfo: function(id){
     return this._groupInfos[id];
   },
   setGroupInfo: function(group){
-    this._groupInfos[group.id] = group;
-    var groupEl = $('#'+this.containerId + ' #'+group.id);
-    groupEl.find('.group-header').html(group.title);
-    groupEl.find('.group-body').html(group.des);
+    this._groupInfos[group.id] = group; 
+    //渲染
+    this.renderGroup(group);
+  },
+  renderGroup: function(group){
+    var $this = this;
+    var groupElement = $('#' + $this.containerId + ' #' +group.id);
+    if(!groupElement || !groupElement.length || groupElement.length<=0){
+      return;
+    }
+ 
+    var id = group.id;
+    var name = group.name;
+
+    var meta = this.getMetadata(name) || {};
+
+    var border_color = group.border_color;
+    var header_color = group.header_color;
+    var header_text_color = group.header_text_color;
+    var body_color = group.body_color;
+    var body_text_color = group.body_text_color;
+
+    var theme = group.theme || meta.theme || '';
+ 
+    var members = group.members || [];
+
+    for (var k in action_themes) { 
+      groupElement.removeClass(k);
+    }    
+    groupElement.addClass(theme);
+   
+    if(border_color){
+      groupElement.get(0).style.setProperty("--group-border-color", border_color);
+    }
+    if(header_color){
+      groupElement.get(0).style.setProperty("--group-header-color", header_color);
+    }
+    if(header_text_color){
+      groupElement.get(0).style.setProperty("--group-header-text-color", header_text_color);
+    }
+    if(body_color){
+      groupElement.get(0).style.setProperty("--group-body-color", body_color);
+    }
+    if(body_text_color){
+      groupElement.get(0).style.setProperty("--group-body-text-color", body_text_color);
+    }
+
+    //title\body
+    groupElement.find('.group-header').html(group.title || '');
+    groupElement.find('.group-body').html(group.des || '');
+
+
+    //位置
+    var padding_top=30;
+    var padding_left=10;
+    var padding_right=10;
+    var padding_bottom=10;
+
+    //left
+    if(group.left==null || group.left=="auto"){
+      if(members.length>0){
+        var minLeft = 9999999999999;
+        
+        for(var i in members){
+          let l = $("#"+members[i]).offset().left - canvasElement.offset().left;
+          if(minLeft>l){
+            minLeft = l;
+          }  
+        }
+        minLeft = minLeft - padding_left;
+        groupElement.css("left",minLeft+"px");
+      } 
+    }else{
+      if((group.left+"").indexOf("px")>=0){
+        groupElement.css("left", group.left);
+      }else{
+        groupElement.css("left", group.left+"px");
+      } 
+    }
+
+    //top
+    if(group.top==null || group.top=="auto"){
+      if(members.length>0){
+        var minTop = 999999999;
+
+        for(var i in members){
+          let t = $("#"+members[i]).offset().top - canvasElement.offset().top;
+          if(minTop>t){
+            minTop = t;
+          }  
+        }
+        minTop = minTop - padding_top;
+        groupElement.css("top",minTop+"px");
+      } 
+    }else{ 
+      if((group.top+"").indexOf("px")>=0){
+        groupElement.css("top", group.top);
+      }else{
+        groupElement.css("top", group.top+"px");
+      }
+    }
+
+    //width
+    if( group.width==null || group.width=="auto"){
+      if(members.length>0){
+        var maxWidth = 0;
+
+        for(var i in members){
+
+          $("#"+members[i]).find("div").each(function(index,el){
+            
+            let w = $(el).offset().left+$(el).width();
+            w = w - groupElement.position().left - canvasElement.offset().left;
+
+            if(w > maxWidth){
+              maxWidth = w;
+            }
+          }); 
+        }
+        maxWidth = maxWidth+padding_right;
+
+        groupElement.find(".group-main").width(maxWidth);
+      } 
+    }else{
+      if((group.width+"").indexOf("px")>=0){
+        groupElement.find(".group-main").css("width", group.width);
+      }else{
+        groupElement.find(".group-main").css("width", group.width+"px"); 
+      }  
+    }
+
+    //height
+    if(group.height==null || group.height=="auto"){
+      if(members.length>0){
+        var maxHeight = 0;
+
+        for(var i in members){
+
+          $("#"+members[i]).find("div").each(function(index,el){
+            
+            let h = $(el).offset().top+$(el).height();
+            h = h - groupElement.position().top - canvasElement.offset().top;
+
+            if(h > maxHeight){
+              maxHeight = h;
+            }
+          }); 
+        }
+        maxHeight = maxHeight+padding_bottom;
+
+        groupElement.find(".group-main").height(maxHeight);
+      } 
+    }else{
+      if((group.height+"").indexOf("px")>=0){
+        groupElement.find(".group-main").css("height", group.height);
+      }else{
+        groupElement.find(".group-main").css("height", group.height+"px"); 
+      }  
+    }
+ 
   },
   getGroupTitle: function(id){
     var group = this._groupInfos[id];
@@ -2891,14 +2943,130 @@ var andflow = {
     var groupEl = $('#'+this.containerId + ' #'+group.id);
     groupEl.find('.group-header').html(group.title);
   },
-
+  setGroupBorderColor: function(id, color){
+    if(this._groupInfos[id]){
+      this._groupInfos[id].border_color=color;
+      this.renderGroup(this._groupInfos[id]);
+    } 
+  },
+  setGroupHeaderColor: function(id, color){
+    if(this._groupInfos[id]){
+      this._groupInfos[id].header_color=color;
+      this.renderGroup(this._groupInfos[id]);
+    } 
+  },
+  setGroupHeaderTextColor: function(id, color){
+    if(this._groupInfos[id]){
+      this._groupInfos[id].header_text_color=color;
+      this.renderGroup(this._groupInfos[id]);
+    } 
+  },
+  setGroupBodyColor: function(id, color){
+    if(this._groupInfos[id]){
+      this._groupInfos[id].body_color=color;
+      this.renderGroup(this._groupInfos[id]);
+    } 
+  },
+  setGroupBodyTextColor: function(id, color){
+    if(this._groupInfos[id]){
+      this._groupInfos[id].body_text_color=color;
+      this.renderGroup(this._groupInfos[id]);
+    } 
+  },
   getListInfo: function(id){
     return this._listInfos[id];
   },
   setListInfo: function(list){
-    this._listInfos[list.id] = list;
-    var listEl = $('#'+this.containerId + ' #'+list.id);
-    listEl.find('.list-header').html(list.title); 
+    this._listInfos[list.id] = list; 
+    this.renderList(list);
+  },
+  renderList: function(list){
+    var $this = this;
+
+    var listElement = $('#' + $this.containerId+ ' #' + list.id);
+    if(!listElement || !listElement.length || listElement.length<=0){
+      return;
+    }
+    var id = list.id;
+    var name = list.name;
+    var meta = this.getMetadata(name) || {};
+    var theme = list.theme || meta.theme || '';
+    var border_color = list.border_color;
+    var header_color = list.header_color;
+    var header_text_color = list.header_text_color;
+    var body_color = list.body_color;
+    var body_text_color = list.body_text_color;
+    var item_color = list.item_color;
+    var item_text_color = list.item_text_color;
+
+    var items = list.items;
+    var left = list.left;
+    var top = list.top; 
+
+    for (var k in action_themes) { 
+      listElement.removeClass(k);
+    }    
+    listElement.addClass(theme);
+
+    listElement.find(".list-header").html(list.title||'');
+    
+    if(border_color){
+      listElement.get(0).style.setProperty("--list-border-color", border_color);
+    }
+    if(header_color){
+      listElement.get(0).style.setProperty("--list-header-color", header_color);
+    }
+    if(header_text_color){
+      listElement.get(0).style.setProperty("--list-header-text-color", header_text_color);
+    }
+    if(body_color){
+      listElement.get(0).style.setProperty("--list-body-color", body_color);
+    }
+    if(body_text_color){
+      listElement.get(0).style.setProperty("--list-body-text-color", body_text_color);
+    }
+    if(item_color){
+      listElement.get(0).style.setProperty("--list-item-color", item_color);
+    }
+    if(item_text_color){
+      listElement.get(0).style.setProperty("--list-item-text-color", item_text_color);
+    }
+
+    //width
+    if(list.width!=undefined && list.width!=null){
+      if((list.width+"").indexOf("px")>=0){
+        listElement.find(".list-main").css("width", list.width);
+      }else{
+        listElement.find(".list-main").css("width", list.width+"px"); 
+      }  
+    }
+
+    //height
+    if(list.height!=undefined && list.height!=null){
+      
+      if((list.height+"").indexOf("px")>=0){
+        listElement.find(".list-main").css("height", list.height);
+      }else{
+        listElement.find(".list-main").css("height", list.height+"px"); 
+      }  
+    }
+
+
+    //top
+    if((top+"").indexOf("px")>=0){
+      listElement.css("top", top);
+    }else{
+      listElement.css("top", top+"px");
+    }
+    //left
+    if((left+"").indexOf("px")>=0){
+      listElement.css("left", left);
+    }else{
+      listElement.css("left", left+"px");
+    }
+    //items
+    $this._setListItems(id,items); 
+ 
   },
   getListTitle: function(id){
     return (this._listInfos[id]||{}).title;
@@ -2926,12 +3094,185 @@ var andflow = {
     this._setListItems(id, items);
     this.refresh();
   },
+  setListBorderColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].border_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListHeaderColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].header_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListHeaderTextColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].header_text_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListBodyColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].body_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListBodyTextColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].body_text_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListItemColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].item_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
+  setListItemTextColor: function(id, color){
+    if(this._listInfos[id]){
+      this._listInfos[id].item_text_color=color;
+      this.renderList(this._listInfos[id]);
+    }
+  },
   getTipInfo: function(id){
     return this._tipInfos[id];
   },
   setTipInfo: function(tip){
     this._tipInfos[tip.id] = tip;
+     //渲染
+     this.renderTip(tip);
   },
+  renderTip:function(tip){
+    var tipElement = $('#'+this.containerId + ' #' + tip.id);
+    if(tipElement==0 || !tipElement.length || tipElement.length<=0){
+      return;
+    }
+
+    var id = tip.id;
+    var name = tip.name;
+    var meta = this.getMetadata(name) || {};
+
+    var theme = tip.theme || meta.theme || '';
+
+    var content = tip.content;
+    var border_color = tip.border_color;
+    var body_color = tip.body_color; 
+    var body_text_color = tip.body_text_color;
+    var header_color = tip.header_color; 
+    var header_text_color = tip.header_text_color;
+
+
+    for (var k in action_themes) { 
+      tipElement.removeClass(k);
+    }    
+    tipElement.addClass(theme);
+
+    //位置 
+    //left
+    if((tip.left+"").indexOf("px")>=0){
+      tipElement.css("left", tip.left);
+    }else{
+      tipElement.css("left", tip.left+"px");
+    } 
+    //top
+    if((tip.top+"").indexOf("px")>=0){
+      tipElement.css("top", tip.top);
+    }else{
+      tipElement.css("top", tip.top+"px");
+    }
+
+    //width 
+    if((tip.width+"").indexOf("px")>=0){ 
+      tipElement.find(".tip-main").css("width", tip.width);
+    }else{
+      tipElement.find(".tip-main").css("width", tip.width+"px"); 
+    }  
+    
+
+    //height 
+    if((tip.height+"").indexOf("px")>=0){
+      tipElement.find(".tip-main").css("height", tip.height);
+    }else{
+      tipElement.find(".tip-main").css("height", tip.height+"px"); 
+    }  
+
+    //color
+    if(border_color){
+      tipElement.get(0).style.setProperty("--tip-border-color",border_color);
+    }
+    if(header_color){
+      tipElement.get(0).style.setProperty("--tip-header-color",header_color);
+    }
+    if(header_text_color){
+      tipElement.get(0).style.setProperty("--tip-header-text-color",header_text_color);
+    }
+    if(body_color){
+      tipElement.get(0).style.setProperty("--tip-body-color",body_color);
+    }
+    if(body_text_color){
+      tipElement.get(0).style.setProperty("--tip-body-text-color",body_text_color);
+    }
+
+    if(content){
+      content = content.replaceAll("\n","<br/>");
+    }
+    
+
+    //title\body
+    tipElement.find('.tip-header').html(tip.title || '');
+    tipElement.find('.tip-body').html(content||'' );
+
+  },
+  getTipTitle: function(id){
+    if(this._tipInfos[id]){ 
+      return this._tipInfos[id].title; 
+    }
+    return null;
+  },
+  setTipTitle: function(id, title){
+    if(this._tipInfos[id]){
+      var tipElement = $('#'+this.containerId + ' #' + id); 
+      this._tipInfos[id].title = title;
+      tipElement.find('.tip-header').html(title || '');
+    }
+  },
+  getTipContent: function(id){
+    if(this._tipInfos[id]){ 
+      return this._tipInfos[id].content; 
+    }
+    return null;
+  },
+  setTipContent: function(id, content){
+    if(this._tipInfos[id]){
+      var tipElement = $('#'+this.containerId + ' #' + id); 
+      this._tipInfos[id].content = content;
+      tipElement.find('.tip-body').html(content || '');
+    }
+  },
+  setTipBorderColor: function(id, color){
+    if(this._tipInfos[id]){
+      var tipElement = $('#'+this.containerId + ' #' + id); 
+      this._tipInfos[id].border_color = color;
+      tipElement.get(0).style.setProperty("--tip-border-color",color);
+    }
+  },
+  setTipBodyColor: function(id, color){
+    if(this._tipInfos[id]){
+      var tipElement = $('#'+this.containerId + ' #' + id); 
+      this._tipInfos[id].body_color = color;
+      tipElement.get(0).style.setProperty("--tip-body-color",color);
+    }
+  },
+  setTipBodyTextColor: function(id, color){
+    if(this._tipInfos[id]){
+      var tipElement = $('#'+this.containerId + ' #' + id); 
+      this._tipInfos[id].body_text_color = color;
+      tipElement.get(0).style.setProperty("--tip-body-text-color",color);
+    }
+  },
+
   getLinkInfo: function (sid, tid) {
     return this._linkInfos[sid + '-' + tid] || {};
   },
@@ -2985,29 +3326,19 @@ var andflow = {
     var link = this._linkInfos[source_id + '-' + target_id] || {};
     return link.label_target;
   },
-  //删除组
-  removeGroup: function(groupId){
-    var $this = this; 
-    var group = $this._plumb.getGroup(groupId);
-    var delete_all = $this._groupInfos[group.id].delete_all || false;
-    if(delete_all!=true){
-      delete_all=false;
-    }
-
-    group.getEl();
-    $this._plumb.removeGroup(group,delete_all);
-  },
+ 
   //删除组
   removeGroup: function(groupId, deleteMembers){
-      var $this = this; 
-      var group = $this._plumb.getGroup(groupId);
-      var all = deleteMembers || false;
-      if(all!=true){
-        all=false;
-      } 
-      group.getEl();
-      $this._plumb.removeGroup(group,all);
+    var $this = this; 
+    var group = $this._plumb.getGroup(groupId);
+    var all = deleteMembers || $this._groupInfos[group.id].delete_all  || false;
+    if(all!=true){
+      all=false;
+    } 
+    group.getEl();
+    $this._plumb.removeGroup(group,all);
   },
+  //删除列表
   removeList: function(id){
     var $this = this;  
     var element = $("#"+$this.containerId+" #"+id);

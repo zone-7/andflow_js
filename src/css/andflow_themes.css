@@ -1,6 +1,43 @@
 /*
 flow_theme_default
 */
+:root{
+    --default-ep-color: #ffc107;
+    --default-action-border-color: #007bff;
+    --default-action-border-color-begin: #17a2b8;
+    --default-action-border-color-end: #17a2b8;
+    --default-action-border-color-success: #7AB02C;
+    --default-action-border-color-error: #b0413f;
+    --default-action-border-color-reject: #fdcf7c;
+    --default-action-border-color-external: #a7a2ff;
+    --default-action-border-color-custom: #b67fb6;
+    --default-action-body-color: white;
+    --default-action-body-text-color: #808080;
+    --default-action-header-color: #007bff;
+    --default-action-header-text-color: none; 
+
+
+    --default-group-border-color: rgba(128, 128, 128, 0.7);
+    --default-group-header-color: transparent;
+    --default-group-header-text-color: rgba(128, 128, 128, 1);
+    --default-group-body-color: rgba(128, 128, 128, 0.01);
+    --default-group-body-text-color: rgba(128, 128, 128, 1);
+
+    --default-list-border-color: rgba(128, 128, 128, 1);
+    --default-list-header-color:rgba(128, 128, 128, 1);
+    --default-list-header-text-color:white;
+    --default-list-body-color: white;
+    --default-list-body-text-color: rgba(128, 128, 128, 1);
+    --default-list-item-color: rgb(237, 237, 237);
+    --default-list-item-text-color: rgba(128, 128, 128, 1);
+
+    --default-tip-border-color: #fff090;
+    --default-tip-header-color: #fff090;
+    --default-tip-header-text-color: rgba(128, 128, 128, 1);
+    --default-tip-body-color: #fff090;
+    --default-tip-body-text-color: rgba(128, 128, 128, 0.8);
+    
+}
 
 /* action drag begin */
 .flow_theme_default .action-drag { 
@@ -62,8 +99,8 @@ flow_theme_default
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-header-color,var(--default-group-header-color));
+    border-bottom: 1px solid var(--group-border-color,var(--default-group-border-color));
     padding-left: 10px;
     color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
@@ -84,12 +121,12 @@ flow_theme_default
 }
 
 .flow_theme_default .list-drag-main {
-    color: #434343;
     width: 150px;
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.6);
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     background-color: rgba(255, 255, 255);
     border-radius: 5px;
     cursor: pointer;
@@ -103,10 +140,10 @@ flow_theme_default
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.6);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: var(--list-header-color, var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color, var(--default-list-border-color));
+    color: var(--list-header-text-color, var(--default-list-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -126,12 +163,12 @@ flow_theme_default
 }
 
 .flow_theme_default .tip-drag-main {
-    color: #434343;
+    color: var(--tip-body-text-color, var(--default-tip-body-text-color));
     width: 150px;
     height: 100px;
     position: absolute;
     z-index: 5; 
-    background-color: #fff090; 
+    background-color: var(--tip-border-color,var(--default-tip-border-color)); 
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
@@ -160,18 +197,18 @@ flow_theme_default
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
 }
+
 .flow_theme_default .tip-drag .tip-header{
     position: relative;
     height: 20px;
     width: 100%;  
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
 }
 /* tip drag end */
-
 
 .flow_theme_default .action-container { 
     position: absolute;
@@ -179,6 +216,7 @@ flow_theme_default
     width: 120px;
     height: 80px; 
 }
+
 .flow_theme_default .action { 
     
     cursor: pointer;
@@ -188,17 +226,16 @@ flow_theme_default
     padding: 0px; 
 }
 
-
 .flow_theme_default .action-main{
     position: relative;
-    color: #434343; 
     min-width: 30px;
     min-height: 30px;
     width: 120px;
     height: 80px;  
     display: block; 
-    background-color: white;
-    border: 1px solid #007bff;
+    color: var(--action-body-text-color, var(--default-action-body-text-color)); 
+    background-color: var(--action-body-color,var(--default-action-body-color));
+    border: 1px solid var(--action-border-color,var(--default-action-border-color));
     border-radius: 5px;
     font-size: 10px;
 }
@@ -232,8 +269,8 @@ flow_theme_default
     position: relative;
     left: 0px;
     top:0px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--action-header-color,var(--default-action-header-color));
+    color: var(--action-header-text-color, white);
     text-align: left;
     padding: 0px;
     padding-left: 5px;
@@ -243,8 +280,7 @@ flow_theme_default
     overflow: hidden;
     border-radius: 3px;
     font-weight: bold;
-    font-size: 10px;
-    color: white;
+    font-size: 10px; 
     transform: inherit;
 }
 
@@ -255,14 +291,14 @@ flow_theme_default
     z-index: 21;
     right: 3px;
     top:2px;
-    color: #007bff;
+    color: var(--action-border-color, var(--default-action-border-color));
     font-size: 10px;
     font-style: normal;
     font-family: normal;
     text-align: center; 
     text-decoration:none;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: white;
     line-height: 15px;
     width: 15px;
     height: 15px;
@@ -276,7 +312,8 @@ flow_theme_default
     width: 100%;
     left: 0px;
     top: 0px;
-    background-color: white;
+    background-color: var(--action-body-color,var(--default-action-body-color));
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     border-radius: 3px;
     overflow: hidden;
 }
@@ -286,7 +323,7 @@ flow_theme_default
     width: 100%;
     height: 100%;
     overflow: auto;
-    color: black;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_default .action-html{
     height: 100%;
@@ -294,13 +331,9 @@ flow_theme_default
     overflow: auto;
 }
 .flow_theme_default .action-msg{
-    position: absolute;
-    z-index: 10;
     width: 100%;
-    text-align: center;
-    top:50%;
-    transform:translateY(-50%);
-    color: rgba(128, 128, 128,1);
+    text-align: center;  
+    color: var(--action-body-text-color, var(--default-action-body-text-color));
     font-size: 12px;
 }
 
@@ -310,9 +343,10 @@ flow_theme_default
     z-index: 20;
     top: calc(50% - 10px);
     left: 5px;
+    transform: none;
     width: 20px;
     height: 20px;
-    border-radius: 10px;
+    border-radius: 10px; 
     text-align: center;
     transform: inherit;
 }
@@ -324,21 +358,18 @@ flow_theme_default
     display: none;
     position: absolute;
     z-index: 30;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid #007bff;
-    border-bottom: 7px solid #007bff;
-
+    border-right: 7px solid var(--action-border-color,var(--default-action-border-color));
+    border-bottom: 7px solid var(--action-border-color,var(--default-action-border-color));
 }
+
 .flow_theme_default .body-resize{
     display: none;
     position: absolute;
@@ -350,8 +381,8 @@ flow_theme_default
     cursor: nwse-resize;
     border-left:5px solid transparent;
     border-top:5px solid transparent;
-    border-right: 5px solid #007bff;
-    border-bottom: 5px solid #007bff;
+    border-right: 5px solid var(--action-border-color,var(--default-action-border-color));
+    border-bottom: 5px solid var(--action-border-color,var(--default-action-border-color));
 }
 
 
@@ -361,7 +392,6 @@ flow_theme_default
     z-index: 100;
     top: calc(50% - 7px);
     right:  3px;
-
     border-radius: 3px;
     width: 15px;
     height: 15px;
@@ -370,10 +400,9 @@ flow_theme_default
     padding: 0px;
     font-size: 10px;
     cursor: crosshair; 
-
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color: var(--ep-color,var(--default-ep-color));
     box-sizing: border-box;
 }
 
@@ -382,61 +411,51 @@ flow_theme_default
 
 /*开始节点*/
 .flow_theme_default .action.begin .action-main{
-    border: 1px solid #17a2b8;
+    border: 1px solid var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
 .flow_theme_default .action.begin .action-header{
-    background-color: #17a2b8;
+    background-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
 .flow_theme_default .action.begin .action-resize{
-    border-right-color:  #17a2b8;
-    border-bottom-color: #17a2b8;
+    border-right-color:  var(--action-border-color-begin,var(--default-action-border-color-begin));
+    border-bottom-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
-.flow_theme_default .action.begin .action-icon{
-    display: none;
-}
+
 /*结束节点*/
 .flow_theme_default .action.end .action-main{
-    border: 1px solid #17a2b8;
+    border: 1px solid var(--action-border-color-end, var(--default-action-border-color-end));
 }
 .flow_theme_default .action.end .action-header{
-    background-color: #17a2b8;
-    color: white;
+    background-color: var(--action-border-color-end, var(--default-action-border-color-end));
 }
 .flow_theme_default .action.end .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color:  #17a2b8;
+    border-right-color: var(--action-border-color-end, var(--default-action-border-color-end));
+    border-bottom-color: var(--action-border-color-end, var(--default-action-border-color-end));
 }
-.flow_theme_default .action.end .action-icon{
-    display: none;
-}
+
 
 /* external */
 .flow_theme_default .action.external .action-main{
-    border: 1px solid #a7a2ff;
+    border: 1px solid var(--action-border-color-external,var(--default-action-border-color-external));
 }
 .flow_theme_default .action.external .action-header{
-    background-color: #a7a2ff;
+    background-color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
 .flow_theme_default .action.external .action-resize{
-    border-right-color: #a7a2ff;
-    border-bottom-color: #a7a2ff;
+    border-right-color: var(--action-border-color-external,var(--default-action-border-color-external));
+    border-bottom-color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
-.flow_theme_default .action.external .action-icon{
-    display: none;
-}
+
 /* custom */
 .flow_theme_default .action.custom .action-main{
-    border: 1px solid #b67fb6;
+    border: 1px solid var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
 .flow_theme_default .action.custom .action-header{
-    background-color: #b67fb6;
+    background-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
 .flow_theme_default .action.custom .action-resize{
-    border-right-color:   #b67fb6;
-    border-bottom-color:  #b67fb6;
-}
-.flow_theme_default .action.custom .action-icon{
-    display: none;
+    border-right-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
+    border-bottom-color:  var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
 
 /*execute*/
@@ -455,66 +474,45 @@ flow_theme_default
 
 /*error*/
 .flow_theme_default .action.error .action-main{
-    border: 1px solid #b0413f;
-    color: #b0413f;
-    background-color: white;
+    border: 1px solid var(--action-border-color-error,var(--default-action-border-color-error));
 }
 .flow_theme_default .action.error .action-header{
-    background-color: #b0413f;
+    background-color: var(--action-border-color-error,var(--default-action-border-color-error));
 }
 
 .flow_theme_default .action.error .action-resize{
-    border-right-color:  #b0413f;
-    border-bottom-color: #b0413f;
+    border-right-color:  var(--action-border-color-error,var(--default-action-border-color-error));
+    border-bottom-color: var(--action-border-color-error,var(--default-action-border-color-error));
 }
-.flow_theme_default .action.error .action-icon{
-    display: none;
-}
-
 
 /*success*/
 .flow_theme_default .action.success .action-main{
-    border: 1px solid #7AB02C;
-    color: #7AB02C;
-    background-color: white;
+    border: 1px solid var(--action-border-color-success,var(--default-action-border-color-success)); 
 }
 
 .flow_theme_default .action.success .action-header{
-    background-color: #7AB02C;
+    background-color: var(--action-border-color-success,var(--default-action-border-color-success));
 }
 
 .flow_theme_default .action.success .action-resize{
-    border-right-color: #7AB02C;
-    border-bottom-color: #7AB02C;
+    border-right-color: var(--action-border-color-success,var(--default-action-border-color-success));
+    border-bottom-color: var(--action-border-color-success,var(--default-action-border-color-success));
 }
-.flow_theme_default .action.success .action-icon{
-    display: none;
-}
-
 
 /*action reject*/
 .flow_theme_default .action.reject .action-main{
-    border: 1px solid #fdcf7c;
-    color: #fdcf7c;
-    background-color: white;
+    border: 1px solid var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
 
 .flow_theme_default .action.reject .action-header{
-    background-color: #fdcf7c;
+    background-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
 
 .flow_theme_default .action.reject .action-resize{
-    border-right-color: #fdcf7c;
-    border-bottom-color: #fdcf7c;
+    border-right-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
+    border-bottom-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
-.flow_theme_default .action.reject .action-icon{
-    display: none;
-}
-
-
-
-
-
+ 
 /*连接线标签*/
 /*link label*/
 .flow_theme_default .linkLabel {
@@ -527,9 +525,11 @@ flow_theme_default
     opacity: 0.6;
     cursor: pointer;
 }
+
 .flow_theme_default .linkLabel.jtk-hover {
     background-color: #ffc107;
 }
+
 .flow_theme_default .linkBtn{
     background-color: white; 
     font: 10px sans-serif;
@@ -541,8 +541,8 @@ flow_theme_default
     line-height: 15px;
     border-radius: 5px;
     text-align: center;
-
 }
+
 .flow_theme_default .linkBtn.jtk-hover {
     border:1px solid #999999;
 }
@@ -577,8 +577,8 @@ flow_theme_default
     width: 200px;
     height: 200px;
     border-radius: 5px;
-    background-color: #ffc10740;
-    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-body-color,var(--default-group-body-color));
+    border: 1px solid var(--group-border-color,var(--default-group-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
@@ -588,10 +588,10 @@ flow_theme_default
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-header-color, var(--default-group-header-color));
+    border-bottom: 1px solid var(--group-border-color,var(--default-group-border-color));
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     transform: inherit;
 }
@@ -601,7 +601,7 @@ flow_theme_default
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--group-body-text-color,var(--default-group-body-text-color));
     box-sizing: border-box;
 }
  
@@ -612,7 +612,7 @@ flow_theme_default
     z-index: 4;
     right: 3px;
     top:2px;
-    color: rgba(128, 128, 128, 1); 
+    color: var(--group-header-text-color,var(--default-group-header-text-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -645,8 +645,8 @@ flow_theme_default
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_default .group:hover .group-ep{
     display: block;
@@ -662,13 +662,11 @@ flow_theme_default
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--group-border-color, var(--default-group-border-color));
+    border-bottom: 7px solid var(--group-border-color, var(--default-group-border-color));
 }
 .flow_theme_default .group:hover .group-resize {
     display: block;
@@ -688,21 +686,22 @@ flow_theme_default
     min-width: 100px;
     min-height: 20px;
     border-radius: 5px;
-    background-color: white;
-    border: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .flow_theme_default .list .list-header {
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 1);
-    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color,var(--default-list-border-color));
+    color: var(--list-header-text-color,var(--default-list-header-text-color));
     padding-left: 10px;
-    color: white;
     box-sizing: border-box;
     transform: inherit;
 } 
@@ -711,8 +710,8 @@ flow_theme_default
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
-    
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
@@ -725,7 +724,8 @@ flow_theme_default
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: rgba(128, 128, 128, 0.1);
+    background-color: var(--list-item-color, var(--default-list-item-color));
+    color:  var(--list-item-text-color,var(--default-list-item-text-color));
     box-sizing: border-box;
     margin-bottom: 10px;
     cursor: default;
@@ -733,7 +733,7 @@ flow_theme_default
 .flow_theme_default .list .list-body .list-item .list-item-title{
     width: 100%;
     height: 100%;
-    color: rgba(128, 128, 128, 1);
+    color:  var(--list-item-text-color,var(--default-list-item-text-color));
 }
 .flow_theme_default .list .list-remove-btn{
     display: none;
@@ -742,7 +742,7 @@ flow_theme_default
     z-index: 4;
     right: 3px;
     top:2px;
-    color: white; 
+    color: var(--list-header-text-color, var(--default-list-header-text-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -758,24 +758,20 @@ flow_theme_default
     display: block;
 }
 
- 
 .flow_theme_default .list .list-resize {
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--list-border-color,var(--default-list-border-color));
+    border-bottom: 7px solid var(--list-border-color,var(--default-list-border-color));
 }
 .flow_theme_default .list:hover .list-resize {
     display: block;
@@ -799,17 +795,14 @@ flow_theme_default
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
-
-    background-color: #fff090; 
+    background-color: var(--tip-body-color, var(--default-tip-body-color)); 
     overflow: hidden;
 }
 
 
 .flow_theme_default .tip-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
@@ -830,11 +823,11 @@ flow_theme_default
     position: relative;
     height: 20px;
     width: 100%; 
-    padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    padding-left: 10px; 
     box-sizing: border-box; 
     font-weight: bold;
     transform: inherit;
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
 }
 
 .flow_theme_default .tip .tip-body {
@@ -842,11 +835,10 @@ flow_theme_default
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     box-sizing: border-box;
-
 }
- 
+
 .flow_theme_default .tip .tip-remove-btn{
     display: none;
     overflow: hidden;
@@ -854,9 +846,9 @@ flow_theme_default
     z-index: 4;
     right: 3px;
     top:2px;
-    color: #ffc107; 
     background-color: white;
-    border: 1px solid #ffc107;
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color)); 
+    border: 1px solid var(--tip-body-text-color,var(--default-tip-body-text-color)); 
     font-size: 10px;
     font-style: normal;
     font-family: normal;
@@ -868,10 +860,10 @@ flow_theme_default
     text-decoration:none;
     cursor: pointer;
 }
+
 .flow_theme_default .tip:hover .tip-remove-btn{
     display: block;
 }
-
 
 .flow_theme_default .tip .tip-ep{
     display: none;
@@ -889,8 +881,8 @@ flow_theme_default
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid  var(--ep-color,var(--default-ep-color));
+    color: var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_default .tip:hover .tip-ep{
     display: block;
@@ -900,17 +892,15 @@ flow_theme_default
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
- 
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--tip-body-text-color,var(--default-tip-body-text-color));
+    border-bottom: 7px solid var(--tip-body-text-color,var(--default-tip-body-text-color));
 }
 .flow_theme_default .tip:hover .tip-resize {
     display: block;
@@ -941,7 +931,7 @@ flow_theme_icon
     width: 50px;
     height: 50px; 
     border-radius: 5px;
-    color: #434343; 
+    color: var(--action-body-text-color,var(--default-action-body-text-color)); 
     font-size: 10px;
 }
 
@@ -960,7 +950,7 @@ flow_theme_icon
     overflow: visible;
     font-weight: bold;
     font-size: 10px;
-    color: #6c757d;
+    color:  var(--action-header-text-color, var(--default-action-border-color)); 
     margin: 0 auto;
     background-color: transparent;
     white-space:nowrap;
@@ -971,6 +961,7 @@ flow_theme_icon
 .flow_theme_icon .action-drag .action-icon{
     width: 100%;
     height: 100%;
+    transform: none;
     background-color: transparent;
     text-align: center;
     transform: inherit;
@@ -998,7 +989,7 @@ flow_theme_icon
     height: 200px;
     border-radius: 5px;
     background-color: transparent;
-    border: 4px dashed rgba(128, 128, 128, 0.3);
+    border: 4px dashed var(--group-border-color,var(--default-group-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
@@ -1011,7 +1002,7 @@ flow_theme_icon
     background-color: transparent;
     border-bottom: 0px;
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -1029,13 +1020,13 @@ flow_theme_icon
 }
 
 .flow_theme_icon .list-drag-main {
-    color: #434343;
     width: 150px;
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.6);
-    background-color: rgba(255, 255, 255);
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -1048,10 +1039,10 @@ flow_theme_icon
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.6);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color,var(--default-list-border-color));
+    color: var(--list-header-text-color,var(--default-list-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -1072,12 +1063,12 @@ flow_theme_icon
 }
 
 .flow_theme_icon .tip-drag-main {
-    color: #434343;
     width: 150px;
     height: 100px;
     position: absolute;
     z-index: 5; 
-    background-color: #fff090; 
+    background-color: var(--tip-border-color,var(--default-tip-border-color)); 
+    color: var(--tip-body-text-color, var(--default-tip-body-text-color));
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
@@ -1088,19 +1079,15 @@ flow_theme_icon
 
 .flow_theme_icon .tip-drag-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
@@ -1111,7 +1098,7 @@ flow_theme_icon
     height: 20px;
     width: 100%;  
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -1125,8 +1112,7 @@ flow_theme_icon
     z-index: 4; 
 }
 .flow_theme_icon .action {
-     
-    color: #434343;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     cursor: pointer;
     text-align: center;
     cursor: move; 
@@ -1163,8 +1149,7 @@ flow_theme_icon
     display: block;
 }
 
-.flow_theme_icon .action:hover .action-body{
-    /* border: 1px solid rgba(128, 128, 128, 0.3); */
+.flow_theme_icon .action:hover .action-body{ 
 }
 
 
@@ -1194,14 +1179,13 @@ flow_theme_icon
     overflow: visible;
     font-weight: bold;
     font-size: 10px;
-    color: #007bff;
+    border: 0px;
+    color: var(--action-header-text-color, var(--default-action-border-color));
     margin: 0 auto;
     background-color: transparent;
     white-space:nowrap;
     transform: inherit;
 }
-
-
 
 .flow_theme_icon  .action-remove-btn{
     display: none;
@@ -1213,33 +1197,32 @@ flow_theme_icon
     height: 15px;
     font-family: normal;
     font-size: 14px;
-    color: #007bff;
+    color: var(--action-border-color,var(--default-action-border-color));
     text-decoration:none;
     border-radius: 5px;
     cursor: pointer;
 }
 
 .flow_theme_icon .action-body{ 
-
     position: absolute; 
     z-index: 22;
     left: 0px;
     top: calc(100% + 25px);
     padding: 0px;
     width: 100%; 
+    height: auto;
     background-color: transparent;
     border-radius: 0px;
     overflow: hidden;
-
 }
 
 
 .flow_theme_icon .action-content{
     position: relative;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow: auto;
-    color: #808080;
+    color: #808080  var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_icon .action-html{
     height: 100%;
@@ -1249,7 +1232,7 @@ flow_theme_icon
 .flow_theme_icon .action-msg{
     width: 100%;
     text-align: center;
-    color: #808080;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     font-size: 12px;
 }
 
@@ -1257,6 +1240,7 @@ flow_theme_icon
     display: block;
     width: 100%;
     height: 100%;
+    transform: none;
     background-color: transparent;
     text-align: center;
     top: 0px;
@@ -1280,9 +1264,10 @@ flow_theme_icon
     cursor: nwse-resize;
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid #007bff;
-    border-bottom: 7px solid #007bff;
+    border-right: 7px solid var(--action-border-color,var(--default-action-border-color));
+    border-bottom: 7px solid var(--action-border-color,var(--default-action-border-color));
 }
+
 .flow_theme_icon .body-resize{
     display: none;
     position: absolute;
@@ -1294,8 +1279,8 @@ flow_theme_icon
     cursor: nwse-resize;
     border-left:5px solid transparent;
     border-top:5px solid transparent;
-    border-right: 5px solid #808080;
-    border-bottom: 5px solid #808080;
+    border-right: 5px solid var(--action-body-text-color,var(--default-action-body-text-color));
+    border-bottom: 5px solid var(--action-body-text-color,var(--default-action-body-text-color));
 }
 
 .flow_theme_icon  .ep {
@@ -1314,108 +1299,92 @@ flow_theme_icon
     cursor: crosshair;
 
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 
 
 /*各类状态*/
 /*begin*/
 .flow_theme_icon .action.begin .action-main{
-    border: 0px solid #17a2b8;
+    border: 0px;
 }
-.flow_theme_icon .action.begin .action-header{
-    color:  #17a2b8;
+.flow_theme_icon .action.begin .action-header{ 
     background-color: transparent;
     border: 0px;
+    color:  var(--action-header-text-color,var(--default-action-border-color-begin));
 }
 
 .flow_theme_icon .action.begin .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color:  #17a2b8;
+    border-right-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
+    border-bottom-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
-.flow_theme_icon .action.begin .action-icon{
-    display: block;
-}
-.flow_theme_icon .action.begin .action-remove-btn{
 
-    color: #17a2b8;
+.flow_theme_icon .action.begin .action-remove-btn{
+    color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
 
 /*end */
 .flow_theme_icon .action.end .action-main{
-    border: 0px solid #17a2b8;
+    border: 0px;
 }
 .flow_theme_icon .action.end .action-header{
-    color:  #17a2b8;
     background-color: transparent;
     border: 0px;
+    color:  var(--action-header-text-color,var(--default-action-border-color-end));
 }
 
 .flow_theme_icon .action.end .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color: #17a2b8;
+    border-right-color: var(--action-border-color-end,var(--default-action-border-color-end));
+    border-bottom-color: var(--action-border-color-end,var(--default-action-border-color-end));
 }
-.flow_theme_icon .action.end .action-icon{
-    display: block;
-}
-.flow_theme_icon .action.end .action-remove-btn{
 
-    color: #17a2b8;
+.flow_theme_icon .action.end .action-remove-btn{
+    color: var(--action-border-color-end,var(--default-action-border-color-end));
 }
 
 /*external*/
 .flow_theme_icon .action.external .action-main{
     border: 0px;
-    color: #a7a2ff;
-    background-color: transparent;
 }
 .flow_theme_icon .action.external .action-header{
-    color:  #a7a2ff;
     background-color: transparent;
+    border: 0px;
+    color:  var(--action-header-text-color,var(--default-action-border-color-external));
+
 
 }
 
 .flow_theme_icon .action.external .action-resize{
-    border-right-color: #a7a2ff;
-    border-bottom-color: #a7a2ff;
+    border-right-color: var(--action-border-color-external,var(--default-action-border-color-external));
+    border-bottom-color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
-.flow_theme_icon .action.external .action-icon{
-    display: block;
-}
-.flow_theme_icon .action.external .action-remove-btn{
 
-    color: #a7a2ff;
+.flow_theme_icon .action.external .action-remove-btn{
+    color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
 
 /* custom */
 .flow_theme_icon .action.custom .action-main{
     border: 0px;
-    color: #b67fb6;
-    background-color: transparent;
 }
 .flow_theme_icon .action.custom .action-header{
-    color:  #b67fb6;
     background-color: transparent;
+    border: 0px;
+    color:  var(--action-header-text-color,var(--default-action-border-color-custom));
 
 }
 
 .flow_theme_icon .action.custom .action-resize{
-    border-right-color: #b67fb6;
-    border-bottom-color: #b67fb6;
+    border-right-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
+    border-bottom-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
-.flow_theme_icon .action.custom .action-icon{
-    display: block;
-}
+
 .flow_theme_icon .action.custom .action-remove-btn{
-
-    color: #b67fb6;
+    color: var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
-
-
 
 /*execute*/
-
 .flow_theme_icon .action.execute .action-icon img{
     background: repeating-linear-gradient(135deg,transparent,transparent 3px,#7AB02C, #7AB02C 6px);
     animation: flow_theme_icon_shine 2s infinite linear;
@@ -1432,78 +1401,67 @@ flow_theme_icon
 /*error*/
 .flow_theme_icon .action.error .action-main{
     border: 0px;
-    color: #b0413f;
-    background-color: transparent;
 }
 .flow_theme_icon .action.error .action-header{
-    color:  #b0413f;
     background-color: transparent;
-
+    border: 0px;
+    color:  var(--action-header-text-color, var(--default-action-border-color-error)); 
+    
 }
 
 .flow_theme_icon .action.error .action-resize{
-    border-right-color: #b0413f;
-    border-bottom-color: #b0413f;
-}
-.flow_theme_icon .action.error .action-icon{
-    display: block;
+    border-right-color: var(--action-border-color-error,var(--default-action-border-color-error));
+    border-bottom-color: var(--action-border-color-error,var(--default-action-border-color-error));
 }
 
-.flow_theme_icon .action.error .action-remove-btn{
-
-    color: #b0413f;
+.flow_theme_icon .action.error .action-remove-btn{ 
+    color: var(--action-border-color-error,var(--default-action-border-color-error));
 }
 
 
 /*success*/
-.flow_theme_icon .action.success .action-main{
+.flow_theme_icon .action.success .action-main{ 
     border: 0px;
-    color: #7AB02C;
-    background-color: transparent;
 }
 
-.flow_theme_icon .action.success .action-header{
-    color:  #7AB02C;
+.flow_theme_icon .action.success .action-header{ 
     background-color: transparent;
+    border: 0px;
+    color:  var(--action-header-text-color, var(--default-action-border-color-success)); 
+    
 }
 
 .flow_theme_icon .action.success .action-resize{
-    border-right-color:  #7AB02C;
-    border-bottom-color:  #7AB02C;
-}
-.flow_theme_icon .action.success .action-icon{
-    display: block;
+    border-right-color:  var(--action-border-color-success,var(--default-action-border-color-success));
+    border-bottom-color:  var(--action-border-color-success,var(--default-action-border-color-success));
 }
 
 .flow_theme_icon .action.success .action-remove-btn{
-
-    color: #7AB02C;
+    color: var(--action-border-color-success,var(--default-action-border-color-success));
 }
 
 /*action reject*/
-.flow_theme_icon .action.reject .action-main{
+.flow_theme_icon .action.reject .action-main{ 
     border: 0px;
-    color: #fdcf7c;
-    background-color: transparent;
 }
 
 .flow_theme_icon .action.reject .action-header{
-    color:  #fdcf7c;
     background-color: transparent;
+    border: 0px;
+    color:  var(--action-header-text-color, var(--default-action-border-color-reject)); 
+    
 }
 
 
 .flow_theme_icon .action.reject .action-resize{
-    border-right-color: #fdcf7c;
-    border-bottom-color: #fdcf7c;
+    border-right-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
+    border-bottom-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
-.flow_theme_icon .action.reject .action-icon{
-    display: block;
-}
-.flow_theme_icon .action.reject .action-remove-btn{
 
-    color: #fdcf7c;
+.flow_theme_icon .action.reject .action-remove-btn{
+    color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
+
 /*link label*/
 .flow_theme_icon .linkLabel {
     background-color: white;
@@ -1544,14 +1502,14 @@ flow_theme_icon
     position: absolute;    
     cursor:move; 
     box-sizing: border-box;
-   
 }
+
 .flow_theme_icon .group-main {
     width: 200px;
     height: 200px;
     border-radius: 5px;
-    background-color: transparent;
-    border: 4px dashed rgba(128, 128, 128, 0.3);
+    background-color: var(--group-body-color,var(--default-group-body-color));
+    border: 1px dashed  var(--group-border-color,var(--default-group-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
@@ -1561,10 +1519,10 @@ flow_theme_icon
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: transparent;
     border-bottom: 0px;
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    background-color: var(--group-header-color,var(--default-group-header-color));
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -1574,7 +1532,8 @@ flow_theme_icon
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    background-color: var(--group-body-color,var(--default-group-body-color));
+    color: var(--group-body-text-color,var(--default-group-body-text-color));
 } 
 
 .flow_theme_icon .group .group-ep{
@@ -1594,8 +1553,8 @@ flow_theme_icon
     padding: 0px;
 
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_icon .group:hover .group-ep{
     display: block;
@@ -1608,7 +1567,7 @@ flow_theme_icon
     z-index: 4;
     right: 5px;
     top:2px;
-    color: rgba(128, 128, 128, 0.5);
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -1630,20 +1589,15 @@ flow_theme_icon
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--group-border-color,var(--default-group-border-color));
+    border-bottom: 7px solid var(--group-border-color,var(--default-group-border-color));
 }
 .flow_theme_icon .group:hover .group-resize {
     display: block;
 }
-
-
-
 
 /* list */
 .flow_theme_icon .list {
@@ -1658,21 +1612,22 @@ flow_theme_icon
     min-width: 100px;
     min-height: 20px;
     border-radius: 5px;
-    background-color: white;
-    border: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .flow_theme_icon .list .list-header {
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 1);
-    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color,var(--default-list-border-color));
+    color: var(--list-header-text-color,var(--default-list-header-text-color));
     padding-left: 10px;
-    color: white;
     box-sizing: border-box;
     transform: inherit;
 } 
@@ -1681,12 +1636,13 @@ flow_theme_icon
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
-    
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 .flow_theme_icon .list .list-body .list-item {
     position: relative;
     height: 20px;
@@ -1695,7 +1651,7 @@ flow_theme_icon
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: rgba(128, 128, 128, 0.1);
+    background-color: var(--list-item-color, var(--default-list-item-color));
     box-sizing: border-box;
     margin-bottom: 10px;
     cursor: default;
@@ -1703,8 +1659,9 @@ flow_theme_icon
 .flow_theme_icon .list .list-body .list-item .list-item-title{
     width: 100%;
     height: 100%;
-    color: rgba(128, 128, 128, 1);
+    color: var(--list-item-text-color,var(--default-list-item-text-color));
 }
+
 .flow_theme_icon .list .list-remove-btn{
     display: none;
     overflow: hidden;
@@ -1712,7 +1669,7 @@ flow_theme_icon
     z-index: 4;
     right: 3px;
     top:2px;
-    color: white; 
+    color: var(--list-header-text-color, var(--default-list-header-text-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -1724,29 +1681,27 @@ flow_theme_icon
     text-decoration:none;
     cursor: pointer;
 }
+
 .flow_theme_icon .list:hover .list-remove-btn{
     display: block;
 }
-
  
 .flow_theme_icon .list .list-resize {
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--list-border-color,var(--default-list-border-color));
+    border-bottom: 7px solid var(--list-border-color,var(--default-list-border-color));
 }
+
 .flow_theme_icon .list:hover .list-resize {
     display: block;
 }
@@ -1759,8 +1714,8 @@ flow_theme_icon
     position: absolute;    
     cursor:move; 
     box-sizing: border-box;
-   
 }
+
 .flow_theme_icon .tip-main {
     width: 150px;
     height: 100px;  
@@ -1769,27 +1724,21 @@ flow_theme_icon
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
-
-    background-color: #fff090; 
+    background-color: var(--tip-body-color,var(--default-tip-body-color));
     overflow: hidden;
 }
 
-
 .flow_theme_icon .tip-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
@@ -1800,8 +1749,8 @@ flow_theme_icon
     position: relative;
     height: 20px;
     width: 100%; 
-    padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    padding-left: 10px; 
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box; 
     font-weight: bold;
     transform: inherit;
@@ -1812,7 +1761,7 @@ flow_theme_icon
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     box-sizing: border-box;
 
 }
@@ -1824,9 +1773,9 @@ flow_theme_icon
     z-index: 4;
     right: 3px;
     top:2px;
-    color: #ffc107; 
     background-color: white;
-    border: 1px solid #ffc107;
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
+    border: 1px solid var(--tip-border-color,var(--default-tip-border-color));
     font-size: 10px;
     font-style: normal;
     font-family: normal;
@@ -1838,6 +1787,7 @@ flow_theme_icon
     text-decoration:none;
     cursor: pointer;
 }
+
 .flow_theme_icon .tip:hover .tip-remove-btn{
     display: block;
 }
@@ -1859,8 +1809,8 @@ flow_theme_icon
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_icon .tip:hover .tip-ep{
     display: block;
@@ -1879,8 +1829,8 @@ flow_theme_icon
  
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--tip-body-text-color,var(--default-tip-body-text-color));
+    border-bottom: 7px solid var(--tip-body-text-color,var(--default-tip-body-text-color));
 }
 .flow_theme_icon .tip:hover .tip-resize {
     display: block;
@@ -1910,17 +1860,15 @@ flow_theme_zone
 .flow_theme_zone .action-drag .action-drag-main{
     width: 200px;
     height: 100px;
-    border: 1px solid #6c757d;
-    background-color: white;
+    background-color: var(--action-body-color,var(--default-action-body-color));
+    border: 1px solid var(--action-border-color, var(--default-action-border-color)); 
+    color: var(--action-body-text-color,var(--default-action-body-text-color)); 
     border-radius: 5px;
-    color: #434343; 
     font-size: 10px;
 }
 
 .flow_theme_zone .action-drag .action-header{
 
-    border-left: 4px solid #6c757d;
-    color: white;
     text-align: center;
     padding-top: 5px;
     padding-bottom:5px ;
@@ -1930,7 +1878,8 @@ flow_theme_zone
     border-radius: 3px;
     font-weight: bold;
     font-size: 10px;
-    color: #6c757d;
+    border-left: 4px solid var(--action-border-color,var(--default-action-border-color)); 
+    color: var(--action-header-text-color,white);
     margin: 0 auto;
     height: 100%; 
     transform: inherit;
@@ -1948,13 +1897,13 @@ flow_theme_zone
 }
 
 .flow_theme_zone .group-drag-main {
-    color: #434343;
     width: 200px;
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    background-color: rgba(128, 128, 128, 0.01);
+    border: 1px solid var(--group-border-color,var(--default-group-border-color));
+    background-color: var(--group-body-color,var(--default-group-body-color));
+    color: var(--group-body-text-color,var(--default-group-body-text-color));
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -1968,10 +1917,10 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-header-color,var(--default-group-header-color));
+    border-bottom: 1px solid var(--group-border-color,var(--default-group-border-color));
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -1990,13 +1939,13 @@ flow_theme_zone
 }
 
 .flow_theme_zone .list-drag-main {
-    color: #434343;
     width: 150px;
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.6);
-    background-color: rgba(255, 255, 255);
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -2009,10 +1958,10 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.6);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color,var(--default-list-border-color));
+    color: var(--list-header-text-color,var(--default-list-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -2031,12 +1980,12 @@ flow_theme_zone
 }
 
 .flow_theme_zone .tip-drag-main {
-    color: #434343;
     width: 150px;
     height: 100px;
     position: absolute;
     z-index: 5; 
-    background-color: #fff090; 
+    background-color: var(--tip-body-color,var(--default-tip-body-color)); 
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
@@ -2047,36 +1996,32 @@ flow_theme_zone
 
 .flow_theme_zone .tip-drag-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
 }
+
 .flow_theme_zone .tip-drag .tip-header{
     position: relative;
     height: 20px;
     width: 100%;  
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
 }
 /* tip drag end */
-
 
 
 .flow_theme_zone .action-container {
@@ -2099,10 +2044,10 @@ flow_theme_zone
     min-height: 30px;
     width: 200px;
     height: 100px;
-    color: #434343;
+    color: var(--action-body-text-color, var(--default-action-body-text-color));
+    background-color: var(--action-body-color,var(--default-action-body-color));
+    border: 1px solid var(--action-border-color,var(--default-action-border-color));
     border-radius: 3px;
-    background-color: white;
-    border: 1px solid #007bff;
     border-radius: 5px;
     font-size: 10px;
 
@@ -2136,7 +2081,6 @@ flow_theme_zone
 
 .flow_theme_zone .action-header{
     position: relative;
-    border-left: 4px solid #007bff;
     text-align: center;     
     padding-left: 0px;
     padding-right: 0px;
@@ -2149,7 +2093,8 @@ flow_theme_zone
     border-radius: 3px;
     font-weight: bold;
     font-size: 10px;
-    color: #007bff;
+    border-left: 4px solid var(--action-border-color,var(--default-action-border-color));
+    color: var(--action-header-text-color ,var(--default-action-border-color));
     background-color: transparent;
     margin: 0 auto;
     height: 100%; 
@@ -2164,13 +2109,12 @@ flow_theme_zone
     z-index: 21;
     right: 5px;
     top:2px;
-    color: #007bff;
+    color: var(--action-border-color,var(--default-action-border-color));
     text-decoration:none;
     cursor: pointer;
 }
 
 .flow_theme_zone .action-body{
-
     position: relative;
     padding: 0px;
     width: calc(100% - 20px);
@@ -2178,7 +2122,7 @@ flow_theme_zone
     float: right;
     top: 0px;
     left: 0px;
-    background-color: transparent;
+    background-color: var(--action-body-color,var(--default-action-body-color));
     border-radius: 3px;
     overflow: hidden;
 }
@@ -2189,7 +2133,7 @@ flow_theme_zone
     width: 100%;
     height: 100%;
     overflow: auto;
-    color: black;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_zone  .action-html{
     height: 100%;
@@ -2198,13 +2142,9 @@ flow_theme_zone
 }
 
 .flow_theme_zone .action-msg{
-    position: absolute;
-    z-index: 10;
     width: 100%;
-    text-align: center;
-    top:50%;
-    transform:translateY(-50%);
-    color: rgba(128, 128, 128,1);
+    text-align: center; 
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     font-size: 12px;
 }
 
@@ -2215,6 +2155,7 @@ flow_theme_zone
     z-index: 20;
     width: 100%;
     height: 100%;
+    transform: none;
     background-color: transparent;
     transform: inherit;
 }
@@ -2235,8 +2176,8 @@ flow_theme_zone
     cursor: nwse-resize;
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid #007bff;
-    border-bottom: 7px solid #007bff;
+    border-right: 7px solid var(--action-border-color,var(--default-action-border-color));
+    border-bottom: 7px solid var(--action-border-color,var(--default-action-border-color));
 }
 
 .flow_theme_zone .body-resize{
@@ -2250,8 +2191,8 @@ flow_theme_zone
     cursor: nwse-resize;
     border-left:5px solid transparent;
     border-top:5px solid transparent;
-    border-right: 5px solid #007bff;
-    border-bottom: 5px solid #007bff;
+    border-right: 5px solid var(--action-border-color, var(--default-action-border-color));
+    border-bottom: 5px solid var(--action-border-color, var(--default-action-border-color));
 }
 
 
@@ -2267,13 +2208,11 @@ flow_theme_zone
     line-height: 15px;
     text-align: center;
     padding: 0px;
-
     font-size: 10px;
     cursor: crosshair;
-
     background-color: white;
-    border: 1px solid #ffc107;
-    color:orange;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color: var(--ep-color,var(--default-ep-color));
 }
 
 
@@ -2281,107 +2220,77 @@ flow_theme_zone
 /*各类状态*/
 /*begin*/
 .flow_theme_zone .action.begin .action-main{
-    border: 1px solid #17a2b8;
+    border: 1px solid var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
 .flow_theme_zone .action.begin .action-header{
-    border-left: 4px solid #17a2b8;
-    color:  #17a2b8;
+    border-left: 4px solid var(--action-border-color-begin,var(--default-action-border-color-begin));
+    color:  var(--action-header-text-color,var(--default-action-border-color-begin));
 }
 
 .flow_theme_zone .action.begin .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color: #17a2b8;
+    border-right-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
+    border-bottom-color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
-.flow_theme_zone .action.begin .action-icon{
-    display: none;
-}
+
 .flow_theme_zone .action.begin .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #17a2b8;
+    color: var(--action-border-color-begin,var(--default-action-border-color-begin));
 }
 
 /*end */
 .flow_theme_zone .action.end .action-main{
-    border: 1px solid #17a2b8;
+    border: 1px solid var(--action-border-color-end, var(--default-action-border-color-end));
 }
 .flow_theme_zone .action.end .action-header{
-
-    border-left: 4px solid #17a2b8;
-    color:  #17a2b8;
+    border-left: 4px solid var(--action-border-color-end, var(--default-action-border-color-end));
+    color:  var(--action-header-text-color, var(--default-action-border-color-end));
 }
 
 .flow_theme_zone .action.end .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color: #17a2b8;
+    border-right-color: var(--action-border-color-end, var(--default-action-border-color-end));
+    border-bottom-color: var(--action-border-color-end, var(--default-action-border-color-end));
 }
-.flow_theme_zone .action.end .action-icon{
-    display: none;
-}
+
 .flow_theme_zone .action.end .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #17a2b8;
+    color: var(--action-border-color-end, var(--default-action-border-color-end));
 }
 
 /*external*/
 .flow_theme_zone .action.external .action-main{
-    border: 1px solid #a7a2ff;
+    border: 1px solid var(--action-border-color-external, var(--default-action-border-color-external));
 }
-.flow_theme_zone .action.external .action-header{
 
-    border-left: 4px solid #a7a2ff;
-    color:  #a7a2ff;
+.flow_theme_zone .action.external .action-header{
+    border-left: 4px solid var(--action-border-color-external, var(--default-action-border-color-external));
+    color:  var(--action-header-text-color,var(--default-action-border-color-external));
 }
 
 .flow_theme_zone .action.external .action-resize{
-    border-right-color: #a7a2ff;
-    border-bottom-color: #a7a2ff;
+    border-right-color: var(--action-border-color-external,var(--default-action-border-color-external));
+    border-bottom-color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
-.flow_theme_zone .action.external .action-icon{
-    display: none;
-}
+
 .flow_theme_zone .action.external .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #a7a2ff;
+    color: var(--action-border-color-external,var(--default-action-border-color-external));
 }
 
 /* custom */
 .flow_theme_zone .action.custom .action-main{
-    border: 1px solid #b67fb6;
+    border: 1px solid var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
 .flow_theme_zone .action.custom .action-header{
-
-    border-left: 4px solid #b67fb6;
-    color:  #b67fb6;
+    border-left: 4px solid var(--action-border-color-custom,var(--default-action-border-color-custom));
+    color:  var(--action-header-text-color,var(--default-action-border-color-custom));
 }
-
 .flow_theme_zone .action.custom .action-resize{
-    border-right-color: #b67fb6;
-    border-bottom-color: #b67fb6;
+    border-right-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
+    border-bottom-color: var(--action-border-color-custom,var(--default-action-border-color-custom));
 }
-.flow_theme_zone .action.custom .action-icon{
-    display: none;
-}
+
 .flow_theme_zone .action.custom .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #b67fb6;
+    color: var(--action-border-color-custom, var(--default-action-border-color-custom));
 }
-
-
 
 /*execute*/
-
 .flow_theme_zone .action.execute{
     background: repeating-linear-gradient(135deg,transparent,transparent 3px,#7AB02C, #7AB02C 6px);
     animation: flow_theme_zone_shine 2s infinite linear;
@@ -2397,88 +2306,60 @@ flow_theme_zone
 
 /*error*/
 .flow_theme_zone .action.error .action-main{
-    border: 1px solid #b0413f;
-    color: #b0413f;
-    background-color: white;
+    border: 1px solid var(--action-border-color-error,var(--default-action-border-color-error));
 }
 .flow_theme_zone .action.error .action-header{
-
-    border-left: 4px solid #b0413f;
-    color:  #b0413f;
+    border-left: 4px solid var(--action-border-color-error,var(--default-action-border-color-error));
+    color:  var(--action-header-text-color, var(--default-action-border-color-error));
 }
 
 .flow_theme_zone .action.error .action-resize{
-    border-right-color: #b0413f;
-    border-bottom-color: #b0413f;
+    border-right-color: var(--action-border-color-error, var(--default-action-border-color-error));
+    border-bottom-color: var(--action-border-color-error, var(--default-action-border-color-error));
 }
-.flow_theme_zone .action.error .action-icon{
-    display: none;
-}
-
+ 
 .flow_theme_zone .action.error .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #b0413f;
+    color: var(--action-border-color-error, var(--default-action-border-color-error));
 }
 
 
 /*success*/
 .flow_theme_zone .action.success .action-main{
-    border: 1px solid #7AB02C;
-    color: #7AB02C;
-    background-color: white;
+    border: 1px solid var(--action-border-color-success, var(--default-action-border-color-success));
 }
 
 .flow_theme_zone .action.success .action-header{
-
-    border-left: 4px solid #7AB02C;
-    color:  #7AB02C;
+    border-left: 4px solid var(--action-border-color-success, var(--default-action-border-color-success));
+    color:  var(--action-header-text-color, var(--default-action-border-color-success));
 }
 
 .flow_theme_zone .action.success .action-resize{
-    border-right-color: #7AB02C;
-    border-bottom-color: #7AB02C;
+    border-right-color: var(--action-border-color-success, var(--default-action-border-color-success));
+    border-bottom-color: var(--action-border-color-success, var(--default-action-border-color-success));
 }
-.flow_theme_zone .action.success .action-icon{
-    display: none;
-}
-
+ 
 .flow_theme_zone .action.success .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #7AB02C;
+    color: var(--action-border-color-success, var(--default-action-border-color-success));
 }
 
 /*action reject*/
 .flow_theme_zone .action.reject .action-main{
-    border: 1px solid #fdcf7c;
-    color: #fdcf7c;
-    background-color: white;
+    border: 1px solid var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
 
 .flow_theme_zone .action.reject .action-header{
-    border-left: 4px solid #fdcf7c;
-    color:  #fdcf7c;
+    border-left: 4px solid var(--action-border-color-reject, var(--default-action-border-color-reject));
+    color:  var(--action-header-text-color, var(--default-action-border-color-reject));
 }
 
 
 .flow_theme_zone .action.reject .action-resize{
-    border-right-color: #fdcf7c;
-    border-bottom-color: #fdcf7c;
+    border-right-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
+    border-bottom-color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
-.flow_theme_zone .action.reject .action-icon{
-    display: none;
-}
+ 
 .flow_theme_zone .action.reject .action-remove-btn{
-    position: absolute;
-    z-index: 21;
-    right: 5px;
-    top:2px;
-    color: #fdcf7c;
+    color: var(--action-border-color-reject,var(--default-action-border-color-reject));
 }
 
 
@@ -2527,7 +2408,7 @@ flow_theme_zone
     width: 200px;
     height: 200px;
     border-radius: 5px; 
-    border: 4px solid rgba(128, 128, 128, 0.3);
+    border: 4px solid var(--group-border-color,var(--default-group-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
@@ -2537,10 +2418,10 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: transparent;
+    background-color: var(--group-header-color,var(--default-group-header-color));
     border-bottom: 0px;
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     box-sizing: border-box;
     text-align: left;
     transform: inherit;
@@ -2551,7 +2432,7 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--group-body-text-color,var(--default-group-body-text-color));
 }
 
 .flow_theme_zone .group .group-remove-btn{
@@ -2561,7 +2442,7 @@ flow_theme_zone
     z-index: 4;
     right: 5px;
     top:2px;
-    color: rgba(128, 128, 128, 0.5);
+    color:  var(--group-header-text-color, var(--default-group-header-text-color));
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -2589,10 +2470,9 @@ flow_theme_zone
     font-size: 10px;
     cursor: crosshair;
     padding: 0px;
-
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 
 .flow_theme_zone .group:hover .group-ep{
@@ -2611,8 +2491,8 @@ flow_theme_zone
     border-radius: 3px;
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--group-border-color, var(--default-group-border-color));
+    border-bottom: 7px solid var(--group-border-color, var(--default-group-border-color));
 }
 
 .flow_theme_zone .group:hover .group-resize {
@@ -2632,21 +2512,22 @@ flow_theme_zone
     min-width: 100px;
     min-height: 20px;
     border-radius: 5px;
-    background-color: white;
-    border: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-body-color, var(--default-list-body-color));
+    border: 1px solid var(--list-border-color, var(--default-list-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .flow_theme_zone .list .list-header {
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 1);
-    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-header-color, var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color, var(--default-list-border-color));
+    color: var(--list-header-text-color, var(--default-list-header-text-color));
     padding-left: 10px;
-    color: white;
     box-sizing: border-box;
     transform: inherit;
 } 
@@ -2655,8 +2536,8 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
-    
+    background-color: var(--list-body-color, var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
@@ -2669,7 +2550,8 @@ flow_theme_zone
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: rgba(128, 128, 128, 0.1);
+    background-color: var(--list-item-color,var(--default-list-item-color));
+    color: var(--list-item-text-color,var(--default-list-item-text-color));
     box-sizing: border-box;
     margin-bottom: 10px;
     cursor: default;
@@ -2677,7 +2559,7 @@ flow_theme_zone
 .flow_theme_zone .list .list-body .list-item .list-item-title{
     width: 100%;
     height: 100%;
-    color: rgba(128, 128, 128, 1);
+    color: var(--list-item-text-color,var(--default-list-item-text-color));
 }
 .flow_theme_zone .list .list-remove-btn{
     display: none;
@@ -2686,7 +2568,7 @@ flow_theme_zone
     z-index: 4;
     right: 3px;
     top:2px;
-    color: white; 
+    color: var(--list-border-color,var(--default-list-border-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -2713,13 +2595,11 @@ flow_theme_zone
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--list-border-color,var(--default-list-border-color));
+    border-bottom: 7px solid var(--list-border-color,var(--default-list-border-color));
 }
 .flow_theme_zone .list:hover .list-resize {
     display: block;
@@ -2732,9 +2612,8 @@ flow_theme_zone
     position: absolute;    
     cursor:move; 
     box-sizing: border-box;
-    
-   
 }
+
 .flow_theme_zone .tip-main {
     width: 150px;
     height: 100px;  
@@ -2743,27 +2622,21 @@ flow_theme_zone
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
-
-    background-color: #fff090; 
+    background-color: var(--tip-body-color, var(--default-tip-body-color));
     overflow: hidden;
 }
 
-
 .flow_theme_zone .tip-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
@@ -2775,7 +2648,7 @@ flow_theme_zone
     height: 20px;
     width: 100%; 
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box; 
     font-weight: bold;
     transform: inherit;
@@ -2786,9 +2659,8 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     box-sizing: border-box;
-
 }
  
 .flow_theme_zone .tip .tip-remove-btn{
@@ -2798,9 +2670,9 @@ flow_theme_zone
     z-index: 4;
     right: 3px;
     top:2px;
-    color: #ffc107; 
     background-color: white;
-    border: 1px solid #ffc107;
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color)); 
+    border: 1px solid var(--tip-body-text-color, var(--default-tip-body-text-color));
     font-size: 10px;
     font-style: normal;
     font-family: normal;
@@ -2833,8 +2705,8 @@ flow_theme_zone
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_zone .tip:hover .tip-ep{
     display: block;
@@ -2850,18 +2722,15 @@ flow_theme_zone
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
- 
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--tip-body-text-color, var(--default-tip-body-text-color));
+    border-bottom: 7px solid var(--tip-body-text-color, var(--default-tip-body-text-color));
 }
 .flow_theme_zone .tip:hover .tip-resize {
     display: block;
 }
 /* tip end */
-
-
 
 
 /* action drag begin */
@@ -2875,12 +2744,12 @@ flow_theme_zone
     background-color: transparent;
 }
 .flow_theme_box .action-drag .action-drag-main{
- 
+
     width: 150px;
     height: 50px;
-    border: 1px solid #6c757d;
+    border: 1px solid var(--action-border-color, var(--default-action-border-color));
+    color: var(--action-body-text-color,var(--default-action-body-text-color)); 
     border-radius: 5px;
-    color: #434343; 
     font-size: 10px;
 }
 .flow_theme_box .action-drag .action-header{
@@ -2897,8 +2766,8 @@ flow_theme_zone
     border-radius: 3px;
     font-weight: bold;
     font-size: 10px;
-    color: #007bff;
-    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--action-header-text-color,var(--default-action-border-color));
+    background-color: transparent;
 }
 /* action drag end */
 
@@ -2919,8 +2788,8 @@ flow_theme_zone
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    background-color: rgba(128, 128, 128, 0.01);
+    border: 1px solid var(--group-border-color,var(--default-group-border-color));
+    background-color: var(--group-body-color,var(--default-group-body-color));
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -2929,14 +2798,15 @@ flow_theme_zone
     font-size: 10px;
     box-sizing: border-box;
 }
+
 .flow_theme_box .group-drag-main .group-header{
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-header-color, var(--default-group-header-color));
+    border-bottom: 1px solid var(--group-border-color, var(--default-group-border-color));
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
 }
@@ -2954,13 +2824,13 @@ flow_theme_zone
 }
 
 .flow_theme_box .list-drag-main {
-    color: #434343;
     width: 150px;
     height: 200px;
     position: absolute;
     z-index: 5;
-    border: 1px solid rgba(128, 128, 128, 0.6);
-    background-color: rgba(255, 255, 255);
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -2973,10 +2843,10 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.6);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.6);
+    background-color: var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color, var(--default-list-border-color));
+    color: var(--list-header-text-color,var(--default-list-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
     text-align: left;
 }
@@ -2995,12 +2865,13 @@ flow_theme_zone
 }
 
 .flow_theme_box .tip-drag-main {
-    color: #434343;
+    
     width: 150px;
     height: 100px;
     position: absolute;
     z-index: 5; 
-    background-color: #fff090; 
+    background-color: var(--tip-border-color,var(--default-tip-border-color)); 
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     cursor: pointer;
     text-align: center;
     opacity: 0.8;
@@ -3011,19 +2882,15 @@ flow_theme_zone
 
 .flow_theme_box .tip-drag-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
@@ -3034,12 +2901,11 @@ flow_theme_zone
     height: 20px;
     width: 100%;  
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box;
     text-align: left;
 }
 /* tip drag end */
-
 
 .flow_theme_box .action-container { 
     position: absolute;
@@ -3056,17 +2922,16 @@ flow_theme_zone
     border-radius: 10px; 
 }
 
-
 .flow_theme_box .action-main{
     position: relative;
-    color: #434343; 
     min-width: 30px;
     min-height: 30px;
     width: 150px;
     height: 50px;  
     display: block; 
-    background-color: white;
-    border: 1px solid #007bff;
+    background-color: var(--action-body-color, var(--default-action-body-color));
+    border: 1px solid var(--action-border-color, var(--default-action-border-color));
+    color: var(--action-body-text-color,var(--default-action-body-text-color)); 
     border-radius: 10px;
     font-size: 10px;
 }
@@ -3109,7 +2974,7 @@ flow_theme_zone
     border-radius: 10px;
     font-weight: bold;
     font-size: 10px;
-    color: #007bff;
+    color: var(--action-header-text-color,var(--default-action-border-color));
     background-color: transparent;
 }
 
@@ -3120,14 +2985,14 @@ flow_theme_zone
     z-index: 21;
     right: 3px;
     top:2px;
-    color: #007bff;
+    color: var(--action-border-color,var(--default-action-border-color));
     font-size: 10px;
     font-style: normal;
     font-family: normal;
     text-align: center; 
     text-decoration:none;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: white;
     line-height: 15px;
     width: 15px;
     height: 15px;
@@ -3142,7 +3007,8 @@ flow_theme_zone
     height: auto;
     left: 0px;
     top: calc(100% + 10px);
-    background-color: transparent;
+    background-color: var(--action-body-color,var(--default-action-body-color));
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     border-radius: 10px;
     overflow: hidden;
 }
@@ -3152,17 +3018,19 @@ flow_theme_zone
     width: 100%;
     height: 100%;
     overflow: auto;
-    color: black;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
+
 .flow_theme_box .action-html{
     height: 100%;
     width: 100%;
     overflow: auto;
 }
+
 .flow_theme_box .action-msg{ 
     width: 100%;
     text-align: center; 
-    color: rgba(128, 128, 128,1);
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
     font-size: 12px;
 }
 
@@ -3178,8 +3046,7 @@ flow_theme_zone
     border-radius: 10px;
     text-align: center;
 }
-.flow_theme_box .action-icon img{
-    display:block;
+.flow_theme_box .action-icon img{ 
     max-width: 100%; 
     height: auto; 
     width: auto;
@@ -3197,8 +3064,8 @@ flow_theme_zone
     border-radius: 5px;
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid #007bff;
-    border-bottom: 7px solid #007bff;
+    border-right: 7px solid var(--action-border-color,var(--default-action-border-color));
+    border-bottom: 7px solid var(--action-border-color,var(--default-action-border-color));
 }
 
 .flow_theme_box .body-resize{
@@ -3212,8 +3079,8 @@ flow_theme_zone
     cursor: nwse-resize;
     border-left:5px solid transparent;
     border-top:5px solid transparent;
-    border-right: 5px solid #007bff;
-    border-bottom: 5px solid #007bff;
+    border-right: 5px solid var(--action-border-color, var(--default-action-border-color));
+    border-bottom: 5px solid var(--action-border-color, var(--default-action-border-color));
 }
 
 
@@ -3223,7 +3090,6 @@ flow_theme_zone
     z-index: 100;
     top: calc(50% - 7px);
     right:  3px;
-
     border-radius: 3px;
     width: 15px;
     height: 15px;
@@ -3232,10 +3098,9 @@ flow_theme_zone
     padding: 0px;
     font-size: 10px;
     cursor: crosshair; 
-
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color: var(--ep-color,var(--default-ep-color));
     box-sizing: border-box;
 }
 
@@ -3244,69 +3109,53 @@ flow_theme_zone
 
 /*开始节点*/
 .flow_theme_box .action.begin .action-main{
-    border: 1px solid #17a2b8;  
+    border: 1px solid var(--action-border-color-begin,var(--default-action-border-color-begin));  
 }
 .flow_theme_box .action.begin .action-header{ 
-    color: #17a2b8;
-    left: 0px;
-    width: 100%;
+    color: var(--action-header-text-color,var(--default-action-border-color-begin));  
 }
 .flow_theme_box .action.begin .action-resize{
-    border-right-color:  #17a2b8;
-    border-bottom-color: #17a2b8;
+    border-right-color:  var(--action-border-color-begin,var(--default-action-border-color-begin));  
+    border-bottom-color: var(--action-border-color-begin,var(--default-action-border-color-begin));  
 }
-.flow_theme_box .action.begin .action-icon{
-    display: block;
-}
+
 /*结束节点*/
 .flow_theme_box .action.end .action-main{
-    border: 1px solid #17a2b8; 
+    border: 1px solid var(--action-border-color-end,var(--default-action-border-color-end));  
 }
 .flow_theme_box .action.end .action-header{
-    color: #17a2b8;
-    left: 0px;
-    width: 100%;
+    color: var(--action-header-text-color,var(--default-action-border-color-end));  
 }
 .flow_theme_box .action.end .action-resize{
-    border-right-color: #17a2b8;
-    border-bottom-color:  #17a2b8;
+    border-right-color: var(--action-border-color-end,var(--default-action-border-color-end));  
+    border-bottom-color:  var(--action-border-color-end,var(--default-action-border-color-end));  
 }
-.flow_theme_box .action.end .action-icon{
-    display: block;
-}
+
 
 /* external */
 .flow_theme_box .action.external .action-main{
-    border: 1px solid #a7a2ff;
+    border: 1px solid var(--action-border-color-external,var(--default-action-border-color-external));  
 }
 .flow_theme_box .action.external .action-header{
-    color: #a7a2ff;
-    left: 0px;
-    width: 100%;
+    color: var(--action-header-text-color,var(--default-action-border-color-external));  
 }
 .flow_theme_box .action.external .action-resize{
-    border-right-color: #a7a2ff;
-    border-bottom-color: #a7a2ff;
+    border-right-color: var(--action-border-color-external,var(--default-action-border-color-external));  
+    border-bottom-color: var(--action-border-color-external,var(--default-action-border-color-external));  
 }
-.flow_theme_box .action.external .action-icon{
-    display: block;
-}
+
 /* custom */
 .flow_theme_box .action.custom .action-main{
-    border: 1px solid #b67fb6;
+    border: 1px solid var(--action-border-color-custom,var(--default-action-border-color-custom));  
 } 
 .flow_theme_box .action.custom .action-header{
-    color: #b67fb6;
-    left: 0px;
-    width: 100%;
+    color: var(--action-header-text-color,var(--default-action-border-color-custom));  
 }
 .flow_theme_box .action.custom .action-resize{
-    border-right-color:   #b67fb6;
-    border-bottom-color:  #b67fb6;
+    border-right-color:   var(--action-border-color-custom,var(--default-action-border-color-custom));  
+    border-bottom-color:  var(--action-border-color-custom,var(--default-action-border-color-custom));  
 }
-.flow_theme_box .action.custom .action-icon{
-    display: block;
-}
+
 
 /*execute*/
 .flow_theme_box .action.execute{
@@ -3324,67 +3173,45 @@ flow_theme_zone
 
 /*error*/
 .flow_theme_box .action.error .action-main{
-    border: 1px solid #b0413f;
-    color: #b0413f;
-    background-color: white;
+    border: 1px solid var(--action-border-color-error,var(--default-action-border-color-error));  
 }
 .flow_theme_box .action.error .action-header{
-    color: #b0413f;
-    left: 0px;
-    width: 100%;
+    color: var(--action-header-text-color,var(--default-action-border-color-error)); 
 }
 
 .flow_theme_box .action.error .action-resize{
-    border-right-color:  #b0413f;
-    border-bottom-color: #b0413f;
+    border-right-color:  var(--action-border-color-error,var(--default-action-border-color-error));  
+    border-bottom-color: var(--action-border-color-error,var(--default-action-border-color-error));  
 }
-.flow_theme_box .action.error .action-icon{
-    display: block;
-}
-
 
 /*success*/
 .flow_theme_box .action.success .action-main{
-    border: 1px solid #7AB02C;
-    color: #7AB02C;
-    background-color: white;
+    border: 1px solid var(--action-border-color-success,var(--default-action-border-color-success));  
 }
 
 .flow_theme_box .action.success .action-header{
-    color: #7AB02C;
-    left: 0px;
-    width: 100%;
+    color:var(--action-header-text-color,var(--default-action-border-color-success));  
 }
 
 .flow_theme_box .action.success .action-resize{
-    border-right-color: #7AB02C;
-    border-bottom-color: #7AB02C;
+    border-right-color: var(--action-border-color-success,var(--default-action-border-color-success));  
+    border-bottom-color: var(--action-border-color-success,var(--default-action-border-color-success));  
 }
-.flow_theme_box .action.success .action-icon{
-    display: block;
-} 
-
 
 /*action reject*/
 .flow_theme_box .action.reject .action-main{
-    border: 1px solid #fdcf7c;
-    color: #fdcf7c;
-    background-color: white;
+    border: 1px solid var(--action-border-color-reject,var(--default-action-border-color-reject));  
 }
 
 .flow_theme_box .action.reject .action-header{
-    left: 0px;
-    width: 100%;
-    color: #fdcf7c;
+    color: var(--action-header-text-color,var(--default-action-border-color-reject));  
 }
 
 .flow_theme_box .action.reject .action-resize{
-    border-right-color: #fdcf7c;
-    border-bottom-color: #fdcf7c;
+    border-right-color: var(--action-border-color-reject,var(--default-action-border-color-reject));  
+    border-bottom-color: var(--action-border-color-reject,var(--default-action-border-color-reject));  
 }
-.flow_theme_box .action.reject .action-icon{
-    display: block;
-}
+
 
 /*连接线标签*/
 /*link label*/
@@ -3448,8 +3275,8 @@ flow_theme_zone
     width: 200px;
     height: 200px;
     border-radius: 5px;
-    background-color: #ffc10740;
-    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-body-color,var(--default-group-body-color)); 
+    border: 1px solid var(--group-border-color,var(--default-group-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
@@ -3459,10 +3286,10 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.05);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--group-header-color,var(--default-group-header-color));
+    border-bottom: 1px solid var(--group-border-color,var(--default-group-border-color));
+    color: var(--group-header-text-color,var(--default-group-header-text-color));
     padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
     box-sizing: border-box;
 }
 
@@ -3471,7 +3298,7 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--group-body-text-color,var(--default-group-body-text-color));
     box-sizing: border-box;
 }
  
@@ -3482,7 +3309,7 @@ flow_theme_zone
     z-index: 4;
     right: 3px;
     top:2px;
-    color: rgba(128, 128, 128, 1); 
+    color: var(--group-header-text-color,var(--default-group-header-text-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -3515,8 +3342,8 @@ flow_theme_zone
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color:var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_box .group:hover .group-ep{
     display: block;
@@ -3526,19 +3353,16 @@ flow_theme_zone
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--group-border-color, var(--default-group-border-color));
+    border-bottom: 7px solid var(--group-border-color, var(--default-group-border-color));
 }
 .flow_theme_box .group:hover .group-resize {
     display: block;
@@ -3550,27 +3374,28 @@ flow_theme_zone
     position: absolute;    
     cursor:move; 
     box-sizing: border-box;
-   
 }
+
 .flow_theme_box .list-main {
     width: 150px;
     height: 200px;
     min-width: 100px;
     min-height: 20px;
     border-radius: 5px;
-    background-color: white;
-    border: 1px solid rgba(128, 128, 128, 1);
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    border: 1px solid var(--list-border-color,var(--default-list-border-color));
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .flow_theme_box .list .list-header {
     position: relative;
     height: 20px;
     width: 100%;
-    background-color: rgba(128, 128, 128, 1);
-    border-bottom: 1px solid rgba(128, 128, 128, 1);
+    background-color:  var(--list-header-color,var(--default-list-header-color));
+    border-bottom: 1px solid var(--list-border-color,var(--default-list-border-color));
     padding-left: 10px;
     color: white;
     box-sizing: border-box;
@@ -3580,12 +3405,13 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
-    
+    background-color: var(--list-body-color,var(--default-list-body-color));
+    color: var(--list-body-text-color,var(--default-list-body-text-color));
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 .flow_theme_box .list .list-body .list-item {
     position: relative;
     height: 20px;
@@ -3594,16 +3420,19 @@ flow_theme_zone
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: rgba(128, 128, 128, 0.1);
+    background-color: var(--list-item-color,var(--default-list-item-color));
+    color: var(--list-item-text-color,var(--default-list-item-text-color));
     box-sizing: border-box;
     margin-bottom: 10px;
     cursor: default;
 }
+
 .flow_theme_box .list .list-body .list-item .list-item-title{
     width: 100%;
     height: 100%;
-    color: rgba(128, 128, 128, 1);
+    color: var(--list-item-text-color, var(--default-list-item-text-color));
 }
+
 .flow_theme_box .list .list-remove-btn{
     display: none;
     overflow: hidden;
@@ -3611,7 +3440,7 @@ flow_theme_zone
     z-index: 4;
     right: 3px;
     top:2px;
-    color: white; 
+    color: var(--list-border-color,var(--default-list-border-color)); 
     font-size: 12px;
     font-style: normal;
     font-family: normal;
@@ -3623,6 +3452,7 @@ flow_theme_zone
     text-decoration:none;
     cursor: pointer;
 }
+
 .flow_theme_box .list:hover .list-remove-btn{
     display: block;
 }
@@ -3632,19 +3462,16 @@ flow_theme_zone
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
-
     border-radius: 3px;
-
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--list-border-color,var(--default-list-border-color));
+    border-bottom: 7px solid var(--list-border-color,var(--default-list-border-color));
 }
 .flow_theme_box .list:hover .list-resize {
     display: block;
@@ -3668,27 +3495,22 @@ flow_theme_zone
     font-size: 12px;
     cursor:move; 
     box-sizing: border-box;
-
-    background-color: #fff090; 
+    background-color: var(--tip-body-color,var(--default-tip-body-color)); 
     overflow: hidden;
 }
 
 
 .flow_theme_box .tip-main:before {
     content:"";
-    
     display:block; /*伪元素默认是行内元素，所以如果要设定宽高，这必须显性设置为block*/
-    
     border-width:0 20px 20px 0; /*设置边框宽度*/
     border-color:#fff #fff transparent transparent; 
     background:transparent;
     border-style:solid; /*设置边框为固体的*/
     width:0; /*设定新创建的元素*/
-    
     position:absolute; /*相对于父容器绝对定位，设置偏移父容器边框距离*/
     top:0;
     right:0;
-    
     /*设置元素的阴影效果*/
     -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
@@ -3699,8 +3521,8 @@ flow_theme_zone
     position: relative;
     height: 20px;
     width: 100%; 
-    padding-left: 10px;
-    color: rgba(128, 128, 128, 1);
+    padding-left: 10px; 
+    color: var(--tip-header-text-color,var(--default-tip-header-text-color));
     box-sizing: border-box; 
     font-weight: bold;
 }
@@ -3710,9 +3532,8 @@ flow_theme_zone
     height: calc(100% - 20px);
     width: 100%;
     padding: 10px;
-    color: rgba(128, 128, 128, 0.7);
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color));
     box-sizing: border-box;
-
 }
  
 .flow_theme_box .tip .tip-remove-btn{
@@ -3722,9 +3543,9 @@ flow_theme_zone
     z-index: 4;
     right: 3px;
     top:2px;
-    color: #ffc107; 
     background-color: white;
-    border: 1px solid #ffc107;
+    color: var(--tip-body-text-color,var(--default-tip-body-text-color)); 
+    border: 1px solid var(--tip-body-text-color,var(--default-tip-body-text-color));
     font-size: 10px;
     font-style: normal;
     font-family: normal;
@@ -3757,8 +3578,8 @@ flow_theme_zone
     cursor: crosshair;
     padding: 0px;
     background-color: white;
-    border: 1px solid #ffc107;
-    color:#ffc107;
+    border: 1px solid var(--ep-color,var(--default-ep-color));
+    color: var(--ep-color,var(--default-ep-color));
 }
 .flow_theme_box .tip:hover .tip-ep{
     display: block;
@@ -3768,17 +3589,15 @@ flow_theme_zone
     display: none;
     position: absolute;
     z-index: 2;
-
     right: 0px;
     bottom: 0px;
     width: 14px;
     height: 14px;
     cursor: nwse-resize;
- 
     border-left:7px solid transparent;
     border-top:7px solid transparent;
-    border-right: 7px solid rgba(128, 128, 128, 0.3);
-    border-bottom: 7px solid rgba(128, 128, 128, 0.3);
+    border-right: 7px solid var(--tip-body-text-color, var(--default-tip-body-text-color));
+    border-bottom: 7px solid var(--tip-body-text-color, var(--default-tip-body-text-color));
 }
 .flow_theme_box .tip:hover .tip-resize {
     display: block;

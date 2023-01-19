@@ -537,6 +537,7 @@ var metadata=[
 <td>flowModel</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.snap("流程");</td>
 <td>截图</td>
@@ -589,6 +590,7 @@ andflow.reflow();
 <td>连线信息</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.setLinkInfo(linkInfo);</td>
 <td>设置连线信息</td>
@@ -596,7 +598,6 @@ andflow.reflow();
 <td>null</td>  
 <td></td>
 </tr>
-
 
 <tr>
 <td>andflow.getLinkLabel(source_id,target_id);</td>
@@ -628,6 +629,8 @@ andflow.reflow();
 <td>节点信息</td>  
 <td></td>
 </tr>
+
+
 <tr>
 <td>andflow.setActionInfo(actionInfo);</td>
 <td>设置节点配置信息</td>
@@ -635,6 +638,7 @@ andflow.reflow();
 <td>null</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.setActionTheme(actionId, theme);</td>
 <td>设置节点样式</td>
@@ -646,12 +650,45 @@ theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,ac
 </tr>
 
 <tr>
+<td>andflow.setActionTitle(actionId,title);</td>
+<td>设置节点标题</td>
+<td> actionId: 节点ID，title:标题</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.getActionTitle(actionId);</td>
+<td>获取节点标题</td>
+<td> actionId: 节点ID</td>  
+<td>string</td>  
+<td></td>
+</tr>
+
+<tr>
 <td>andflow.setActionContentVisible(true);</td>
 <td>设置内容是否可见</td>
 <td>true、false</td>  
 <td>null</td>  
 <td></td>
 </tr>
+
+<tr>
+<td>andflow.getActionContent(actionId);</td>
+<td>获取节点内容</td>
+<td>actionId:节点ID</td>  
+<td>string</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionContent(actionId, content, content_type);</td>
+<td>设置内容</td>
+<td>actionId:节点ID；content:内容; content_type:类型（"msg"、"html","chart"）</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
 <tr>
 <td>andflow.setActionParam(actionId,key,value);</td>
 <td>设置节点参数。</td>
@@ -659,11 +696,52 @@ theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,ac
 <td>null</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.getActionParam(actionId,key);</td>
 <td>设置节点参数。</td>
 <td>actionId：节点ID,key：参数名</td>  
 <td>参数值</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionBorderColor(actionId,color);</td>
+<td>设置节点边框颜色。</td>
+<td>actionId：节点ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionHeaderColor(actionId,color);</td>
+<td>设置节点头部背景颜色。</td>
+<td>actionId：节点ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionHeaderTextColor(actionId,color);</td>
+<td>设置节点头部字体颜色。</td>
+<td>actionId：节点ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionBodyColor(actionId,color);</td>
+<td>设置节点内容背景颜色。</td>
+<td>actionId：节点ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setActionBodyTextColor(actionId,color);</td>
+<td>设置节点内容字体颜色。</td>
+<td>actionId：节点ID,color: 颜色</td>  
+<td>null</td>  
 <td></td>
 </tr>
 
@@ -675,12 +753,15 @@ theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,ac
 <td></td>
 </tr>
 
+<!-- group -->
+<tr>
 <td>andflow.getGroupInfo(groupId);</td>
 <td>获取组配置信息</td>
 <td>groupId：组ID</td>  
 <td>组信息</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.setGroupInfo(groupInfo);</td>
 <td>设置组配置信息</td>
@@ -689,12 +770,14 @@ theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,ac
 <td></td>
 </tr>
 
+<tr>
 <td>andflow.getGroupTitle(groupId);</td>
 <td>获取组标题</td>
 <td>groupId：组ID</td>  
 <td>组标题</td>  
 <td></td>
 </tr>
+
 <tr>
 <td>andflow.setGroupTitle(groupId,title);</td>
 <td>设置组标题</td>
@@ -702,13 +785,225 @@ theme:节点样式，action_theme_default,action_theme_icon,action_theme_zone,ac
 <td>null</td>  
 <td></td>
 </tr>
+
+<tr>
+<td>andflow.setGroupBorderColor(groupId,color);</td>
+<td>设置组边框颜色。</td>
+<td>groupId:组ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setGroupHeaderColor(groupId,color);</td>
+<td>设置组头部背景颜色。</td>
+<td>groupId：组ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setGroupHeaderTextColor(groupId,color);</td>
+<td>设置组头部字体颜色。</td>
+<td>groupId：组ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setGroupBodyColor(groupId,color);</td>
+<td>设置组内容背景颜色。</td>
+<td>groupId：组ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setGroupBodyTextColor(groupId,color);</td>
+<td>设置组内容字体颜色。</td>
+<td>groupId：组ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
 <tr>
 <td>andflow.removeGroup(groupId,deleteMembers);</td>
-<td>设置组标题</td>
+<td>删除组</td>
 <td>groupId：组ID, deleteMembers: 是否删除子元素（true,false)</td>  
 <td>null</td>  
 <td></td>
+</tr>
+
+<!-- list -->
+
+<tr>
+<td>andflow.getListInfo(listId);</td>
+<td>获取列表配置信息</td>
+<td>listId: 列表ID</td>  
+<td>列表信息</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListInfo(listInfo);</td>
+<td>设置列表配置信息</td>
+<td>listInfo: 列表信息</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.getListTitle(listId);</td>
+<td>获取列表标题</td>
+<td>listId: 列表ID</td>  
+<td>列表标题</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListTitle(listId,title);</td>
+<td>设置列表标题</td>
+<td>listId: 列表ID, title:标题</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListBorderColor(listId,color);</td>
+<td>设置列表边框颜色。</td>
+<td>listId:列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListHeaderColor(listId,color);</td>
+<td>设置列表头部背景颜色。</td>
+<td>listId: 列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListHeaderTextColor(listId,color);</td>
+<td>设置列表头部字体颜色。</td>
+<td>listId: 列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListBodyColor(listId,color);</td>
+<td>设置列表内容背景颜色。</td>
+<td>listId: 列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListBodyTextColor(listId,color);</td>
+<td>设置列表内容字体颜色。</td>
+<td>listId:列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListItemColor(listId,color);</td>
+<td>设置列表元素背景颜色。</td>
+<td>listId: 列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setListItemTextColor(listId,color);</td>
+<td>设置列表元素字体颜色。</td>
+<td>listId:列表ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.removeList(listId);</td>
+<td>删除列表</td>
+<td>listId: 列表ID</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<!-- tip -->
+<tr>
+<td>andflow.getTipInfo(tipId);</td>
+<td>获取标签配置信息</td>
+<td>tipId：标签ID</td>  
+<td>标签信息</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setTipInfo(tipInfo);</td>
+<td>设置标签配置信息</td>
+<td>tipInfo:标签信息</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.getTipTitle(tipId);</td>
+<td>获取标签标题</td>
+<td>tipId：标签ID</td>  
+<td>标签标题</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setTipTitle(tipId,title);</td>
+<td>设置标签标题</td>
+<td>tipId：标签ID, title:标题</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.getTipContent(tipId);</td>
+<td>获取标签内容</td>
+<td>tipId：标签ID</td>  
+<td>标签内容</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setTipContent(tipId,content);</td>
+<td>设置标签内容</td>
+<td>tipId：标签ID, content:内容</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setTipBodyColor(tip,color);</td>
+<td>设置标签背景颜色。</td>
+<td>tipId：标签ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.setTipBodyTextColor(tip,color);</td>
+<td>设置标签内容字体颜色。</td>
+<td>tipId：标签ID,color: 颜色</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+<tr>
+<td>andflow.removeTip(tipId);</td>
+<td>删除标签</td>
+<td>tipId：标签ID</td>  
+<td>null</td>  
+<td></td>
 </tr> 
+
 </table>
 
 

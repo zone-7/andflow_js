@@ -1584,13 +1584,13 @@ var andflow = {
    
   //添加节点
   _createAction: function (action) {
-    var $this = this;
-    var id = action.id;
+    const $this = this;
+    const id = action.id;
     if (id == null) {
       return;
     }
     
-    var name = action.name;
+    const name = action.name;
     if (name == null) {
       return;
     } 
@@ -1721,9 +1721,7 @@ var andflow = {
     });
 
     actionElement.bind('mouseover', function (e) {
-      var actionName = $(this).attr('name');
-
-      if (actionName != 'end') {
+      if (name != 'end') {
         $(this).find('.ep').show();
       }
     });

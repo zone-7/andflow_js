@@ -2228,11 +2228,11 @@ var andflow = {
   },
   //画连接线基础样式 
   _paintConnection: function (conn, link) {
-    var linktype = this.flowModel.link_type || 'Flowchart';
-  
     if (link == null) {
       link == {};
     }
+
+    var linktype = link.link_type || this.flowModel.link_type || 'Flowchart';
 
     //如果与tip连线
     var istip = link.source_id.indexOf("tip_")>=0 || link.target_id.indexOf("tip_")>=0  ; 
@@ -2329,7 +2329,7 @@ var andflow = {
       conn.getOverlay('arrow_target').setVisible(false); 
       conn.getOverlay('label_target').setVisible(true); 
     }
-    
+
     if(link.arrows && link.arrows.length>0){
       if(link.arrows[0]){
         conn.getOverlay('arrow_source').setVisible(true);

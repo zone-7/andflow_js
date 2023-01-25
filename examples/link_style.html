@@ -38,6 +38,14 @@
 <div id="andflow" style="width: 100%;height: 400px;padding:0px;"> 
 </div>
 
+类型:
+<select id="link_type" >
+	<option value="Flowchart">Flowchart</option>
+	<option value="Straight">Straight</option>
+	<option value="Bezier">Bezier</option>
+	<option value="StateMachine">StateMachine</option>
+</select>  
+
 <br/>
 颜色: <input id="stroke" value="gray" />
 宽度:<input id="strokeWidth" value="2" />
@@ -178,6 +186,8 @@
     andflow.showFlow();
  
 	function setStyle(){ 
+		var link_type = $("#link_type").val();
+
         var stroke = $("#stroke").val();
         var strokeWidth = $("#strokeWidth").val();
         var radius = $("#radius").val();
@@ -196,6 +206,8 @@
 
 		var link = andflow.getLinkInfo("4e7fed4b5f90466a856cb743294e383c","c3747d543b724800ab792de258c9f64e");
  		
+		link.link_type = link_type;
+
 		var paintStyle = {
 			stroke: stroke,
 			strokeWidth: strokeWidth,
@@ -211,11 +223,11 @@
 		link.arrows=[arrow_source=="true",arrow_middle=="true",arrow_target=="true"];
 	  
 		link.animation = animation=="true";
-
+		 
         andflow.setLinkInfo(link);
 		
     }
-
+	 
 
     // function setStyle1(){ 
     //     var stroke = $("#stroke").val();

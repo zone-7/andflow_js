@@ -556,16 +556,6 @@ andflow.reflow();
 </td>
 </tr>
 
-<tr>
-<td>andflow.setLinkType(link_type);</td>
-<td>设置连接线样式名称</td>
-<td>Flowchart、Straight、Bezier、StateMachine</td>  
-<td>null</td>  
-<td>
-andflow.setLinkType(link_type);
-andflow.reflow();
-</td>
-</tr>
 
 <tr>
 <td>andflow.setEditable(false);</td>
@@ -600,6 +590,17 @@ andflow.reflow();
 </tr>
 
 <tr>
+<td>andflow.setLinkType(link_type);</td>
+<td>设置连接线样式名称</td>
+<td>Flowchart、Straight、Bezier、StateMachine</td>  
+<td>null</td>  
+<td>
+andflow.setLinkType(link_type);
+andflow.reflow();
+</td>
+</tr>
+
+<tr>
 <td>andflow.getLinkLabel(source_id,target_id);</td>
 <td>获取连线中间标签标题</td>
 <td>sourceId：起始节点ID, targetId：目的节点ID</td>  
@@ -621,6 +622,23 @@ andflow.reflow();
 <td>null</td>  
 <td></td>
 </tr>
+<tr>
+<td>andflow.removeLinkBySource(sourceId);</td>
+<td>删除从SoureceID节点开始的所有链接线</td>
+<td>sourceId：起始节点ID</td>  
+<td>null</td>  
+<td></td>
+</tr>
+<tr>
+<td>andflow.removeLinkByTarget(targetId);</td>
+<td>删除所有到达targetId节点的所有链接线</td>
+<td>targetId：目标节点ID</td>  
+<td>null</td>  
+<td></td>
+</tr>
+
+
+
 
 <tr>
 <td>andflow.getActionInfo(actionId);</td>

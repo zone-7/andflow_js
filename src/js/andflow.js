@@ -2229,7 +2229,7 @@ var andflow = {
   //画连接线基础样式 
   _paintConnection: function (conn, link) {
     var linktype = this.flowModel.link_type || 'Flowchart';
-
+  
     if (link == null) {
       link == {};
     }
@@ -2247,25 +2247,27 @@ var andflow = {
      
 
     //连线样式
-    var paintStyle = ps || { 
+    var paintStyle = { 
       stroke:  this._themeObj.default_link_color,
       radius: this._themeObj.default_link_radius,
       strokeWidth: this._themeObj.default_link_strokeWidth,
       outlineStroke: 'transparent',
       outlineWidth: this._themeObj.default_link_outlineWidth,
     };
+    $.extend(paintStyle, ps);
+   
 
-    var hoverPaintStyle = hps||{ 
+    var hoverPaintStyle ={ 
       stroke: this._themeObj.default_link_color_hover,
       radius: this._themeObj.default_link_radius_hover,
       strokeWidth: this._themeObj.default_link_strokeWidth_hover,
       outlineStroke: 'transparent',
       outlineWidth: this._themeObj.default_link_outlineWidth_hover,
     };
-
-
-
-    if ( style == 'dotted' || (active != null && active == 'false')) {
+    $.extend(hoverPaintStyle, hps);
+    
+   
+    if( style == 'dotted' || (active != null && active == 'false')) {
       paintStyle.dashstyle = '2 1';
       hoverPaintStyle.dashstyle = '2 1';
     } else {
@@ -2306,16 +2308,13 @@ var andflow = {
       hoverPaintStyle.outlineStroke = 'transparent';
       hoverPaintStyle.outlineWidth = this._themeObj.default_link_outlineWidth_g_hover;
        
- 
     }  
+
+
     conn.setType(linktype);
     conn.setPaintStyle(paintStyle);
     conn.setHoverPaintStyle(hoverPaintStyle);
      
-
-
-
-
     //默认arrow
     conn.getOverlay('arrow_source').setVisible(false);
     conn.getOverlay('arrow_middle').setVisible(false); 
@@ -2330,6 +2329,7 @@ var andflow = {
       conn.getOverlay('arrow_target').setVisible(false); 
       conn.getOverlay('label_target').setVisible(true); 
     }
+    
     if(link.arrows && link.arrows.length>0){
       if(link.arrows[0]){
         conn.getOverlay('arrow_source').setVisible(true);
@@ -3276,10 +3276,16 @@ var andflow = {
   },
 
   setLinkInfo: function (link) {
-    
-    $.extend(this._linkInfos[link.source_id + '-' + link.target_id], link);
- 
+    var linkInfo = this._linkInfos[link.source_id + '-' + link.target_id];
+    $.extend(linkInfo, link); 
+    this._linkInfos[link.source_id + '-' + link.target_id] = linkInfo;
+
+    this.renderLink(linkInfo);
+  
+  },
+  renderLink: function(link){
     var conn = this.getConnection(link.source_id, link.target_id);
+    
     if (conn != null) {
       
       this._paintConnection(conn, link);
@@ -3287,9 +3293,17 @@ var andflow = {
       this._plumb.repaintEverything();
     }
   },
-
   delLinkInfo: function (sid, tid) {
     this._linkInfos[sid + '-' + tid] = null;
+  },
+  getLinkPaintStyle: function(source_id,target_id){
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
+    return  link.paintStyle ;
+  },
+  setLinkPaintStyle: function(source_id,target_id,paintStyle){
+    var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
+    link.paintStyle = paintStyle;
+    this.setLinkInfo(link);
   },
   setLinkTitle: function(source_id,target_id, title){
     var link = this._linkInfos[link.source_id + '-' + link.target_id] || {source_id:source_id, target_id:target_id};
@@ -3540,16 +3554,16 @@ var andflow = {
 
     //建立列表
     if(obj && obj.lists){
-      for(var k in obj.lists){
-        var list = obj.lists[k]; 
+      for(var l in obj.lists){
+        var list = obj.lists[l]; 
         this._createList(list); 
       }
     }
  
     //建立组
     if (obj && obj.groups) {
-      for(var k in obj.groups){
-        var group = obj.groups[k];
+      for(var g in obj.groups){
+        var group = obj.groups[g];
 
         this._createGroup(group);
 
@@ -3561,29 +3575,27 @@ var andflow = {
     if (obj && obj.links) {
       var linktype = this.flowModel.link_type || 'Flowchart';
 
-      for (var k in obj.links) {
-        var link = obj.links[k];
+      for (var lk in obj.links) {
+        var link = obj.links[lk];
 
         var conn = this._plumb.connect({ source: link.source_id, target: link.target_id });
 
         if (conn == undefined || conn == null) {
-          
           continue;
         }
-        
-        this._paintConnection(conn, link);
-
-        this._linkInfos[link.source_id + '-' + link.target_id] = link;
+        this.setLinkInfo(link);
+        // this._paintConnection(conn, link); 
+        // this._linkInfos[link.source_id + '-' + link.target_id] = link;
       }
     }
 
 
     //设置端点样式
-    for (var k in obj.actions) {
-      var action = obj.actions[k];
-      var endpoints = this._plumb.getEndpoints(action.id);
-      for (var k in endpoints) {
-        var endpoint = endpoints[k];
+    for (var a in obj.actions) {
+      var act = obj.actions[a];
+      var endpoints = this._plumb.getEndpoints(act.id);
+      for (var ep in endpoints) {
+        var endpoint = endpoints[ep];
         endpoint.setPaintStyle({
           stroke: this._themeObj.default_endpoint_stroke_color,
           fill: this._themeObj.default_endpoint_fill_color,
@@ -3717,9 +3729,9 @@ var andflow = {
 
     //显示节点状态
     var actions = this.getActions();
+
     for (var i in actions) {
-      action = actions[i];
-      var actionId = action.id;
+      var actionId = actions[i].id;
       var action_state = action_state_map[actionId];
       if (action_state == null) {
         continue;
@@ -3990,6 +4002,7 @@ var andflow = {
       var target_id = conn_list[i]['targetId'];
 
       if (source_id == sourceId && target_id == targetId) {
+      
         return conn_list[i];
       }
     }

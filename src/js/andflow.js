@@ -1306,6 +1306,10 @@ var andflow = {
   //添加列表
   _createList: function(list){
     var $this = this;
+    var id = list.id;
+    if(id == null){
+      return;
+    }
 
     var meta = this.getMetadata(name) || {};
 
@@ -1894,9 +1898,11 @@ var andflow = {
   _createTip: function(tip){
     var $this= this;
      
-    
-
-    var id = tip.id;
+    const id = tip.id;
+    if (id == null) {
+      return;
+    }
+ 
     var name = tip.name;
 
     var tip_meta = this.getMetadata(name) || {};

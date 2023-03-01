@@ -210,7 +210,7 @@ var andflow = {
       .attr('state', 'open');
     $('#' + containerId)
       .find('.nav_btn')
-      .bind('click', function (e) {
+      .on('click', function (e) {
         var btn = $('#' + $this.containerId).find('.nav_btn');
         var state = btn.attr('state');
         if (state == 'open') {
@@ -229,7 +229,7 @@ var andflow = {
     //scale
     $('#' + containerId)
       .find('.scale_up_btn')
-      .bind('click', function (e) {
+      .on('click', function (e) {
         var value =
           $('#' + $this.containerId)
             .find('.scale_value')
@@ -245,7 +245,7 @@ var andflow = {
       });
     $('#' + containerId)
       .find('.scale_down_btn')
-      .bind('click', function (e) {
+      .on('click', function (e) {
         var value =
           $('#' + $this.containerId)
             .find('.scale_value')
@@ -261,7 +261,7 @@ var andflow = {
       });
     $('#' + containerId)
       .find('.scale_info')
-      .bind('click', function (e) {
+      .on('click', function (e) {
         $('#' + $this.containerId)
           .find('.canvas')
           .css('transform', 'scale(1)');
@@ -273,7 +273,7 @@ var andflow = {
     
     //drag and move
     var canvasContainer = $('#' + containerId).find(".canvasContainer");
-    $('#' + containerId).find('.canvas').bind('mousedown',function(e){
+    $('#' + containerId).find('.canvas').on('mousedown',function(e){
       var masker = $('#' + containerId).find('.canvas');
 
       masker.attr("drag","true");
@@ -284,7 +284,7 @@ var andflow = {
       $this._resizeCanvas();
 
     });
-    $('#' + containerId).find('.canvas').bind('mouseup',function(e){
+    $('#' + containerId).find('.canvas').on('mouseup',function(e){
       var masker = $('#' + containerId).find('.canvas');
       
       var drag = masker.attr("drag");
@@ -300,7 +300,7 @@ var andflow = {
 
     });
 
-    $('#' + containerId).find('.canvas').bind('mouseout',function(e){
+    $('#' + containerId).find('.canvas').on('mouseout',function(e){
       var masker = $('#' + containerId).find('.canvas');
 
       masker.attr("drag","false");
@@ -308,7 +308,7 @@ var andflow = {
       masker.attr("offset_y",e.offsetY); 
     });
 
-    $('#' + containerId).find('.canvas').bind('mousemove',function(e){
+    $('#' + containerId).find('.canvas').on('mousemove',function(e){
       var masker = $('#' + containerId).find('.canvas'); 
       var drag = masker.attr("drag");
       if(drag=="true"){
@@ -328,7 +328,7 @@ var andflow = {
 
     //show code
     $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_code+')');
-    $('#'+containerId).find('.code_btn').bind('click', function (e) {
+    $('#'+containerId).find('.code_btn').on('click', function (e) {
       try{
         if($('#codeContainer').is(':visible')){
           var txt = $('#codeContainer textarea').val()||"{}";
@@ -359,7 +359,7 @@ var andflow = {
     //thumbnail
     $('#' + containerId).find('.thumbnail_btn').css('background-image', 'url(' + this._icon_eye_close + ')');
     $('#' + containerId).find('.thumbnail_btn').attr('state', 'close');
-    $('#' + containerId).find('.thumbnail_btn').bind('click', function (e) {
+    $('#' + containerId).find('.thumbnail_btn').on('click', function (e) {
         var element = $('#' + $this.containerId).find('.flow_thumbnail');
         var btn = $('#' + $this.containerId).find('.thumbnail_btn');
         var state = btn.attr('state');
@@ -375,12 +375,12 @@ var andflow = {
         }
     });
 
-    $('#' + containerId).find('.flow_thumbnail_mask').mousedown(function (e) {
+    $('#' + containerId).find('.flow_thumbnail_mask').on('mousedown',function (e) {
         
         var xx = e.offsetX;
         var yy = e.offsetY;
          
-        $('#' + $this.containerId).mousemove(function (e) {
+        $('#' + $this.containerId).on('mousemove',function (e) {
           var el = $('#' + $this.containerId).find('.flow_thumbnail_mask');
           if(el.length>0){
             var x = e.pageX - el.parent().offset().left - xx;
@@ -481,17 +481,17 @@ var andflow = {
   _initEvents: function () {
     var $this = this;
 
-    $('#' + $this.containerId).mouseup(function (e) {
+    $('#' + $this.containerId).on('mouseup',function (e) {
       
-      $(this).unbind('mousemove');
+      $(this).off('mousemove');
       $(this).css('cursor', 'default');
       $this._drag_name=null;
       $('#drag_helper').remove();
 
     });
-    $(document).mouseup(function(e){
+    $(document).on('mouseup',function(e){
       
-      $('#' + $this.containerId).unbind('mousemove');
+      $('#' + $this.containerId).off('mousemove');
       $('#' + $this.containerId).css('cursor', 'default');
       $this._drag_name=null;
       $('#drag_helper').remove();
@@ -873,7 +873,7 @@ var andflow = {
     });
 
     // bind a double click listener to "canvas"; add new node when this occurs.
-    $("#canvas").bind("click", function(e) {
+    $("#canvas").on("click", function(e) {
         if($this.event_canvas_click){
 
           $this.event_canvas_click(e);
@@ -957,7 +957,7 @@ var andflow = {
       index++;
     }
 
-    $('#actionMenu li.actionMenuItem').bind("mousedown", function(e){
+    $('#actionMenu li.actionMenuItem').on("mousedown", function(e){
       var el = $(this);  
 
 
@@ -972,7 +972,7 @@ var andflow = {
 
       var name = el.attr("action_name");
       $this._drag_name = name; 
-      $('#' + $this.containerId).find(".andflow").mousemove(function (e) {
+      $('#' + $this.containerId).find(".andflow").on('mousemove',function (e) {
         if($this._drag_name==null){
           return;
         }
@@ -1055,7 +1055,7 @@ var andflow = {
     helperEl.css("position","absolute");
     helperEl.find("img").attr("draggable","false");
 
-    helperEl.bind("mouseup",function(e){
+    helperEl.on("mouseup",function(e){
       
       var ll = helperEl.attr("p_x")||10;
       var tt = helperEl.attr("p_y")||10; 
@@ -1187,17 +1187,17 @@ var andflow = {
     }
     
     //event
-    groupElement.bind('mouseup', function () {
+    groupElement.on('mouseup', function () {
       $this._onCanvasChanged();
     });
-    groupElement.find('.group-remove-btn').bind('click', function () {
+    groupElement.find('.group-remove-btn').on('click', function () {
       var sure = confirm('确定删除分组?');
       if (sure) {
         $this.removeGroup(id);
       }  
     });
  
-    groupElement.find('.group-header').bind('dblclick',function(event){
+    groupElement.find('.group-header').on('dblclick',function(event){
       if ($this.editable) {
         event.preventDefault();
         if(groupElement.find('.group-header').find('.content_editor').length>0){
@@ -1234,7 +1234,7 @@ var andflow = {
         });
       } 
     });
-    groupElement.find('.group-body').bind('dblclick',function(event){
+    groupElement.find('.group-body').on('dblclick',function(event){
       if ($this.editable) {
         event.preventDefault();
         if(groupElement.find('.group-body').find('.content_editor').length>0){
@@ -1266,7 +1266,7 @@ var andflow = {
 
     
     //group event
-    groupElement.find('.group-resize').mousedown(function (e) {
+    groupElement.find('.group-resize').on('mousedown',function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
      
       var group_main = groupElement.find(".group-master");
@@ -1277,7 +1277,7 @@ var andflow = {
       var width = group_main.width();
       var height = group_main.height();
 
-      $('#' + $this.containerId).mousemove(function (e) {
+      $('#' + $this.containerId).on('mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
@@ -1336,10 +1336,10 @@ var andflow = {
    
    
     //event
-    listElement.bind('mouseup', function () {
+    listElement.on('mouseup', function () {
       $this._onCanvasChanged();
     });
-    listElement.find('.list-remove-btn').bind('click', function () {
+    listElement.find('.list-remove-btn').on('click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeList(id);
@@ -1348,14 +1348,14 @@ var andflow = {
     
     //resize
     var list_main = listElement.find(".list-main");
-    listElement.find('.list-resize').mousedown(function (e) {
+    listElement.find('.list-resize').on('mousedown',function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize'); 
       var x1 = e.pageX;
       var y1 = e.pageY;
       var width = list_main.width();
       var height = list_main.height();
 
-      $('#' + $this.containerId).mousemove(function (e) {
+      $('#' + $this.containerId).on('mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
@@ -1377,7 +1377,7 @@ var andflow = {
       e.preventDefault();
     }); 
 
-    listElement.find('.list-header').bind('dblclick',function(event){
+    listElement.find('.list-header').on('dblclick',function(event){
      
       if ($this.editable) {
         event.preventDefault();
@@ -1416,7 +1416,7 @@ var andflow = {
         });
       } 
     });
-    listElement.find('.list-body').bind('dblclick',function(event){
+    listElement.find('.list-body').on('dblclick',function(event){
       
       if ($this.editable) {
         event.preventDefault();
@@ -1679,7 +1679,7 @@ var andflow = {
     
     //事件
     //image load
-    actionElement.find(".action-icon img").bind('load',function(){ 
+    actionElement.find(".action-icon img").on('load',function(){ 
       var d =  $(this).attr("src");
       if(d.indexOf("data:image/")<0){
         var data = $this._getBase64Image(this);
@@ -1689,11 +1689,11 @@ var andflow = {
       } 
     });
     //mouseup
-    actionElement.bind('mouseup', function () {
+    actionElement.on('mouseup', function () {
       $this._onCanvasChanged();
     });
 
-    actionElement.find('.action-remove-btn').bind('click', function () {
+    actionElement.find('.action-remove-btn').on('click', function () {
       var sure = confirm('确定删除该节点?');
       if (sure) {
         $this.removeAction(id);
@@ -1701,7 +1701,7 @@ var andflow = {
     });
 
     //双击打开配置事件,在设计模式和步进模式下才可以用
-    actionElement.bind('click', function (event) {
+    actionElement.on('click', function (event) {
       if ($this.editable) {
         if ($this.event_action_click && $this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -1714,7 +1714,7 @@ var andflow = {
       }
     });
 
-    actionElement.bind('dblclick', function (event) {
+    actionElement.on('dblclick', function (event) {
       if ($this.editable) {
         if ($this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -1724,18 +1724,18 @@ var andflow = {
       }
     });
 
-    actionElement.bind('mouseover', function (e) {
+    actionElement.on('mouseover', function (e) {
       if (name != 'end') {
         $(this).find('.ep').show();
       }
     });
 
-    actionElement.bind('mouseout', function (e) {
+    actionElement.on('mouseout', function (e) {
       $(this).find('.ep').hide();
     });
 
     //改变大小事件，鼠标按下去
-    actionElement.find('.action-resize').mousedown(function (e) {
+    actionElement.find('.action-resize').on('mousedown',function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
       var divEl = $(this)[0];
       var x1 = e.pageX;
@@ -1743,7 +1743,7 @@ var andflow = {
       var width = $('#' + id).find(".action-master").width();
       var height = $('#' + id).find(".action-master").height();
 
-      $('#' + $this.containerId).mousemove(function (e) {
+      $('#' + $this.containerId).on('mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
@@ -1797,7 +1797,7 @@ var andflow = {
     });
 
     //改变Body大小事件，鼠标按下去
-    actionElement.find('.body-resize').mousedown(function (e) {
+    actionElement.find('.body-resize').on('mousedown',function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
       var divEl = $(this)[0];
       var x1 = e.pageX;
@@ -1809,7 +1809,7 @@ var andflow = {
         .find('.action-body')
         .height();
 
-      $('#' + $this.containerId).mousemove(function (e) {
+      $('#' + $this.containerId).on('mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
@@ -1988,17 +1988,17 @@ var andflow = {
     });
 
     //event
-    tipElement.bind('mouseup', function () {
+    tipElement.on('mouseup', function () {
       $this._onCanvasChanged();
     });
-    tipElement.find('.tip-remove-btn').bind('click', function () {
+    tipElement.find('.tip-remove-btn').on('click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeTip(id);
       }  
     });
  
-    tipElement.find('.tip-header').bind('dblclick',function(event){
+    tipElement.find('.tip-header').on('dblclick',function(event){
       if ($this.editable) {
         if(tipElement.find('.tip-header').find('.content_editor').length>0){
           return;
@@ -2035,7 +2035,7 @@ var andflow = {
         });
       } 
     });
-    tipElement.find('.tip-body').bind('dblclick',function(event){
+    tipElement.find('.tip-body').on('dblclick',function(event){
       if ($this.editable) {
         if(tipElement.find('.tip-body').find('.content_editor').length>0){
           return;
@@ -2071,7 +2071,7 @@ var andflow = {
    
 
     //event
-    tipElement.find('.tip-resize').mousedown(function (e) {
+    tipElement.find('.tip-resize').on('mousedown',function (e) {
       $('#' + $this.containerId).css('cursor', 'nwse-resize');
      
       var tip_main = tipElement.find(".tip-master");
@@ -2082,7 +2082,7 @@ var andflow = {
       var width = tip_main.width();
       var height = tip_main.height();
 
-      $('#' + $this.containerId).mousemove(function (e) {
+      $('#' + $this.containerId).on('mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 

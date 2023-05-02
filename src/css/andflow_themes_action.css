@@ -174,9 +174,7 @@ flow_theme_default
 
 .action_theme_default .action-container { 
     position: absolute;
-    z-index: 4;  
-    width: 120px;
-    height: 80px; 
+    z-index: 4;   
 }
 
 .action_theme_default .action { 
@@ -2871,9 +2869,7 @@ flow_theme_zone
 
 .action_theme_box .action-container { 
     position: absolute;
-    z-index: 4;  
-    width: 150px;
-    height: 50px; 
+    z-index: 4;   
 }
 .action_theme_box .action {  
     cursor: pointer;
@@ -2890,7 +2886,9 @@ flow_theme_zone
     min-height: 30px;
     width: 150px;
     height: 50px;  
-    display: block; 
+    display: flex;
+    justify-content: center;
+    align-items: center; 
     background-color: var(--action-body-color, var(--default-action-body-color));
     border: 1px solid var(--action-border-color, var(--default-action-border-color));
     color: var(--action-body-text-color,var(--default-action-body-text-color)); 
@@ -2997,7 +2995,7 @@ flow_theme_zone
 }
 
 .action_theme_box .action-icon{
-    display: block;
+    display: flex;
     position: absolute;
     z-index: 20;
     top: 50%;

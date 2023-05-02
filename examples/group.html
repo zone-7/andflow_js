@@ -6,8 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow</title>
-
-    <script src="../depends/jquery.min.js"></script>
+ 
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -201,10 +200,10 @@
         //节点单击事件
         event_action_click:function(metadata,action){
 
-            var oldid=$("#current_action_id").val();
+            var oldid=document.getElementById("current_action_id").value;
             andflow.setActionSelected(oldid,false);
 
-            $("#current_action_id").val(action.id);
+            document.getElementById("current_action_id").value = (action.id);
             andflow.setActionSelected(action.id,true);
 
         },
@@ -229,9 +228,9 @@
         },
         //画图板单击事件
         event_canvas_click: function(e){
-            var oldid=$("#current_action_id").val();
+            var oldid=document.getElementById("current_action_id").value;
             andflow.setActionSelected(oldid,false);
-            $("#current_action_id").val("");
+            document.getElementById("current_action_id").value = "";
         }
     }
 

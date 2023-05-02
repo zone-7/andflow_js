@@ -5,9 +5,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>andflow</title>
-
-    <script src="../depends/jquery.min.js"></script>
+    <title>andflow</title> 
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -285,31 +283,39 @@ tip:<input id="tip_color" value="#83ef83" />
         }
     }
 
-
     andflow.newInstance("andflow",options);
     andflow.showFlow();
  
-
-
-
     function setColor(){
-        var action_color = $("#action_color").val();
-        var group_color = $("#group_color").val();
-        var list_color = $("#list_color").val();
-        var tip_color = $("#tip_color").val();
+        var action_color = document.getElementById("action_color").value;
+        var group_color = document.getElementById("group_color").value;
+        var list_color = document.getElementById("list_color").value;
+        var tip_color = document.getElementById("tip_color").value;
 
         andflow.setActionBorderColor("7e56400e9b634045941db181e7aaccb0", action_color);
         andflow.setActionHeaderColor("7e56400e9b634045941db181e7aaccb0", action_color);
-
+		andflow.setActionHeaderTextColor("7e56400e9b634045941db181e7aaccb0", action_color); 
+        andflow.setActionBodyColor("7e56400e9b634045941db181e7aaccb0", 'white');
+		andflow.setActionBodyTextColor("7e56400e9b634045941db181e7aaccb0", 'black');
 
         andflow.setGroupBorderColor("group_77cdaa0e62e44a0cbe25c0bd919ecdf8", group_color);
         andflow.setGroupHeaderColor("group_77cdaa0e62e44a0cbe25c0bd919ecdf8", group_color);
+		andflow.setGroupHeaderTextColor("group_77cdaa0e62e44a0cbe25c0bd919ecdf8", 'black');
+		andflow.setGroupBodyColor("group_77cdaa0e62e44a0cbe25c0bd919ecdf8", 'yellow'); 
+		andflow.setGroupBodyTextColor("group_77cdaa0e62e44a0cbe25c0bd919ecdf8", 'black');
+
+
 
         andflow.setListBorderColor("list_c3d7863953854bbbb900f09f24db02b6", list_color);
         andflow.setListHeaderColor("list_c3d7863953854bbbb900f09f24db02b6", list_color);
+        andflow.setListHeaderTextColor("list_c3d7863953854bbbb900f09f24db02b6", 'black');
+		andflow.setListItemColor("list_c3d7863953854bbbb900f09f24db02b6", list_color);
+		andflow.setListItemTextColor("list_c3d7863953854bbbb900f09f24db02b6", 'black');
+		
 
+        andflow.setTipBorderColor("tip_dc14b91900ee468b8a368d97db66b071", tip_color); 
         andflow.setTipBodyColor("tip_dc14b91900ee468b8a368d97db66b071", tip_color);
- 
+		andflow.setTipBodyTextColor("tip_dc14b91900ee468b8a368d97db66b071", 'black');
 
     }
 </script>

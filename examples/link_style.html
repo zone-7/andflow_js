@@ -6,8 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow</title>
-
-    <script src="../depends/jquery.min.js"></script>
+ 
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -83,7 +82,7 @@
 </select>
 <br/>
 
-<button onclick="setStyle()">设置</button>
+<button onclick="setLinkStyle()">设置</button>
 </body>
  
 
@@ -185,24 +184,24 @@
     andflow.newInstance("andflow",options);
     andflow.showFlow();
  
-	function setStyle(){ 
-		var link_type = $("#link_type").val();
+	function setLinkStyle(){ 
+		var link_type = document.getElementById("link_type").value;
 
-        var stroke = $("#stroke").val();
-        var strokeWidth = $("#strokeWidth").val();
-        var radius = $("#radius").val();
+        var stroke = document.getElementById("stroke").value;
+        var strokeWidth = document.getElementById("strokeWidth").value;
+        var radius = document.getElementById("radius").value;
 
-        var lineStyle = $("#lineStyle").val();
+        var lineStyle = document.getElementById("lineStyle").value;
 
-		var label = $("#label").val(); 
-		var label_source = $("#label_source").val(); 
-		var label_target = $("#label_target").val(); 
+		var label = document.getElementById("label").value; 
+		var label_source = document.getElementById("label_source").value; 
+		var label_target = document.getElementById("label_target").value; 
 
-		var arrow_source = $("#arrow_source").val(); 
-		var arrow_middle = $("#arrow_middle").val(); 
-		var arrow_target = $("#arrow_target").val(); 
+		var arrow_source = document.getElementById("arrow_source").value; 
+		var arrow_middle = document.getElementById("arrow_middle").value; 
+		var arrow_target = document.getElementById("arrow_target").value; 
 
-		var animation = $("#animation").val(); 
+		var animation = document.getElementById("animation").value; 
 
 		var link = andflow.getLinkInfo("4e7fed4b5f90466a856cb743294e383c","c3747d543b724800ab792de258c9f64e");
  		
@@ -227,26 +226,6 @@
         andflow.setLinkInfo(link);
 		
     }
-	 
-
-    // function setStyle1(){ 
-    //     var stroke = $("#stroke").val();
-    //     var strokeWidth = $("#strokeWidth").val();
-    //     var radius = $("#radius").val();
-    //     var lineStyle = $("#lineStyle").val();
-	// 	var label = $("#label").val(); 
-
-	// 	var paintStyle = {
-	// 		stroke: stroke,
-	// 		strokeWidth: strokeWidth,
-	// 		radius: radius,
-	// 		lineStyle: lineStyle
-	// 	};
-
-    //     andflow.setPaintStyle("4e7fed4b5f90466a856cb743294e383c","c3747d543b724800ab792de258c9f64e", paintStyle);
-    //     andflow.setLabel("4e7fed4b5f90466a856cb743294e383c","c3747d543b724800ab792de258c9f64e", label);
-
-    // }
-
+	  
 </script>
 </html>

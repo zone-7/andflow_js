@@ -252,25 +252,23 @@ var currentActionInfo;
 //打开连接线配置对话框
 function openLinkDialog(link){
     currentLinkInfo = link;
-    var dialog = $("#linkDialog");
-    dialog.find("input[name='source_id']").val(link.source_id);
-    dialog.find("input[name='target_id']").val(link.target_id);
-    dialog.find("input[name='title']").val(link.title||"");
-    dialog.find("input[name='label_source']").val(link.label_source||"");
-    dialog.find("input[name='label_target']").val(link.label_target||"");
-    dialog.find("select[name='animation']").val(link.animation?"true":"false");
+    var dialog = document.getElementById("linkDialog");
+    dialog.querySelector("input[name='source_id']").value = link.source_id;
+    dialog.querySelector("input[name='target_id']").value = (link.target_id);
+    dialog.querySelector("input[name='title']").value = (link.title||"");
+    dialog.querySelector("input[name='label_source']").value= link.label_source||"";
+    dialog.querySelector("input[name='label_target']").value = (link.label_target||"");
+    dialog.querySelector("select[name='animation']").value = (link.animation?"true":"false");
 
     var arrows = link.arrows||[false,false,true];
 
-    dialog.find("select[name='arrows1']").val(arrows[0]?"true":"false");
-    dialog.find("select[name='arrows2']").val(arrows[1]?"true":"false");
-    dialog.find("select[name='arrows3']").val(arrows[2]?"true":"false");
+    dialog.querySelector("select[name='arrows1']").value = (arrows[0]?"true":"false");
+    dialog.querySelector("select[name='arrows2']").value = (arrows[1]?"true":"false");
+    dialog.querySelector("select[name='arrows3']").value = (arrows[2]?"true":"false");
 
-
-    dialog.find("select[name='active']").val(link.active||"true");
-    dialog.find("textarea[name='filter']").val(link.filter||"");
+    dialog.querySelector("select[name='active']").value = (link.active||"true");
+    dialog.querySelector("textarea[name='filter']").value = (link.filter||"");
     
-
     var modalLink = new Custombox.modal({
         content: {
             id:'linkModal',
@@ -280,6 +278,7 @@ function openLinkDialog(link){
     });
     modalLink.open();
 }
+
 function closeLinkDialog(){ 
     Custombox.modal.close();
 }
@@ -287,24 +286,24 @@ function saveLinkDialog(){
     if(currentLinkInfo==null){
         return;
     }
-    var dialog = $("#linkDialog");
-    currentLinkInfo.title = dialog.find("input[name='title']").val();
-    currentLinkInfo.label_target = dialog.find("input[name='label_target']").val();
-    currentLinkInfo.label_source = dialog.find("input[name='label_source']").val();
-    currentLinkInfo.animation = dialog.find("select[name='animation']").val()=="true"?true:false;
+    var dialog = document.getElementById("linkDialog");
+    currentLinkInfo.title = dialog.querySelector("input[name='title']").value;
+    currentLinkInfo.label_target = dialog.querySelector("input[name='label_target']").value;
+    currentLinkInfo.label_source = dialog.querySelector("input[name='label_source']").value;
+    currentLinkInfo.animation = dialog.querySelector("select[name='animation']").value=="true"?true:false;
     var arrows=[false,false,true];
-    if(dialog.find("select[name='arrows1']").val()=="true"){
+    if(dialog.querySelector("select[name='arrows1']").value=="true"){
         arrows[0]=true
     }
-    if(dialog.find("select[name='arrows2']").val()=="true"){
+    if(dialog.querySelector("select[name='arrows2']").value=="true"){
         arrows[1]=true
     }
-    if(dialog.find("select[name='arrows3']").val()=="true"){
+    if(dialog.querySelector("select[name='arrows3']").value=="true"){
         arrows[2]=true
     }
     currentLinkInfo.arrows = arrows;
-    currentLinkInfo.active = dialog.find("select[name='active']").val();
-    currentLinkInfo.filter = dialog.find("textarea[name='filter']").val();
+    currentLinkInfo.active = dialog.querySelector("select[name='active']").value;
+    currentLinkInfo.filter = dialog.querySelector("textarea[name='filter']").value;
 
     andflow.setLinkInfo(currentLinkInfo);
     Custombox.modal.close();
@@ -314,18 +313,18 @@ function saveLinkDialog(){
 function openActionDialog(action){
     currentActionInfo = action;
      
-    var dialog = $("#actionDialog");
-    dialog.find("input[name='name']").val(action.name);
-    dialog.find("input[name='title']").val(action.title||"");
-    dialog.find("input[name='des']").val(action.des||"");
-    dialog.find("select[name='theme']").val(action.theme||"andflow_theme_default");
-    dialog.find("select[name='once']").val(action.once||"false");
-    dialog.find("select[name='collect']").val(action.collect||"false"); 
+    var dialog = document.getElementById("actionDialog");
+    dialog.querySelector("input[name='name']").value=  action.name;
+    dialog.querySelector("input[name='title']").value = action.title||"";
+    // dialog.querySelector("input[name='des']").value = action.des||"";
+    dialog.querySelector("select[name='theme']").value = action.theme||"andflow_theme_default";
+    dialog.querySelector("select[name='once']").value = action.once||"false";
+    dialog.querySelector("select[name='collect']").value = action.collect||"false"; 
     if(action.content==null){
         action.content={};
     }
-    dialog.find("textarea[name='content']").val(action.content.content||""); 
-    dialog.find("textarea[name='script']").val(action.script||"");
+    dialog.querySelector("textarea[name='content']").value = (action.content.content||""); 
+    dialog.querySelector("textarea[name='script']").value = (action.script||"");
     var modalAction = new Custombox.modal({ 
         content: { 
             id:'actionModal',
@@ -342,18 +341,18 @@ function saveActionDialog(){
     if(currentActionInfo==null){
         return;
     }
-    var dialog = $("#actionDialog");
+    var dialog = document.getElementById("actionDialog");
   
-    currentActionInfo.title = dialog.find("input[name='title']").val();
-    currentActionInfo.des = dialog.find("select[name='des']").val();
-    currentActionInfo.theme = dialog.find("select[name='theme']").val(); 
-    currentActionInfo.once = dialog.find("select[name='once']").val();
-    currentActionInfo.collect = dialog.find("select[name='collect']").val(); 
+    currentActionInfo.title = dialog.querySelector("input[name='title']").value;
+    // currentActionInfo.des = dialog.querySelector("select[name='des']").value;
+    currentActionInfo.theme = dialog.querySelector("select[name='theme']").value; 
+    currentActionInfo.once = dialog.querySelector("select[name='once']").value;
+    currentActionInfo.collect = dialog.querySelector("select[name='collect']").value; 
     if(currentActionInfo.content==null){
         currentActionInfo.content={};
     }
-    currentActionInfo.content.content = dialog.find("textarea[name='content']").val(); 
-    currentActionInfo.script = dialog.find("textarea[name='script']").val();
+    currentActionInfo.content.content = dialog.querySelector("textarea[name='content']").value; 
+    currentActionInfo.script = dialog.querySelector("textarea[name='script']").value;
 
     andflow.setActionInfo(currentActionInfo);
 

@@ -8,6 +8,353 @@
  * Released under the MIT License
  *
  */
+var andflow_util={
+  extend:function (src,dst){
+    if(src){
+      for(var k in dst){
+        src[k] = dst[k];
+      }
+    }else{
+      src =  dst;
+    }
+    
+    return src;
+  },
+
+  parseHtml: function (html){
+    var divEl = document.createElement('div');
+    divEl.innerHTML = html;
+    return divEl.firstChild; 
+  },
+
+  addEventList:function (obj, type, callback, useCapture) {
+    if (obj.eventList) {
+        if (obj.eventList[type]) {
+            obj.eventList[type].push({ callback: callback, useCapture: useCapture });
+        } else {
+            obj.eventList[type] = [{ callback: callback, useCapture: useCapture }];
+        }
+    } else {
+        obj.eventList = {};
+        obj.eventList[type] = [{ callback: callback, useCapture: useCapture }];
+    }
+  },
+
+  removeEventList: function (obj, type, callback, useCapture) {
+    var eventList=obj.eventList;
+    if (eventList) {
+        if (eventList[type]) {
+          if(callback){
+              
+            for (var i = 0; i < eventList[type].length; i++) {
+                if (eventList[type][i].callback===callback) {
+                    eventList[type].splice(i, 1);
+                    if (eventList[type].length===0) {
+                        delete eventList[type];
+                    }
+                    break;
+                }
+            }
+  
+          }else{
+            delete eventList[type];
+          }
+        } 
+    } 
+  },
+
+  
+  getEventList:function (id, type){
+    var obj = id; 
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+    var eventList = obj.eventList;
+    if (eventList) {
+      return eventList[type];
+    }
+    return null;
+  },
+
+  addEventListener: function (id, event, callback, useCapture){
+    var obj = id; 
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+  
+    obj.addEventListener(event, callback, useCapture);
+    andflow_util.addEventList(obj, event, callback, useCapture);
+  },
+    
+  removeEventListener: function (id, event, callback, useCapture) {
+    var obj = id; 
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+
+    if(callback){
+      obj.removeEventListener(event, callback, useCapture);
+      removeEventList(obj, event, callback, useCapture);
+    }else{
+      var list = andflow_util.getEventList(obj, event);
+      if(list && list.length>0){
+        list.forEach(function(value, index){ 
+          if(value.callback){
+            obj.removeEventListener(event, value.callback, value.useCapture); 
+          }
+        });
+        andflow_util.removeEventList(obj, event);
+      }
+    }
+    
+  },
+
+  isVisible:function (id){ 
+   
+    var obj = id; 
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return false;
+    } 
+   
+    var ret = obj.style.display === "none" || 
+              (obj.currentStyle && obj.currentStyle === "none") ||
+              (window.getComputedStyle && window.getComputedStyle(obj, null).display === "none");
+            
+    return !ret;
+  },
+  
+  getPageLeft:function (e){
+    if(typeof e === 'string'){
+      e = document.querySelector(e);
+    } 
+
+    if(!e){
+      return 0;
+    }  
+    var l = e.offsetLeft - e.scrollLeft;
+    if(e.parentElement){
+      l += andflow_util.getPageLeft(e.parentElement);
+    }
+    return l;
+
+  },
+  getPageTop:function (e){
+    
+    if(typeof e === 'string'){
+      e = document.querySelector(e);
+    } 
+
+    if(!e){
+      return 0;
+    }
+
+    
+    var t = e.offsetTop - e.scrollTop;
+    if(e.parentElement){
+      t += andflow_util.getPageTop(e.parentElement);
+    }
+    return t;
+
+  },
+
+  show:function (id){
+    var obj = id;
+  
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+    obj.style.display="block";
+  },
+  hide:function (id){
+    var obj = id;
+  
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+    obj.style.display="none";
+  },
+
+
+  setValue: function (id,value){
+    var obj = id;
+  
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+  
+    var name = obj.tagName;
+    if(name=='INPUT'){
+      obj.value = value; 
+    }
+    if(name=='SELECT'){
+      obj.value = value; 
+    }
+    
+    if(name=='TEXTAREA'){
+      obj.innerHTML = value; 
+    }
+  
+  },
+  getValue: function (id){
+    var obj = id;
+  
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    var name = obj.tagName;
+    if(name=='INPUT'){
+      return obj.value; 
+    }
+    if(name=='SELECT'){
+      return obj.value; 
+    }
+    
+    if(name=='TEXTAREA'){
+      return obj.value||obj.innerHTML; 
+    }
+    
+    return null;
+     
+  },
+  
+  setAttr:function (id, attr,val){
+    var obj = id;
+
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+
+    return obj.setAttribute(attr,val);
+  },
+  getAttr: function (id, attr){
+    var obj = id;
+
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return null;
+    }
+    return obj.getAttribute(attr);
+  },
+
+  setStyle:function (id, prop, value){
+    var obj = id;
+  
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+  
+    obj.style[prop] = value;
+  },
+
+  getStyle:function(id, prop){
+    var obj = id;
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return null;
+    }
+    if (obj.currentStyle) //IE
+    {
+      return obj.currentStyle[prop];
+    }
+    else if (window.getComputedStyle) //非IE
+    {
+      propprop = prop.replace (/([A-Z])/g, "-$1");
+      propprop = prop.toLowerCase ();
+      return document.defaultView.getComputedStyle(obj,null)[propprop];
+    }
+    return null;
+  },
+
+  //自定义添加class方法
+  addClass:function (id, name) {
+    
+    var obj = id;
+
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+
+    if (name) {
+        if(obj.className && obj.className.indexOf(name)>=0){
+          return;
+        }
+        //判断该dom有没有class，有则在原class基础上增加，无则直接赋值
+        obj.className ? obj.className = obj.className + " " + name : obj.className = name;
+    } else {
+        throw new Error("请传递一个有效的class类名");
+    };
+  },
+
+  //自定义删除class类方法
+  removeClass: function (id, name) {
+    var obj = id;
+
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+
+    //将className属性转为数组
+    let classArr = obj.className.split(" "),
+        index = classArr.indexOf(name);
+    //将符合条件的class类删除
+    index > -1 ? classArr.splice(index, 1) : null;
+    obj.className = classArr.join(" ");
+  },
+
+  removeElement: function(id){
+    var obj = id;
+
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+    var parentNode = obj.parentNode;
+    if(parentNode){
+      parentNode.removeChild(obj);
+    } 
+  }
+ 
+};
+
 
 var andflow = {
   containerId: null, //DOM
@@ -196,157 +543,161 @@ var andflow = {
 
     html += '</div>';
 
-    $('#' + containerId).html(html);
- 
+    var htmlEl = andflow_util.parseHtml(html);
+    document.getElementById(containerId).appendChild(htmlEl);
+
+    document.getElementById(containerId).style.position = document.getElementById(containerId).style.position||'relative';
+
+
     //events
     
     
-    //nav button
-    $('#' + containerId)
-      .find('.nav_btn')
-      .css('background-image', 'url(' + this._icon_nav + ')');
-    $('#' + containerId)
-      .find('.nav_btn')
-      .attr('state', 'open');
-    $('#' + containerId)
-      .find('.nav_btn')
-      .on('click', function (e) {
-        var btn = $('#' + $this.containerId).find('.nav_btn');
-        var state = btn.attr('state');
+    //nav button 
+    andflow_util.setStyle('#' + containerId+' .nav_btn', 'background-image','url(' + this._icon_nav + ')' ); 
+
+    andflow_util.setAttr('#' + containerId+' .nav_btn', 'state','open'); 
+
+    var containerEl= document.getElementById(containerId);
+    var navBtnEl = containerEl.querySelector('.nav_btn');
+
+    andflow_util.addEventListener(navBtnEl, 'click', function (e) {
+  
+        var state = andflow_util.getAttr('#' + $this.containerId+' .nav_btn','state');
+
         if (state == 'open') {
-          btn.attr('state', 'close');
-          $('#' + $this.containerId)
-            .find('.andflow')
-            .addClass('fold');
+ 
+          andflow_util.setAttr('#' + $this.containerId+' .nav_btn', 'state','close');
+ 
+
+          andflow_util.addClass('#' + $this.containerId+' .andflow','fold');
+
         } else {
-          btn.attr('state', 'open');
-          $('#' + $this.containerId)
-            .find('.andflow')
-            .removeClass('fold');
+           andflow_util.setAttr('#' + $this.containerId+' .nav_btn', 'state','open');
+ 
+
+          andflow_util.removeClass('#' + $this.containerId+' .andflow','fold');
         }
       });
 
-    //scale
-    $('#' + containerId)
-      .find('.scale_up_btn')
-      .on('click', function (e) {
-        var value =
-          $('#' + $this.containerId)
-            .find('.scale_value')
-            .html() * 1.0;
+    //scale 
+    andflow_util.addEventListener(containerEl.querySelector('.scale_up_btn'), 'click', function (e) {
+
+        var value = document.querySelector('#' + $this.containerId+' .scale_value').innerHTML * 1.0;
+  
+
         value = value + 1;
-        var v = value / 100.0;
-        $('#' + $this.containerId)
-          .find('.canvas')
-          .css('transform', 'scale(' + v + ')');
-        $('#' + $this.containerId)
-          .find('.scale_value')
-          .html(value);
+        var v = value / 100.0; 
+
+        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(' + v + ')');
+        
+ 
+        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = value;
+
       });
-    $('#' + containerId)
-      .find('.scale_down_btn')
-      .on('click', function (e) {
-        var value =
-          $('#' + $this.containerId)
-            .find('.scale_value')
-            .html() * 1.0;
+
+    andflow_util.addEventListener(containerEl.querySelector('.scale_down_btn'), 'click', function (e) {
+
+        var value = document.querySelector('#' + $this.containerId+' .scale_value').innerHTML * 1.0;
+
+
         value = value - 1;
         var v = value / 100.0;
-        $('#' + $this.containerId)
-          .find('.canvas')
-          .css('transform', 'scale(' + v + ')');
-        $('#' + $this.containerId)
-          .find('.scale_value')
-          .html(value);
+
+        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(' + v + ')');
+
+        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = value;
+
       });
-    $('#' + containerId)
-      .find('.scale_info')
-      .on('click', function (e) {
-        $('#' + $this.containerId)
-          .find('.canvas')
-          .css('transform', 'scale(1)');
-        $('#' + $this.containerId)
-          .find('.scale_value')
-          .html('100');
+
+    andflow_util.addEventListener(containerEl.querySelector('.scale_info'), 'click', function (e) {
+ 
+        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(1)');
+ 
+        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = '100';
+
       });
 
     
     //drag and move
-    var canvasContainer = $('#' + containerId).find(".canvasContainer");
-    $('#' + containerId).find('.canvas').on('mousedown',function(e){
-      var masker = $('#' + containerId).find('.canvas');
-
-      masker.attr("drag","true");
-      masker.attr("offset_x",e.offsetX);
-      masker.attr("offset_y",e.offsetY);
-      masker.addClass("canvas-move");
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mousedown',function(e){
+      
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'true');
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
+      andflow_util.addClass('#' + containerId+' .canvas', 'canvas-move');
 
       $this._resizeCanvas();
 
     });
-    $('#' + containerId).find('.canvas').on('mouseup',function(e){
-      var masker = $('#' + containerId).find('.canvas');
-      
-      var drag = masker.attr("drag");
+
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseup',function(e){
+     
+      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
       if(drag=="true"){
         $this._onCanvasChanged();
       }
-
-      masker.attr("drag","false");
-      masker.attr("offset_x",e.offsetX);
-      masker.attr("offset_y",e.offsetY); 
-      masker.removeClass("canvas-move");
  
+ 
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false');
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
+      andflow_util.removeClass('#' + containerId+' .canvas', 'canvas-move');
 
     });
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseout',function(e){
+    
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false');
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
 
-    $('#' + containerId).find('.canvas').on('mouseout',function(e){
-      var masker = $('#' + containerId).find('.canvas');
-
-      masker.attr("drag","false");
-      masker.attr("offset_x",e.offsetX);
-      masker.attr("offset_y",e.offsetY); 
     });
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mousemove',function(e){
+      
+      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
 
-    $('#' + containerId).find('.canvas').on('mousemove',function(e){
-      var masker = $('#' + containerId).find('.canvas'); 
-      var drag = masker.attr("drag");
       if(drag=="true"){
-        let startX = masker.attr("offset_x");
-        let startY = masker.attr("offset_y");
+        
+        let startX = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_x');
+        let startY = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_y');
+        
         let offsetX = e.offsetX - startX;
         let offsetY = e.offsetY - startY;
-        
          
-        scrollLeft = canvasContainer.scrollLeft() - offsetX;
-        scrollTop = canvasContainer.scrollTop() - offsetY;
 
-        canvasContainer.scrollLeft(scrollLeft); 
-        canvasContainer.scrollTop(scrollTop); 
+        scrollLeft = document.querySelector('#' + containerId+' .canvasContainer').scrollLeft - offsetX;
+        scrollTop = document.querySelector('#' + containerId+' .canvasContainer').scrollTop - offsetY;
+        document.querySelector('#' + containerId+' .canvasContainer').scrollLeft = scrollLeft;
+        document.querySelector('#' + containerId+' .canvasContainer').scrollTop = scrollTop;
       }
     });
 
     //show code
-    $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_code+')');
-    $('#'+containerId).find('.code_btn').on('click', function (e) {
+    andflow_util.setStyle('#'+containerId+' .code_btn','background-image','url('+$this._icon_code+')');
+
+    andflow_util.addEventListener(containerEl.querySelector('.code_btn'), 'click', function (e) {
+      
       try{
-        if($('#codeContainer').is(':visible')){
-          var txt = $('#codeContainer textarea').val()||"{}";
+        
+        if(andflow_util.isVisible('#codeContainer')){
+          var txt = andflow_util.getValue('#codeContainer textarea')||"{}";
           
           var m = JSON.parse(txt); 
-          $('#codeContainer').hide();  
+           
+          andflow_util.hide('#codeContainer');
+
           $this.showFlow(m); 
  
-          $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_code+')');
+          andflow_util.setStyle('#'+containerId+' .code_btn', 'background-image','url('+$this._icon_code+')');
 
         }else{
           var code = $this.getFlow();
           var content = JSON.stringify(code,null,'\t');
+ 
+          andflow_util.show('#codeContainer');
 
-          $('#codeContainer').show(); 
-          $('#codeContainer textarea').val(content);
-          
-          $('#'+containerId).find('.code_btn').css('background-image','url('+$this._icon_design+')');
+          andflow_util.setValue('#codeContainer textarea', content); 
+
+          andflow_util.setStyle('#'+containerId+' .code_btn', 'background-image','url('+$this._icon_design+')');
 
         }
 
@@ -357,34 +708,48 @@ var andflow = {
     });
 
     //thumbnail
-    $('#' + containerId).find('.thumbnail_btn').css('background-image', 'url(' + this._icon_eye_close + ')');
-    $('#' + containerId).find('.thumbnail_btn').attr('state', 'close');
-    $('#' + containerId).find('.thumbnail_btn').on('click', function (e) {
-        var element = $('#' + $this.containerId).find('.flow_thumbnail');
-        var btn = $('#' + $this.containerId).find('.thumbnail_btn');
-        var state = btn.attr('state');
+    andflow_util.setStyle(containerEl.querySelector('.thumbnail_btn'),'background-image', 'url(' + this._icon_eye_close + ')');
+    andflow_util.setAttr(containerEl.querySelector('.thumbnail_btn'), 'state', 'close');
+     
+    andflow_util.addEventListener(containerEl.querySelector('.thumbnail_btn'), 'click', function (e) {
+ 
+        var state = andflow_util.getAttr('#' + $this.containerId+' .thumbnail_btn', 'state');
+
         if (state == 'open') {
-          btn.attr('state', 'close');
-          btn.css('background-image', 'url(' + $this._icon_eye_close + ')');
-          element.hide();
+          andflow_util.setAttr('#' + $this.containerId+' .thumbnail_btn', 'state', 'close');
+
+          andflow_util.setStyle('#' + $this.containerId+' .thumbnail_btn', 'background-image', 'url(' + $this._icon_eye_close + ')'); 
+
+          andflow_util.hide('#' + $this.containerId + ' .flow_thumbnail');
+
+
         } else {
-          btn.attr('state', 'open');
-          btn.css('background-image', 'url(' + $this._icon_eye + ')');
-          element.show();
+          andflow_util.setAttr('#' + $this.containerId+' .thumbnail_btn', 'state', 'open');
+
+          andflow_util.setStyle('#' + $this.containerId+' .thumbnail_btn', 'background-image', 'url(' + $this._icon_eye + ')'); 
+
+          andflow_util.show('#' + $this.containerId + ' .flow_thumbnail');
+
           $this._showThumbnail();
         }
     });
-
-    $('#' + containerId).find('.flow_thumbnail_mask').on('mousedown',function (e) {
+ 
+    andflow_util.addEventListener(containerEl.querySelector('.flow_thumbnail_mask'),'mousedown',function (e) {
         
-        var xx = e.offsetX;
-        var yy = e.offsetY;
-         
-        $('#' + $this.containerId).on('mousemove',function (e) {
-          var el = $('#' + $this.containerId).find('.flow_thumbnail_mask');
-          if(el.length>0){
-            var x = e.pageX - el.parent().offset().left - xx;
-            var y = e.pageY - el.parent().offset().top - yy;
+        var xx = e.pageX;
+        var yy = e.pageY;
+       
+        andflow_util.addEventListener(containerEl,'mousemove',function (e) {
+ 
+          var elSel='#' + $this.containerId+' .flow_thumbnail_mask';
+
+          var el = document.querySelector(elSel);
+          var parentEl = el.parentElement;
+          
+          if(el){ 
+            var x = e.pageX -  xx;
+            var y = e.pageY - yy; 
+
             if(x<0){
               x =0 ;
             }
@@ -392,22 +757,28 @@ var andflow = {
               y=0;
             }
 
-            if(x+el.outerWidth()>el.parent().width()){ 
-              x = (el.parent().width()-el.outerWidth()); 
+            if(x+el.offsetWidth>parentEl.offsetWidth){ 
+              x = (parentEl.offsetWidth-el.offsetWidth); 
             }
-            if(y+el.outerHeight()>el.parent().height()){
-              y= (el.parent().height()-el.outerHeight());
+            if(y+el.offsetHeight>parentEl.offsetHeight){
+              y= (parentEl.offsetHeight-el.offsetHeight);
             }
-          
-            el.css("left",x+"px");
-            el.css("top",y+"px"); 
+            
+            andflow_util.setStyle(elSel, 'left', x+'px');
+            andflow_util.setStyle(elSel, 'top', y+'px');
+             
+            var canvasEl = document.querySelector('#' + $this.containerId + ' .canvas');
+            var canvasContainerEl = canvasEl.parentElement;
 
-            var sca = $('#' + $this.containerId).find(".canvas").parent().width()/el.width();
+            var sca = canvasContainerEl.offsetWidth/el.offsetWidth;
+ 
 
-            var l = el.position().left * sca;
-            var t = el.position().top * sca;
-            $('#' + $this.containerId).find(".canvas").parent().scrollLeft(l);
-            $('#' + $this.containerId).find(".canvas").parent().scrollTop(t);
+            var l = el.offsetLeft * sca;
+            var t = el.offsetTop * sca; 
+
+            canvasContainerEl.scrollLeft = l;
+            canvasContainerEl.scrollTop = t;
+             
 
           }
           
@@ -415,6 +786,8 @@ var andflow = {
     });    
      
   }, 
+
+  
   //定时动画
   _initAnimaction: function(){
     var $this = this;
@@ -478,23 +851,39 @@ var andflow = {
     },100);
 
   },
+
+
   _initEvents: function () {
     var $this = this;
+    andflow_util.addEventListener(document.getElementById($this.containerId), 'mouseup',function (e) {
+      andflow_util.removeEventListener(this, 'mousemove');
+ 
+      andflow_util.setStyle('#' + $this.containerId, 'cursor','default');
 
-    $('#' + $this.containerId).on('mouseup',function (e) {
-      
-      $(this).off('mousemove');
-      $(this).css('cursor', 'default');
       $this._drag_name=null;
-      $('#drag_helper').remove();
+
+      var drag_helperEl = document.getElementById('drag_helper');
+       
+      if(drag_helperEl){
+        andflow_util.removeElement(drag_helperEl) 
+      }
 
     });
-    $(document).on('mouseup',function(e){
-      
-      $('#' + $this.containerId).off('mousemove');
-      $('#' + $this.containerId).css('cursor', 'default');
+
+    andflow_util.addEventListener(document,'mouseup',function(e){
+
+      var containerEl = document.getElementById($this.containerId);
+      andflow_util.removeEventListener(containerEl, 'mousemove');
+       
+      andflow_util.setStyle(containerEl, 'cursor','default');
+
       $this._drag_name=null;
-      $('#drag_helper').remove();
+
+      var drag_helperEl = document.getElementById('drag_helper');
+      if(drag_helperEl){
+        andflow_util.removeElement(drag_helperEl);
+      }
+ 
     })
 
 
@@ -503,6 +892,8 @@ var andflow = {
   _initTheme: function (theme) {
     this.setTheme(theme);
   },
+
+ 
 
   //初始化action 列表
   _initMetadata: function () {
@@ -525,34 +916,52 @@ var andflow = {
       scripts += '\n';
     }
     scripts += '</script>';
-    $('body').append(scripts);
 
+    var scriptsEl = andflow_util.parseHtml(scripts);  
+
+    document.body.appendChild(scriptsEl);
+
+ 
     //初始化action模板元数据
-    if ($('#tag_select').length > 0) {
-      var tpdata = [];
+    var tag_selectEl = document.querySelector('#tag_select');
 
-      $('#tag_select').html('');
-      $('#tag_select').append('<option value="">' + $this.lang.metadata_tag_all + '</option>');
+    if (tag_selectEl) {
+      var tpdata = [];
+      tag_selectEl.innerHTML = '';
+
+
+      var tagEl = andflow_util.parseHtml('<option value="">' + $this.lang.metadata_tag_all + '</option>');
+
+      tag_selectEl.appendChild(tagEl);
+
+      
       for (var i in tags) {
         var t = tags[i];
         if (t == null || t == '') {
           continue;
         }
-        $('#tag_select').append('<option value="' + t + '">' + t + '</option>');
-      }
+        tag_selectEl.appendChild(andflow_util.parseHtml('<option value="' + t + '">' + t + '</option>'));
 
-      $('#tag_select').on('change', function (e) {
-        var tag = $(this).val();
+
+      }
+      andflow_util.addEventListener(document.getElementById('tag_select'),'change', function (e) {
+        
+
+        var tag = andflow_util.getValue('#tag_select');
+
         $this._showMetadata(tag);
       });
 
       //加载Action元数据
-      $this._showMetadata($('#tag_select').val());
+      var tag = andflow_util.getValue('#tag_select');
+      $this._showMetadata(tag);
     } else {
       $this._showMetadata('');
     }
  
   },
+
+
   _dropComponent:function(name,left,top){
     var $this = this;
          
@@ -561,7 +970,8 @@ var andflow = {
     if(metaInfo.tp=="group"){
       var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
       var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
-        
+      
+
       $this._createGroup(group);
 
     }else if(metaInfo.tp=="list"){
@@ -593,28 +1003,37 @@ var andflow = {
 
       //开始节点只有一个
       if (name == 'begin') {
-        if ($(".action[name='begin']").length && $(".action[name='begin']").length > 0) {
+        var beginEl = document.querySelector(".action[name='begin']");
+        if (beginEl) {
           return;
         }
+ 
       }
       //结束节点只有一个
       if (name == 'end') {
-        if ($(".action[name='end']").length && $(".action[name='end']").length > 0) {
+        var endEl = document.querySelector(".action[name='end']");
+
+        if (endEl) {
           return;
         }
       }
       action.title=action.title||metaInfo.title;
-
+      
       $this._createAction(action);
 
     }
   },
+
+   
   _initPlumb: function () {
     var $this = this;
 
     if ($this._plumb != null) {
       $this._plumb.destroy();
-      $('#' + this.containerId + ' #canvas').html('');
+
+      document.querySelector('#' + this.containerId + ' #canvas').innerHTML = '';
+
+
     }
     
     var linkType = this.flowModel.link_type || 'Flowchart';
@@ -873,19 +1292,14 @@ var andflow = {
     });
 
     // bind a double click listener to "canvas"; add new node when this occurs.
-    $("#canvas").on("click", function(e) {
-        if($this.event_canvas_click){
-
-          $this.event_canvas_click(e);
-
+    andflow_util.addEventListener(document.getElementById('#canvas'),"click", function(e) {
+        if($this.event_canvas_click){ 
+          $this.event_canvas_click(e); 
         }
     });
-
-
-    // $this._plumb.draggable("standalone");
-
-
+ 
   },
+
   /**
    * 设置左边Action菜单
    * @param Data
@@ -911,18 +1325,19 @@ var andflow = {
     }
 
     //按分组输出到Html
-    $('#actionMenu').html('');
+    document.getElementById('actionMenu').innerHTML='';
+
+
     var index = 0;
     for (var g in groups) {
       var openClass = index == 0 ? 'menu-is-opening menu-open' : '';
       var openBody = index == 0 ? '' : 'display:none';
 
-      var html =
-        '<li class="actionMenuGroup"  ><a href="#" class="group-title">' +
-        g +
-        '<i class="pull-right ico"></i></a></li>';
+      var html ='<div>';
 
-      //html+='<ul class="actionMenuGroupBody" >';
+      html +=  '<li class="actionMenuGroup"  ><a href="#" class="group-title">' +
+        g +
+        '<i class="pull-right ico"></i></a></li>'; 
 
       var item = groups[g];
       for (var i in item) {
@@ -950,61 +1365,61 @@ var andflow = {
           '</a></li>';
         html += element_str;
       }
-
-      //html+='</ul>';
-      //html+='</li>';
-      $('#actionMenu').append(html);
+      
+      html+='</div>';
+ 
+      document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(html));
+ 
       index++;
     }
-
-    $('#actionMenu li.actionMenuItem').on("mousedown", function(e){
-      var el = $(this);  
-
-
-      //如果是编码状态不可拖动
-      if($('#codeContainer').is(':visible')){
-        return;
-      }
-
-
-      var inner_x = e.offsetX;
-      var inner_y = e.offsetY;
-
-      var name = el.attr("action_name");
-      $this._drag_name = name; 
-      $('#' + $this.containerId).find(".andflow").on('mousemove',function (e) {
-        if($this._drag_name==null){
+    document.querySelectorAll('#actionMenu .actionMenuItem').forEach(function(item, index){
+      andflow_util.addEventListener(item, "mousedown", function(e){ 
+        //如果是编码状态不可拖动 
+        if(andflow_util.isVisible('#codeContainer')){
           return;
-        }
-         
-
-        var helper=  $('#' + $this.containerId).find(".andflow").find('#drag_helper');
-        if(helper==null || helper.length==0){
-          helper = $this._createHelper($this._drag_name);
-          if(helper==null){
+        } 
+        
+        var name = this.getAttribute("action_name");
+       
+        $this._drag_name = name; 
+        andflow_util.addEventListener(document.querySelector('#' + $this.containerId+" .andflow"),'mousemove',function (e) {
+          if($this._drag_name==null){
             return;
           }
            
-          $('#' + $this.containerId).find(".andflow").append(helper);
-
-        }
-        
-        var ll = helper.width()/2 || 10;
-        var tt = helper.height()/2 || 10;
- 
-        var x = e.pageX - $('#' + $this.containerId).find(".andflow").offset().left - ll;
-        var y = e.pageY - $('#' + $this.containerId).find(".andflow").offset().top - tt;
-
-        helper.css("left",x+"px");
-        helper.css("top",y+"px");
-        
-        helper.attr("p_x",ll);
-        helper.attr("p_y",tt);
-
-
+          var endflowEl = document.querySelector('#' + $this.containerId+' .andflow');
+  
+          var helper =  document.getElementById('drag_helper');
+          
+          if(!helper){
+            helper = $this._createHelper($this._drag_name);
+            if(helper==null){
+              return;
+            }
+            endflowEl.appendChild(helper);
+  
+          }
+          
+          var ll = helper.offsetWidth/2 || 10;
+          var tt = helper.offsetHeight/2 || 10;
+    
+          var x = e.pageX - andflow_util.getPageLeft(endflowEl) - ll;
+          var y = e.pageY - andflow_util.getPageTop(endflowEl) - tt;
+  
+  
+          helper.style.left = x+"px";
+          helper.style.top = y+"px";
+          helper.setAttribute('p_x',ll);
+          helper.setAttribute('p_y',tt);
+           
+  
+        });
+  
       });
 
     });
+
+    
 
  
   },
@@ -1018,61 +1433,68 @@ var andflow = {
     var icon = metadata.icon;
     var title = metadata.title;
 
-    var helperEl = $('<div class="action-drag"></div>');
+    var helperHtml = '<div class="action-drag"></div>';
 
-    var contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
+    var contentHtml = '<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
       ($this.img_path || '') +
-      icon + '"  draggable="false"/></div></div>'); 
+      icon + '"  draggable="false"/></div></div>'; 
 
     if(metadata.tp=="group") {
-      helperEl = $('<div class="group-drag"></div>');
-      contentEl = $('<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>');
+      helperHtml = '<div class="group-drag"></div>';
+      contentHtml = '<div class="group-drag-main"><div class="group-header">' + title + '</div><div class="group-body"></div></div>';
     }else if(metadata.tp=="list") {
-      helperEl = $('<div class="list-drag"></div>');
-      contentEl = $('<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>');
+      helperHtml = '<div class="list-drag"></div>';
+      contentHtml = '<div class="list-drag-main"><div class="list-header">' + title + '</div><div class="list-body"></div></div>';
     }else if(metadata.tp=="tip") {
-      helperEl = $('<div class="tip-drag"></div>');
-      contentEl = $('<div class="tip-drag-main"><div class="tip-header"></div><div class="tip-body">' + title + '</div></div>');
+      helperHtml = '<div class="tip-drag"></div>';
+      contentHtml = '<div class="tip-drag-main"><div class="tip-header"></div><div class="tip-body">' + title + '</div></div>';
     }else{
-      helperEl = $('<div class="action-drag"></div>');
+      helperHtml = '<div class="action-drag"></div>';
 
-      contentEl = $('<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
+      contentHtml = '<div class="action-drag-main" ><div class="action-header">' +title + '</div><div class="action-icon"><img src="' +
       ($this.img_path || '') +
-      icon + '" draggable="false"/></div></div>'); 
+      icon + '" draggable="false"/></div></div>'; 
     }
 
     var render = metadata.render_helper || metadata.render || $this.render_action_helper;
     if(render) {
       let r = render(metadata);
       if (r != null && r.length > 0) {
-        contentEl = $(r); 
+        contentHtml = r; 
       }
     }
     
+    var helperEl = andflow_util.parseHtml(helperHtml);
+    var contentEl = andflow_util.parseHtml(contentHtml);
 
-    helperEl.append(contentEl);
-    helperEl.attr("id","drag_helper");
-    helperEl.css("position","absolute");
-    helperEl.find("img").attr("draggable","false");
+    helperEl.appendChild(contentEl);
+    helperEl.setAttribute('id','drag_helper');
+    helperEl.style.position = 'absolute';
+    helperEl.querySelectorAll('img').forEach(element => {
+      element.setAttribute('draggable','false');
+    });
 
-    helperEl.on("mouseup",function(e){
-      
-      var ll = helperEl.attr("p_x")||10;
-      var tt = helperEl.attr("p_y")||10; 
-      var l = e.pageX - $('#' + $this.containerId).find('.canvas').offset().left - ll*1;
-      var t = e.pageY - $('#' + $this.containerId).find('.canvas').offset().top -  tt*1;
-      
+    andflow_util.addEventListener(helperEl, "mouseup",function(e){
+      var canvasEl = document.querySelector('#' + $this.containerId+ ' .canvas');
+ 
+      var ll = helperEl.getAttribute("p_x")||10;
+      var tt = helperEl.getAttribute("p_y")||10; 
+     
+
+      var l = e.pageX - andflow_util.getPageLeft(canvasEl) - ll*1;
+      var t = e.pageY - andflow_util.getPageTop(canvasEl) - tt*1;
+       
       if(l >= 0 && t>=0){
         $this._dropComponent($this._drag_name,l,t);
       }
-
-     
-
+ 
     });
 
     return helperEl; 
 
   },
+
+
   _createGroup: function(group){
     var $this= this;
      
@@ -1089,59 +1511,62 @@ var andflow = {
 
     var group_meta = this.getMetadata(name) || {};
     
-    var groupElement = $('#' + $this.containerId+ ' #' + group.id);
-    if(!groupElement || !groupElement.length || groupElement.length<=0){
-      var html='<div id="'+group.id+'" class="group group-container" > </div>';  
-      groupElement = $(html);
+    var groupElement = document.getElementById(group.id);
+ 
+    if(!groupElement){
+      var groupHtml='<div id="'+group.id+'" class="group group-container" > </div>';  
+      groupElement = andflow_util.parseHtml(groupHtml);
      
-      var group_main_dom = '<div class="group-main group-master"><div class="group-header"></div><div class="group-body"></div></div>';
+      var group_main_html = '<div class="group-main group-master"><div class="group-header"></div><div class="group-body"></div></div>';
 
       //render
       if(group.render){
-        var r = group.render(group_meta, group, group_main_dom);
+
+        var r = group.render(group_meta, group, group_main_html);
+
         if (r && r.length > 0) {
-          group_main_dom = r;
+          group_main_html = r;
         }
       }else if(group_meta.render){
-        var r = group_meta.render(group_meta, group, group_main_dom);
+        var r = group_meta.render(group_meta, group, group_main_html);
         if (r && r.length > 0) {
-          group_main_dom = r;
+          group_main_html = r;
         }
       } 
 
-      group_main_element = $(group_main_dom); 
+      group_main_element = andflow_util.parseHtml(group_main_html); 
 
       //removebtn 
-      group_main_element.append('<div class="group-remove-btn">X</div>');
+      group_main_element.appendChild(andflow_util.parseHtml('<div class="group-remove-btn">X</div>'));
       //resize
-      group_main_element.append('<div class="group-resize"></div>');
+      group_main_element.appendChild(andflow_util.parseHtml('<div class="group-resize"></div>'));
 
       //endpoint
-      var ep = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      var epHtml = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
       if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_meta, action, ep);
+        var epr = $this.render_endpoint(action_meta, action, epHtml);
         if (epr && epr.length > 0) {
-          ep = epr;
+          epHtml = epr;
         }
       }
-      var epElement = $(ep);
-      epElement.removeClass('group-ep');
-      epElement.addClass('group-ep');
-      group_main_element.append(epElement);
+      var epElement = andflow_util.parseHtml(epHtml); 
+      andflow_util.addClass(epElement, 'group-ep');
+  
+      group_main_element.appendChild(epElement);
 
-      groupElement.append(group_main_element); 
+      groupElement.appendChild(group_main_element); 
 
-      var canvasElement = $('#' + $this.containerId + ' #canvas');
-      canvasElement.append(groupElement); 
+      var canvasElement = document.querySelector('#' + $this.containerId + ' #canvas');
+      canvasElement.appendChild(groupElement); 
        
     }
-    
+   
     $this.setGroupInfo(group);
    
  
     //plumb add group 
     $this._plumb.addGroup({
-      el:groupElement.get(0),
+      el:groupElement,
       id:group.id, 
       orphan:true,
       droppable:true,
@@ -1151,7 +1576,7 @@ var andflow = {
     }); 
 
 
-    $this._plumb.makeSource(groupElement.get(0), {
+    $this._plumb.makeSource(groupElement , {
       filter: '.group-ep', 
       anchor: 'Continuous',
       extract: {
@@ -1160,105 +1585,127 @@ var andflow = {
     });
 
     //target
-    $this._plumb.makeTarget(groupElement.get(0), {
+    $this._plumb.makeTarget(groupElement, {
       dropOptions: { hoverClass: 'dragHover' },
       anchor: 'Continuous', 
       allowLoopback: true,
     });
 
-    $this._plumb.draggable(groupElement.get(0),{
+    $this._plumb.draggable(groupElement,{
       stop:function(event){
         if($this.drag_step>1){
           x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
           y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
-          $(event.el).css("left",x+"px");
-          $(event.el).css("top",y+"px");
+          andflow_util.setStyle(event.el, 'left', x+'px');
+          andflow_util.setStyle(event.el, 'top', y+'px'); 
+
         }
       }
     });
     
    
     if(members && members.length>0){
+      
       var actionElements = [];
       for(var i in members){
-        actionElements.push($("#"+members[i]).get(0));
+        actionElements.push( document.getElementById(members[i]) ); 
       }
+      
       $this._plumb.addToGroup(id, actionElements);
+ 
     }
     
     //event
-    groupElement.on('mouseup', function () {
+    andflow_util.addEventListener(groupElement, 'mouseup', function () {
       $this._onCanvasChanged();
     });
-    groupElement.find('.group-remove-btn').on('click', function () {
+    andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), 'click', function () {
       var sure = confirm('确定删除分组?');
       if (sure) {
         $this.removeGroup(id);
       }  
     });
  
-    groupElement.find('.group-header').on('dblclick',function(event){
-      if ($this.editable) {
+    andflow_util.addEventListener(groupElement.querySelector('.group-header'), 'dblclick',function(event){
+      if ($this.editable) { 
         event.preventDefault();
-        if(groupElement.find('.group-header').find('.content_editor').length>0){
+
+        if(groupElement.querySelector('.content_editor')){
           return;
         }
 
-        var editor=$('<input class="content_editor"  />');
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
-        editor.val(groupElement.find('.group-header').html());
-        groupElement.find('.group-header').append(editor);
+        var editorEl=andflow_util.parseHtml('<input class="content_editor"  />');
+        andflow_util.setStyle(editorEl,'position','absolute');
+        andflow_util.setStyle(editorEl,'z-index','9999');
+        andflow_util.setStyle(editorEl,'left','0px');
+        andflow_util.setStyle(editorEl,'top','0px');
+        andflow_util.setStyle(editorEl,'width','100%');
+        andflow_util.setStyle(editorEl,'height','100%');
+        andflow_util.setStyle(editorEl,'box-sizing','border-box');
+ 
+        andflow_util.setValue(editorEl, groupElement.querySelector('.group-header').innerHTML);
 
-        editor.focus();
-        editor.on("blur",function(e){
+ 
+        groupElement.querySelector('.group-header').appendChild(editorEl);
+
+        editorEl.focus();
+        andflow_util.addEventListener(editorEl, "blur",function(e){
           
-          var value = editor.val(); 
-          editor.parent().html(value);
+          var value = andflow_util.getValue(editorEl); 
+          editorEl.parentElement.innerHTML =  value;
+
           $this._groupInfos[id].title = value;
-          editor.remove();
+
+          andflow_util.removeElement(editorEl); 
+          
         });
-        editor.on("keydown",function(e){ 
+        andflow_util.addEventListener(editorEl, "keydown",function(e){ 
           if(e.code=="Enter"){ 
-            var value = editor.val(); 
-            editor.parent().html(value);
+            var value = andflow_util.getValue(editorEl); 
+            editorEl.parentElement.innerHtml = value;
+
             $this._groupInfos[id].title = value;
-            editor.remove();
-          } 
+
+            andflow_util.removeElement(editorEl);
+            
+          }
          
         });
       } 
     });
-    groupElement.find('.group-body').on('dblclick',function(event){
+
+    andflow_util.addEventListener(groupElement.querySelector('.group-body'), 'dblclick',function(event){
       if ($this.editable) {
         event.preventDefault();
-        if(groupElement.find('.group-body').find('.content_editor').length>0){
+
+        if(groupElement.querySelector('.content_editor')){
           return;
         }
         
-        var editor=$('<textarea class="content_editor"></textarea>');
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
+        var editorEl = andflow_util.parseHtml('<textarea class="content_editor"></textarea>');
+        andflow_util.setStyle(editorEl,'position','absolute');
+        andflow_util.setStyle(editorEl,'z-index','9999');
+        andflow_util.setStyle(editorEl,'left','0px');
+        andflow_util.setStyle(editorEl,'top','0px');
+        andflow_util.setStyle(editorEl,'width','100%');
+        andflow_util.setStyle(editorEl,'height','100%');
+        andflow_util.setStyle(editorEl,'box-sizing','border-box');
 
-        editor.val(groupElement.find('.group-body').html());
-        groupElement.find('.group-body').append(editor);
+       
 
-        editor.focus();
-        editor.on("blur",function(e){
-          var value = editor.val(); 
-          editor.parent().html(value);
+        andflow_util.setValue(editorEl, groupElement.querySelector('.group-body').innerHTML);
+        
+        groupElement.querySelector('.group-body').appendChild(editorEl);
+
+        editorEl.focus();
+
+        andflow_util.addEventListener(editorEl, "blur",function(e){
+          var value = andflow_util.getValue(editorEl); 
+          editorEl.parentElement.innerHTML = value;
           $this._groupInfos[id].des = value;
-          editor.remove();
+          
+          andflow_util.removeElement(editorEl);
+
         });
 
       } 
@@ -1266,29 +1713,32 @@ var andflow = {
 
     
     //group event
-    groupElement.find('.group-resize').on('mousedown',function (e) {
-      $('#' + $this.containerId).css('cursor', 'nwse-resize');
+   andflow_util.addEventListener( groupElement.querySelector('.group-resize'), 'mousedown',function (e) {
+      var containerEl = document.querySelector('#' + $this.containerId);
+      containerEl.style.cursor = 'nwse-resize';
      
-      var group_main = groupElement.find(".group-master");
+      var group_main = groupElement.querySelector(".group-master");
       var x1 = e.pageX;
       var y1 = e.pageY;
       
       
-      var width = group_main.width();
-      var height = group_main.height();
+      var width = group_main.offsetWidth;
+      var height = group_main.offsetHeight;
 
-      $('#' + $this.containerId).on('mousemove',function (e) {
+      andflow_util.addEventListener(containerEl , 'mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        group_main.css({
-          width: w,
-          height: h,
-        });
-        groupElement.attr('width', w);
-        groupElement.attr('height', h);
+
+        andflow_util.setStyle(group_main, 'width', w+'px');
+        andflow_util.setStyle(group_main, 'height', h+'px');
+        
+        
+        andflow_util.setAttr(groupElement, 'width', w);
+        andflow_util.setAttr(groupElement, 'height', h);
+        
  
         $this._plumb.repaintEverything();
 
@@ -1302,7 +1752,7 @@ var andflow = {
     $this._onCanvasChanged();
 
   }, //end createGroup
-
+ 
   //添加列表
   _createList: function(list){
     var $this = this;
@@ -1313,8 +1763,8 @@ var andflow = {
 
     var meta = this.getMetadata(name) || {};
 
-    var listElement = $('#' + $this.containerId+ ' #' + list.id);
-    if(!listElement || !listElement.length || listElement.length<=0){
+    var listElement = document.querySelector('#' + $this.containerId+ ' #' + list.id);
+    if(!listElement){
       var html='<div id="'+list.id+'" class="list list-container">';
       html+='<div class="list-remove-btn">X</div>';
       html+='<div class="list-resize"></div>';
@@ -1323,10 +1773,10 @@ var andflow = {
       html+='<div class="list-body"></div>';
       html+='</div>'; //end main 
       html+='</div>'; //end list 
-      listElement = $(html);
+      listElement = andflow_util.parseHtml(html);
 
-      var canvasElement = $('#' + $this.containerId + ' #canvas');
-      canvasElement.append(listElement);
+      var canvasElement = document.querySelector('#' + $this.containerId + ' #canvas');
+      canvasElement.appendChild(listElement);
       
     }
 
@@ -1336,10 +1786,10 @@ var andflow = {
    
    
     //event
-    listElement.on('mouseup', function () {
+    andflow_util.addEventListener(listElement, 'mouseup', function () {
       $this._onCanvasChanged();
     });
-    listElement.find('.list-remove-btn').on('click', function () {
+    andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), 'click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeList(id);
@@ -1347,27 +1797,33 @@ var andflow = {
     });
     
     //resize
-    var list_main = listElement.find(".list-main");
-    listElement.find('.list-resize').on('mousedown',function (e) {
-      $('#' + $this.containerId).css('cursor', 'nwse-resize'); 
+    var list_main = listElement.querySelector(".list-main");
+
+    andflow_util.addEventListener(listElement.querySelector('.list-resize'), 'mousedown',function (e) {
+      
+      var containerEl = document.getElementById($this.containerId);
+      containerEl.style.cursor = 'nwse-resize'; 
+
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = list_main.width();
-      var height = list_main.height();
 
-      $('#' + $this.containerId).on('mousemove',function (e) {
+
+      var width = list_main.offsetWidth;
+      var height = list_main.offsetHeight;
+
+      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        list_main.css({
-          width: w,
-          height: h,
-        });
-        listElement.attr('width', w);
-        listElement.attr('height', h);
- 
+        
+        andflow_util.setStyle(list_main,'width', w+'px');
+        andflow_util.setStyle(list_main,'height', h+'px');
+         
+        andflow_util.setAttr(listElement, 'width', w);
+        andflow_util.setAttr(listElement, 'height', h);
+        
         $this._plumb.repaintEverything();
 
         $this._onCanvasChanged();
@@ -1377,79 +1833,102 @@ var andflow = {
       e.preventDefault();
     }); 
 
-    listElement.find('.list-header').on('dblclick',function(event){
+    andflow_util.addEventListener(listElement.querySelector('.list-header'), 'dblclick',function(event){
      
       if ($this.editable) {
+        
         event.preventDefault();
-        if(listElement.find('.list-header').find('.content_editor').length>0){
+        
+        if(listElement.querySelector('.content_editor')){
           return;
         }
 
-        let editor=$('<input class="content_editor"  />');
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
-        editor.val(listElement.find('.list-header').html());
-        listElement.find('.list-header').append(editor);
+        let editorEl = andflow_util.parseHtml('<input class="content_editor"  />');
+        andflow_util.setStyle(editorEl, 'position', 'absolute');
+        andflow_util.setStyle(editorEl, 'z-index', '9999');
+        andflow_util.setStyle(editorEl, 'left', '0px');
+        andflow_util.setStyle(editorEl, 'top', '0px');
+        andflow_util.setStyle(editorEl, 'width', '100%');
+        andflow_util.setStyle(editorEl, 'height', '100%');
+        andflow_util.setStyle(editorEl, 'box-sizing', 'border-box');
+           
+        andflow_util.setValue(editorEl,listElement.querySelector('.list-header').innerHTML );
+      
+        listElement.querySelector('.list-header').appendChild(editorEl);
 
-        editor.focus();
-        editor.on("blur",function(e){ 
-          var value = editor.val(); 
-          editor.parent().html(value);
+        editorEl.focus();
+        andflow_util.addEventListener(editorEl, "blur",function(e){ 
+          var value = andflow_util.getValue(editorEl); 
+
+          editorEl.parentElement.innerHTML = value;
           $this._listInfos[id].title = value;
-          editor.remove();
+
+          andflow_util.removeElement(editorEl);
+          
           $this._onCanvasChanged();
         });
-        editor.on("keydown",function(e){ 
+
+        andflow_util.addEventListener(editorEl,"keydown",function(e){ 
           if(e.code=="Enter"){
-            var value = editor.val(); 
-            editor.parent().html(value);
+            var value = andflow_util.getValue(editorEl); 
+
+            editorEl.parentElement.innerHTML = value;
+
             $this._listInfos[id].title = value;
-            editor.remove();
+
+            andflow_util.removeElement(editorEl);
+
             $this._onCanvasChanged();
+
           } 
-         
+        
         });
+
       } 
+
     });
-    listElement.find('.list-body').on('dblclick',function(event){
+
+    andflow_util.addEventListener(listElement.querySelector('.list-body'), 'dblclick',function(event){
       
       if ($this.editable) {
+
         event.preventDefault();
-        if(listElement.find('.list-body').find('.content_editor').length>0){
+
+        if(listElement.querySelector('.content_editor')){
           return;
         }
          
-        let editor=$('<textarea></textarea>');
-        editor.addClass("content_editor");
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
-         
+        let editorEl=andflow_util.parseHtml('<textarea></textarea>');
+        
+        andflow_util.addClass(editorEl, 'content_editor');
+        andflow_util.setStyle(editorEl, 'position', 'absolute'); 
+        andflow_util.setStyle(editorEl, 'z-index', '9999'); 
+        andflow_util.setStyle(editorEl, 'left', '0px'); 
+        andflow_util.setStyle(editorEl, 'top', '0px'); 
+        andflow_util.setStyle(editorEl, 'width', '100%'); 
+        andflow_util.setStyle(editorEl, 'height', '100%'); 
+        andflow_util.setStyle(editorEl, 'box-sizing', 'border-box'); 
+ 
         var items = $this._listInfos[id].items;
+
         var rows = '';
+        
         if(items && items.length>0){
           for(var i in items){  
             rows += items[i].title+'\n';
           } 
         }
-        editor.val(rows);
+
+        andflow_util.setValue(editorEl, rows);
+         
+        listElement.querySelector('.list-body').appendChild(editorEl);
        
-        listElement.find('.list-body').append(editor);
-       
-        editor.focus();
-        editor.on("blur",function(e){
-          
-          var value = $(this).val(); 
-          $(this).remove();
+        editorEl.focus();
+        andflow_util.addEventListener(editorEl, "blur",function(e){
+
+          var value = andflow_util.getValue(this); 
+           
+
           var rows = value.split("\n");
  
           var items = [];
@@ -1462,42 +1941,58 @@ var andflow = {
             var item = {id: itemid, title:rows[i]};
             items.push(item);
           }
-          $this._setListItems(id, items);
+          $this.setListItems(id, items);
          
           $this._onCanvasChanged();
+
+          andflow_util.removeElement(this);
          
         });
 
       } 
     });
 
-    $this._plumb.draggable(listElement.get(0),{
+    $this._plumb.draggable(listElement, {
       stop:function(event){
         if($this.drag_step>1){
           x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
           y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
-          $(event.el).css("left",x+"px");
-          $(event.el).css("top",y+"px");
+          
+          andflow_util.setStyle(event.el, 'left', x+'px');
+          andflow_util.setStyle(event.el, 'top', y+'px');
+           
         }
       }
+
     });
  
-    $this._plumb.addList(listElement.get(0), {
+    $this._plumb.addList(listElement, {
       endpoint:["Rectangle", {width:20, height:20}]
     });
  
-    
     $this._onCanvasChanged();
-  }, //end createList
 
+  }, //end createList
+   
   _setListItems: function(listid, items){
     var $this = this;
-     
-    if($("#"+listid).find(".list-item").length>0){  
+   
+    var listEl = listid; 
+    if(typeof listid === 'string'){
+      listEl = document.getElementById(listid);
+    } 
+    
+    if(!listEl){
+      return;
+    }
+    
+    //remove
+    if(listEl.querySelector(".list-item")){  
       var tobe_dels = [];
-      $("#"+listid).find(".list-item").each(function(index, el){
+      listEl.querySelectorAll(".list-item").forEach(function(el,index){
          
-        let el_id = $(el).attr("id");
+        let el_id = el.id;
+
         let exist = false;
         for(var i in items){ 
           if(el_id==items[i].id){
@@ -1505,55 +2000,66 @@ var andflow = {
           } 
         }
         if(!exist){
-          tobe_dels.push($(el)); 
+          tobe_dels.push(el); 
         }
       });
 
       for(var i in tobe_dels){
         
-        let el_id = tobe_dels[i].attr("id"); 
+        let el_id = tobe_dels[i].id; 
+        
         $this.removeLinkBySource(el_id);
         $this.removeLinkByTarget(el_id); 
-        $this._plumb.remove(tobe_dels[i].get(0));
-        tobe_dels[i].remove();
+        $this._plumb.remove(tobe_dels[i]);
+
+        andflow_util.removeElement(tobe_dels[i]);
+        
       }
 
     }
-
+    
+    //append
     for(var i in items){ 
       var item = items[i];
       if(item.id==null || item.title==null || item.title==''){
         continue;
       }
+
       var id=item.id;
 
-      var itemEl = $("#"+listid).find(".list-body").find("#"+id);
-
-      if(itemEl.length==0){
-        itemEl = $('<div id="'+id+'" class="list-item"><div class="list-item-title"></div></div>');
-        $("#"+listid).find(".list-body").append(itemEl); 
-        var item_dom = itemEl.get(0);
-        $this._plumb.makeSource(item_dom, {
+      var itemEl = document.getElementById(id);
+      
+      if(!itemEl){
+        
+        itemEl = andflow_util.parseHtml('<div id="'+id+'" class="list-item"><div class="list-item-title"></div></div>');
+        
+        listEl.querySelector(".list-body").appendChild(itemEl); 
+        
+         
+        $this._plumb.makeSource(itemEl, {
           allowLoopback: false,
           anchor: ["Left", "Right" ]
         });
-        $this._plumb.makeTarget(item_dom, {
+        $this._plumb.makeTarget(itemEl, {
           allowLoopback: false,
           anchor: ["Left", "Right" ]
         }); 
+        
       }
-      itemEl.find(".list-item-title").html(item.title||'');
+
+      itemEl.querySelector(".list-item-title").innerHTML = (item.title||'');
       
       if(item.item_color){
-        itemEl.css("background-color",item.item_color);
+        andflow_util.setStyle(itemEl, 'background-color', item.item_color); 
       }
+
       if(item.item_text_color){
-        itemEl.find(".list-item-title").css("color",item.item_text_color);
+        andflow_util.setStyle(itemEl.querySelector('.list-item-title'), 'color', item.item_text_color);  
       }
+
       if(item.style){
-         
         for(var n in item.style){ 
-          itemEl.css(n,item.style[n]);
+          andflow_util.setStyle(itemEl, n,item.style[n] ); 
         } 
       }
 
@@ -1562,8 +2068,8 @@ var andflow = {
   },
 
   _deleteListItem: function(listid, itemid){
-    var $this = this;
-
+    var $this = this; 
+    
     for(var j in $this._listInfos[listid].items){
       if($this._listInfos[listid].items[j].id==itemid){
         $this._listInfos[listid].items[j]=null;
@@ -1571,6 +2077,7 @@ var andflow = {
     }
 
   },
+
   _getBase64Image: function(img) {
     try{
       var canvas = document.createElement("canvas");
@@ -1585,7 +2092,7 @@ var andflow = {
     }
     
   },
-   
+    
   //添加节点
   _createAction: function (action) {
     const $this = this;
@@ -1600,61 +2107,61 @@ var andflow = {
     } 
     var action_meta = this.getMetadata(name) || {};
      
-    var actionElement = $('#'+this.containerId + ' #' + action.id);
-    if(actionElement==0 || !actionElement.length || actionElement.length<=0){
+    var actionElement = document.getElementById(action.id);
+    if(!actionElement){
     
-      var actionHtml ='<div id="' + id + '"  draggable="true" ondragend="" class="action-container"><div  class="action" ></div></div>'; 
+      var actionHtml = '<div id="' + id + '"  draggable="true" ondragend="" class="action-container"><div  class="action" ></div></div>'; 
 
-      actionElement = $(actionHtml); 
+      actionElement = andflow_util.parseHtml(actionHtml); 
 
       //main
-      var action_main_dom = '<div class="action-main action-master" >';
-      action_main_dom += '<div class="action-icon"  ><img src=""  ></div>'; 
-      action_main_dom += '<div class="action-header"></div>'; //标题  
-      action_main_dom += '<div class="action-body" >';
-      action_main_dom += '<div class="action-content" ></div>'; //消息内容,html,chart
-      action_main_dom += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
-      action_main_dom += '</div>'; 
-      action_main_dom += '</div>'; //end action-main
+      var action_main_html = '<div class="action-main action-master" >';
+      action_main_html += '<div class="action-icon"  ><img src=""  ></div>'; 
+      action_main_html += '<div class="action-header"></div>'; //标题  
+      action_main_html += '<div class="action-body" >';
+      action_main_html += '<div class="action-content" ></div>'; //消息内容,html,chart
+      action_main_html += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
+      action_main_html += '</div>'; 
+      action_main_html += '</div>'; //end action-main
 
       var render = action.render || action_meta.render || $this.render_action;
 
       if(render){
-        var r = render(action_meta, action, action_main_dom);
+        var r = render(action_meta, action, action_main_html);
         if (r && r.length > 0) {
-          action_main_dom = r;
+          action_main_html = r;
         }
       }
-      var action_main_el = $(action_main_dom);
-      action_main_el.addClass("action-master"); 
-      actionElement.find(".action").append(action_main_el);
+      var action_main_el = andflow_util.parseHtml(action_main_html);
+      andflow_util.addClass(action_main_el, 'action-master');
+
+      actionElement.querySelector(".action").appendChild(action_main_el);
 
       //ep
-      var ep = '<div class="ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      var epHtml = '<div class="ep" title="拖拉连线">→</div>'; //拖拉连线焦点
       if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_meta, action, ep);
+        var epr = $this.render_endpoint(action_meta, action, epHtml);
         if (epr && epr.length > 0) {
-          ep = epr;
+          epHtml = epr;
         }
       }
-      var epElement = $(ep); 
-      epElement.removeClass('ep');
-      epElement.addClass('ep');
-      actionElement.append(epElement);
+      var epElement = andflow_util.parseHtml(epHtml); 
+      andflow_util.addClass(epElement, 'ep');
+
+      actionElement.appendChild(epElement);
       
       //resizer
-      var resizer = '<div class="action-resize"></div>'; //改变大小的三角形框
+      var resizerHtml = '<div class="action-resize"></div>'; //改变大小的三角形框
       if ($this.render_btn_resize) {
-        var resizer_new = $this.render_btn_resize(action_meta, action, resizer);
+        var resizer_new = $this.render_btn_resize(action_meta, action, resizerHtml);
         if (resizer_new && resizer_new.length > 0) {
-          resizer = resizer_new;
+          resizerHtml = resizer_new;
         }
       }
 
-      var resizerElement = $(resizer);
-      resizerElement.removeClass('action-resize');
-      resizerElement.addClass('action-resize'); 
-      actionElement.find(".action").append(resizerElement);
+      var resizerElement = andflow_util.parseHtml(resizerHtml);
+      andflow_util.addClass(resizerElement, 'action-resize');
+      actionElement.querySelector(".action").appendChild(resizerElement);
 
       //remove button 
       var removeBtn = '<a href="javascript:void(0)" class="action-remove-btn"  >X</a>'; //工具栏
@@ -1664,23 +2171,25 @@ var andflow = {
           removeBtn = removeBtn_new;
         }
       }
-      var removeBtnElement = $(removeBtn);
-      removeBtnElement.removeClass('action-remove-btn');
-      removeBtnElement.addClass('action-remove-btn');
+      var removeBtnElement = andflow_util.parseHtml(removeBtn);
+      andflow_util.addClass(removeBtnElement, 'action-remove-btn');
 
-      actionElement.find(".action").append(removeBtnElement);
+      actionElement.querySelector(".action").appendChild(removeBtnElement);
   
-      var canvasElement = $('#' + $this.containerId + ' #canvas');
-      canvasElement.append(actionElement);
+      var canvasElement = document.querySelector('#' + $this.containerId + ' #canvas');
+      canvasElement.appendChild(actionElement);
     }
-   
+    
+    actionElement.id = id;
+
     this.setActionInfo(action);
  
-    
+   
     //事件
     //image load
-    actionElement.find(".action-icon img").on('load',function(){ 
-      var d =  $(this).attr("src");
+    andflow_util.addEventListener(actionElement.querySelector(".action-icon img"), 'load',function(){ 
+      var d = andflow_util.getAttr(this, 'src');
+
       if(d.indexOf("data:image/")<0){
         var data = $this._getBase64Image(this);
         if(data!=null){
@@ -1689,11 +2198,11 @@ var andflow = {
       } 
     });
     //mouseup
-    actionElement.on('mouseup', function () {
+    andflow_util.addEventListener(actionElement, 'mouseup', function () {
       $this._onCanvasChanged();
     });
 
-    actionElement.find('.action-remove-btn').on('click', function () {
+    andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), 'click', function () {
       var sure = confirm('确定删除该节点?');
       if (sure) {
         $this.removeAction(id);
@@ -1701,7 +2210,7 @@ var andflow = {
     });
 
     //双击打开配置事件,在设计模式和步进模式下才可以用
-    actionElement.on('click', function (event) {
+    andflow_util.addEventListener(actionElement, 'click', function (event) {
       if ($this.editable) {
         if ($this.event_action_click && $this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -1714,7 +2223,7 @@ var andflow = {
       }
     });
 
-    actionElement.on('dblclick', function (event) {
+    andflow_util.addEventListener(actionElement, 'dblclick', function (event) {
       if ($this.editable) {
         if ($this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -1724,69 +2233,70 @@ var andflow = {
       }
     });
 
-    actionElement.on('mouseover', function (e) {
+    andflow_util.addEventListener(actionElement, 'mouseover', function (e) {
       if (name != 'end') {
-        $(this).find('.ep').show();
+        andflow_util.show(this.querySelector('.ep'));
       }
     });
 
-    actionElement.on('mouseout', function (e) {
-      $(this).find('.ep').hide();
+    andflow_util.addEventListener(actionElement, 'mouseout', function (e) {
+      andflow_util.hide(this.querySelector('.ep'));
     });
 
     //改变大小事件，鼠标按下去
-    actionElement.find('.action-resize').on('mousedown',function (e) {
-      $('#' + $this.containerId).css('cursor', 'nwse-resize');
-      var divEl = $(this)[0];
+    andflow_util.addEventListener(actionElement.querySelector('.action-resize'), 'mousedown',function (e) {
+      var containerEl = document.getElementById($this.containerId);
+    
+      containerEl.style.cursor = 'nwse-resize';
+
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = $('#' + id).find(".action-master").width();
-      var height = $('#' + id).find(".action-master").height();
 
-      $('#' + $this.containerId).on('mousemove',function (e) {
-        var x2 = e.pageX;
-        var y2 = e.pageY;
+      var width = actionElement.querySelector(".action-master").offsetWidth;
+      var height = actionElement.querySelector(".action-master").offsetHeight;
+
+      andflow_util.addEventListener(containerEl, 'mousemove',function (e2) {
+        var x2 = e2.pageX;
+        var y2 = e2.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
 
-        var mw=$('#' + id).find(".action-master").css("min-width").replace("px","")*1;
-        var mh=$('#' + id).find(".action-master").css("min-height").replace("px","")*1;
+        var minWidth = andflow_util.getStyle(actionElement.querySelector(".action-master"),'min-width')||'0';
+        var minHeight = andflow_util.getStyle(actionElement.querySelector(".action-master"),'min-height')||'0';
+
+
+        var mw = minWidth.replace("px","")*1;
+        var mh = minHeight.replace("px","")*1;
          
         if(mw==null || w>mw){
-          $('#' + id).find(".action-master").css({
-            width: w+"px"
-          });
-   
-          $('#' + id).css({
-            width: w+"px"
-          }); 
+         
+          andflow_util.setStyle(actionElement.querySelector(".action-master"), 'width', w + 'px');
+          andflow_util.setStyle(actionElement.querySelector(".action"), 'width', w + 'px'); 
+           
         }
+
         if(mh==null || h>mh){
-          $('#' + id).find(".action-master").css({ 
-            height: h+"px"
-          });
+           
+          andflow_util.setStyle(actionElement.querySelector(".action-master"), 'height', h + 'px');
+          andflow_util.setStyle(actionElement.querySelector(".action"), 'height', h + 'px');  
    
-          $('#' + id).css({
-            height: h+"px"
-          }); 
         }
  
 
         var chart = $this._actionCharts[id];
         if (chart != null) {
-          var pw = $('#chart_' + id)
-            .parent()
-            .width();
-          var ph = $('#chart_' + id)
-            .parent()
-            .height();
-          $('#chart_' + id).css({
-            width: pw,
-            height: ph,
-          });
+          var chatEl=document.getElementById('chart_' + id);
+
+          var pw = chatEl.parentElement.offsetWidth; 
+          var ph = chatEl.parentElement.offsetHeight;
+
+          andflow_util.setStyle(chatEl, 'width', pw+'px');
+          andflow_util.setStyle(chatEl, 'height', ph+'px'); 
+
           chart.resize();
         }
+
         $this._plumb.repaintEverything();
 
         $this._onCanvasChanged();
@@ -1797,48 +2307,44 @@ var andflow = {
     });
 
     //改变Body大小事件，鼠标按下去
-    actionElement.find('.body-resize').on('mousedown',function (e) {
-      $('#' + $this.containerId).css('cursor', 'nwse-resize');
-      var divEl = $(this)[0];
+    andflow_util.addEventListener(actionElement.querySelector('.body-resize'), 'mousedown',function (e) {
+
+      var containerEl = document.getElementById($this.containerId); 
+      containerEl.style.cursor = 'nwse-resize';
+       
       var x1 = e.pageX;
       var y1 = e.pageY;
-      var width = $('#' + id)
-        .find('.action-body')
-        .width();
-      var height = $('#' + id)
-        .find('.action-body')
-        .height();
 
-      $('#' + $this.containerId).on('mousemove',function (e) {
+      var width = actionElement.querySelector('.action-body').offsetWidth; 
+      var height = actionElement.querySelector('.action-body').offsetHeight;
+
+      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        $('#' + id)
-          .find('.action-body')
-          .css({
-            width: w,
-            height: h,
-          });
-        $('#' + id).attr('body_width', w);
-        $('#' + id).attr('body_height', h);
-
+ 
+        andflow_util.setStyle(actionElement.querySelector('.action-body'), 'width', w+'px');
+        andflow_util.setStyle(actionElement.querySelector('.action-body'), 'height', h+'px');
+        andflow_util.setAttr(actionElement, 'body_width', w);
+        andflow_util.setAttr(actionElement, 'body_height', h);
+        
         //刷新图表
         var chart = $this._actionCharts[id];
         if (chart != null) {
-          var pw = $('#chart_' + id)
-            .parent()
-            .width();
-          var ph = $('#chart_' + id)
-            .parent()
-            .height();
-          $('#chart_' + id).css({
-            width: pw,
-            height: ph,
-          });
+          
+          var chartEl = document.getElementById('chart_'+id);
+          
+          var pw = chartEl.parentElement.offsetWidth;
+          var ph = chartEl.parentElement.offsetHeight;
+
+          andflow_util.setStyle(chartEl, 'width', pw+'px');
+          andflow_util.setStyle(chartEl, 'height', ph+'px');
+          
           chart.resize();
         }
+
         $this._plumb.repaintEverything();
 
         $this._onCanvasChanged();
@@ -1847,7 +2353,7 @@ var andflow = {
       });
       e.preventDefault();
     });
-
+    
     //初始化节点
     this._showActionNode(actionElement, name);
     $this._onCanvasChanged();
@@ -1859,20 +2365,20 @@ var andflow = {
     var $this = this;
 
     // initialise draggable elements.
-    this._plumb.draggable(el.get(0),{ 
+    this._plumb.draggable(el, {
       stop:function(event){
         if($this.drag_step>1){
           x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
           y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
-          $(event.el).css("left",x+"px");
-          $(event.el).css("top",y+"px");
+          andflow_util.setStyle(event.el, "left", x+"px");
+          andflow_util.setStyle(event.el, "top", y+"px");
         }
       }
     });
  
 
     if (name == null || name != 'end') {
-      this._plumb.makeSource(el.get(0), {
+      this._plumb.makeSource(el, {
         filter: '.ep',
 
         anchor: 'Continuous',
@@ -1887,7 +2393,7 @@ var andflow = {
     }
 
     if (name == null || name != 'begin') {
-      this._plumb.makeTarget(el.get(0), {
+      this._plumb.makeTarget(el, {
         dropOptions: { hoverClass: 'dragHover' },
         anchor: 'Continuous', 
         allowLoopback: true,
@@ -1907,193 +2413,215 @@ var andflow = {
 
     var tip_meta = this.getMetadata(name) || {};
 
-    var tipElement = $('#'+this.containerId + ' #' + tip.id);
-    if(tipElement==0 || !tipElement.length || tipElement.length<=0){
+    var tipElement = document.querySelector('#'+this.containerId + ' #' + tip.id);
+    if(!tipElement){
       var html='<div id="'+tip.id+'" class="tip tip-container">';
       html+='<div class="tip-remove-btn">X</div>';
       html+='<div class="tip-resize"></div>'; 
       html+='</div>'; 
-      tipElement = $(html);
+      tipElement = andflow_util.parseHtml(html);
 
       //main
-      var tip_main_dom = '<div class="tip-main"><div class="tip-header"></div><div class="tip-body"></div></div>';
+      var tip_main_html = '<div class="tip-main"><div class="tip-header"></div><div class="tip-body"></div></div>';
 
       //render
       if(tip.render){
-        var r = tip.render(tip_meta, tip, tip_main_dom);
+        var r = tip.render(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
-          tip_main_dom = r;
+          tip_main_html = r;
         }
       }else if(tip_meta.render){
-        var r = tip_meta.render(tip_meta, tip, tip_main_dom);
+        var r = tip_meta.render(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
-          tip_main_dom = r;
+          tip_main_html = r;
         }
       }else if ($this.render_tip) {
-        var r = $this.render_tip(tip_meta, tip, tip_main_dom);
+        var r = $this.render_tip(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
-          tip_main_dom = r;
+          tip_main_html = r;
         }
       }
-      tip_main_element = $(tip_main_dom);
-      tip_main_element.addClass("tip-master");
-      tipElement.append(tip_main_element);
+      tip_main_element = andflow_util.parseHtml(tip_main_html); 
+      andflow_util.addClass(tip_main_element, "tip-master");
+      tipElement.appendChild(tip_main_element);
   
       //endpoint
-      var ep = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
+      var epHtml = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
       if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_meta, tip, ep);
+        var epr = $this.render_endpoint(action_meta, tip, epHtml);
         if (epr && epr.length > 0) {
-          ep = epr;
+          epHtml = epr;
         }
       }
-      var epElement = $(ep);
-      epElement.removeClass('tip-ep');
-      epElement.addClass('tip-ep');
-      tipElement.append(epElement);
 
+      var epElement = andflow_util.parseHtml(epHtml);
+      andflow_util.addClass(epElement, 'tip-ep');
+      tipElement.appendChild(epElement);
 
-      var canvasElement = $('#' + $this.containerId + ' #canvas');
-      canvasElement.append(tipElement); 
+      var canvasElement = document.getElementById('canvas');
+      canvasElement.appendChild(tipElement); 
   
     }
-
+     
     $this.setTipInfo(tip);
    
    
     //draggable
-    this._plumb.getContainer().appendChild(tipElement.get(0));
+    this._plumb.getContainer().appendChild(tipElement);
     // initialise draggable elements.
-    this._plumb.draggable(tipElement.get(0),{
+    this._plumb.draggable(tipElement, {
       stop:function(event){
         if($this.drag_step>1){
           x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
           y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
-          $(event.el).css("left",x+"px");
-          $(event.el).css("top",y+"px");
+          andflow_util.setStyle(event.el, 'left', x+'px');
+          andflow_util.setStyle(event.el, 'top', y+'px');
+
         }
       }
     });
+
     //source
-    $this._plumb.makeSource(tipElement.get(0), {
+    $this._plumb.makeSource(tipElement, {
       filter: '.tip-ep', 
       anchor: 'Continuous'
     });
 
     //target
-    $this._plumb.makeTarget(tipElement.get(0), {
+    $this._plumb.makeTarget(tipElement, {
       dropOptions: { hoverClass: 'dragHover' },
       anchor: 'Continuous', 
       allowLoopback: true,
     });
 
     //event
-    tipElement.on('mouseup', function () {
+    andflow_util.addEventListener(tipElement,'mouseup', function () {
       $this._onCanvasChanged();
     });
-    tipElement.find('.tip-remove-btn').on('click', function () {
+
+    andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'),'click', function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeTip(id);
       }  
     });
- 
-    tipElement.find('.tip-header').on('dblclick',function(event){
+
+    andflow_util.addEventListener(tipElement.querySelector('.tip-header'), 'dblclick',function(event){
+      
       if ($this.editable) {
-        if(tipElement.find('.tip-header').find('.content_editor').length>0){
+        
+        if(tipElement.querySelector('.content_editor')){
           return;
         }
          
-        var editor=$('<input class="content_editor" />');
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
-        editor.val(tipElement.find('.tip-header').html());
-        tipElement.find('.tip-header').append(editor);
+        var editor=andflow_util.parseHtml('<input class="content_editor" />');
+        andflow_util.setStyle(editor, 'position', 'absolute');
+        andflow_util.setStyle(editor, 'z-index', '9999');
+        andflow_util.setStyle(editor, 'left', '0px');
+        andflow_util.setStyle(editor, 'top', '0px');
+        andflow_util.setStyle(editor, 'width', '100%');
+        andflow_util.setStyle(editor, 'height', '100%');
+        andflow_util.setStyle(editor, 'box-sizing', 'border-box');
+        andflow_util.setValue(editor,tipElement.querySelector('.tip-header').innerHTML );
+         
+        tipElement.querySelector('.tip-header').appendChild(editor);
 
         editor.focus();
-        editor.on("blur",function(e){ 
-          var value = editor.val(); 
-          editor.parent().html(value);
+
+        andflow_util.addEventListener(editor,"blur",function(e){ 
+          var value = andflow_util.getValue(editor); 
+          editor.parentElement.innerHTML = value;
           $this._tipInfos[id].title = value;
-          editor.remove();
+          
           $this._onCanvasChanged();
+          andflow_util.removeElement(editor);
+
         });
-        editor.on("keydown",function(e){ 
+        andflow_util.addEventListener(editor, "keydown",function(e){ 
           if(e.code=="Enter"){ 
-            var value = editor.val(); 
-            editor.parent().html(value);
+            var value = andflow_util.getValue(editor); 
+            editor.parentElement.innerHtml = value;
             $this._tipInfos[id].title = value;
-            editor.remove();
+            
             $this._onCanvasChanged();
+
+            andflow_util.removeElement(editor);
           } 
          
         });
       } 
     });
-    tipElement.find('.tip-body').on('dblclick',function(event){
+    andflow_util.addEventListener(tipElement.querySelector('.tip-body'),'dblclick',function(event){
+       
       if ($this.editable) {
-        if(tipElement.find('.tip-body').find('.content_editor').length>0){
+
+        if(tipElement.querySelector('.content_editor')){
           return;
         }
-        var editor=$('<textarea class="content_editor"></textarea>');
-        editor.css("position","absolute");
-        editor.css("z-index","9999");
-        editor.css("left","0px");
-        editor.css("top","0px");
-        editor.css("width","100%");
-        editor.css("height","100%");
-        editor.css("box-sizing","border-box");
-       
+
+        var editor=andflow_util.parseHtml('<textarea class="content_editor"></textarea>');
+
+        andflow_util.setStyle(editor, 'position', 'absolute');
+        andflow_util.setStyle(editor, 'z-index', '9999');
+        andflow_util.setStyle(editor, 'left', '0px');
+        andflow_util.setStyle(editor, 'top', '0px');
+        andflow_util.setStyle(editor, 'width', '100%');
+        andflow_util.setStyle(editor, 'height', '100%');
+        andflow_util.setStyle(editor, 'box-sizing', 'border-box');
+
         var content = $this._tipInfos[id].content;
        
-        editor.val(content);
+        andflow_util.setValue(editor, content); 
 
-        tipElement.find('.tip-body').append(editor);
+        tipElement.querySelector('.tip-body').appendChild(editor);
 
         editor.focus();
-        editor.on("blur",function(e){
-          var value = editor.val();  
+
+        andflow_util.addEventListener(editor, "blur",function(e){
+          var value = andflow_util.getValue(editor);  
           $this._tipInfos[id].content = value; 
+          
           value = value.replaceAll("\n","<br/>"); 
-          editor.parent().html(value); 
-          editor.remove();
+
+          editor.parentElement.innerHTML = value; 
+         
           $this._onCanvasChanged();
+          andflow_util.removeElement(editor);
+
         });
 
       } 
     });
 
-   
-
+  
     //event
-    tipElement.find('.tip-resize').on('mousedown',function (e) {
-      $('#' + $this.containerId).css('cursor', 'nwse-resize');
-     
-      var tip_main = tipElement.find(".tip-master");
+    andflow_util.addEventListener(tipElement.querySelector('.tip-resize'), 'mousedown',function (e) {
+      
+      var containerEl = document.getElementById($this.containerId);
+
+      containerEl.style.cursor = 'nwse-resize';
+
+      var tip_main = tipElement.querySelector(".tip-master");
+
       var x1 = e.pageX;
       var y1 = e.pageY;
       
-      
-      var width = tip_main.width();
-      var height = tip_main.height();
+      var width = tip_main.offsetWidth;
+      var height = tip_main.offsetHeight;
 
-      $('#' + $this.containerId).on('mousemove',function (e) {
+
+      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
         var x2 = e.pageX;
         var y2 = e.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
-        tip_main.css({
-          width: w,
-          height: h,
-        });
-        tipElement.attr('width', w);
-        tipElement.attr('height', h);
+ 
+        andflow_util.setStyle(tip_main, 'width', w+'px');
+        andflow_util.setStyle(tip_main, 'height', h+'px');
+        
+        andflow_util.setAttr(tipElement, 'width', w);
+        andflow_util.setAttr(tipElement, 'height', h); 
  
         $this._plumb.repaintEverything();
 
@@ -2105,41 +2633,44 @@ var andflow = {
     }); 
  
   }, //end createTip
+
   //缩略图
   _showThumbnail: function () {
     var $this = this;
+     
 
-    if (
-      $('#' + this.containerId)
-        .find('.flow_thumbnail')
-        .is(':hidden')
-    ) {
-      return;
-    }
     //视觉框
-    var canvas = $('#' + $this.containerId).find(".canvas");
-    var canvasView = $('#' + $this.containerId).find(".canvas").parent();
-    var thumbnail=$('#' + $this.containerId).find('.flow_thumbnail');
- 
-    var full_width = canvas.width(); 
-    var full_height = canvas.height();
-    var canvas_width = canvasView.width();
-    var canvas_height = canvasView.height();
+    var canvas = document.getElementById($this.containerId).querySelector(".canvas");
 
-    var scale = thumbnail.width()*1.0/full_width*1.0;
-    $('#' + $this.containerId).find('.flow_thumbnail').height(scale*full_height);
+    var canvasView = canvas.parentElement;
+    var thumbnail= document.getElementById($this.containerId).querySelector('.flow_thumbnail');
+    var mask= document.getElementById($this.containerId).querySelector('.flow_thumbnail_mask');
+
+    var full_width = canvas.offsetWidth; 
+    var full_height = canvas.offsetHeight;
+
+    var canvas_width = canvasView.offsetWidth;
+    var canvas_height = canvasView.offsetHeight;
+
+    var thumbnail_width = (thumbnail.offsetWidth||100);
+
+    var scale = thumbnail_width*1.0 / full_width*1.0;
+     
+
+    andflow_util.setStyle(thumbnail, 'width', thumbnail_width + 'px');
+    andflow_util.setStyle(thumbnail, 'height', scale*full_height + 'px');
 
     var mask_w=(canvas_width * scale)+"px"; 
     var mask_h=(canvas_height * scale)+"px";
-    var mask_l = (canvasView.scrollLeft() * scale)+"px";
-    var mask_t = (canvasView.scrollTop() * scale)+"px";
-    
-    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("width",mask_w);
-    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("height",mask_h);
-    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("left",mask_l);
-    $('#' + $this.containerId).find('.flow_thumbnail_mask').css("top",mask_t);
-    
 
+    var mask_l = (canvasView.scrollLeft * scale)+"px";
+    var mask_t = (canvasView.scrollTop * scale)+"px";
+    
+    andflow_util.setStyle(mask, 'width', mask_w);
+    andflow_util.setStyle(mask, 'height', mask_h);
+    andflow_util.setStyle(mask, 'left', mask_l);
+    andflow_util.setStyle(mask, 'top', mask_t);
+ 
     //缩略图
     $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
     $this._timer_thumbnail = setTimeout(function () {
@@ -2149,10 +2680,8 @@ var andflow = {
           try { 
             
             var url = canvas.toDataURL('image/png'); //生成下载的url
-            
-            $('#' + $this.containerId)
-              .find('.flow_thumbnail')
-              .css('background-image', 'url(' + url + ')');
+             
+            andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
 
           } catch (e) {
              console.error(e);
@@ -2160,31 +2689,42 @@ var andflow = {
         },
         { scale: 0.5, backgroundColor: 'transparent' ,ignore_svg: true},
       );
-    }, 10);
-
+    }, 10); 
 
   },
+
+  
   _resizeCanvas: function(){
     //调整canvas大小
     var maxWidth=0;
     var maxHeight=0;
-    $('#' + this.containerId).find(".canvas").find("div").each(function(index,e){
-      let left = $(e).position().left;
-      let width = $(e).width(); 
-      let top = $(e).position().top;
-      let height = $(e).height(); 
+    var canvasEl = document.getElementById(this.containerId).querySelector('.canvas');
+
+    canvasEl.querySelectorAll('div').forEach(function(e,index){
+      
+      
+      let left = e.offsetLeft;
+
+      let width = e.offsetWidth; 
+      let top = e.offsetTop;
+      let height = e.offsetHeight; 
+
       if(left + width>maxWidth){
         maxWidth=left + width;
       } 
       if(top + height>maxHeight){
         maxHeight=top + height;
       } 
+
     });
-  
-    $('#' + this.containerId).find(".canvas").width(maxWidth);
-    $('#' + this.containerId).find(".canvas").height(maxHeight);
+
+    andflow_util.setStyle(canvasEl, 'width', maxWidth+'px');
+    andflow_util.setStyle(canvasEl, 'height', maxHeight+'px');
+     
     
   },
+
+  
   _onCanvasChanged: function () {
     var $this = this;
     setTimeout(function(){
@@ -2196,7 +2736,6 @@ var andflow = {
         $this.event_canvas_changed();
       }
     },50);
-   
     
   },
 
@@ -2232,6 +2771,7 @@ var andflow = {
     }
     return false;
   },
+
   //画连接线基础样式 
   _paintConnection: function (conn, link) {
     if (link == null) {
@@ -2260,7 +2800,7 @@ var andflow = {
       outlineStroke: 'transparent',
       outlineWidth: this._themeObj.default_link_outlineWidth,
     };
-    $.extend(paintStyle, ps);
+    paintStyle = andflow_util.extend(paintStyle, ps);
    
 
     var hoverPaintStyle ={ 
@@ -2270,7 +2810,7 @@ var andflow = {
       outlineStroke: 'transparent',
       outlineWidth: this._themeObj.default_link_outlineWidth_hover,
     };
-    $.extend(hoverPaintStyle, hps);
+    hoverPaintStyle = andflow_util.extend(hoverPaintStyle, hps);
     
    
     if( style == 'dotted' || (active != null && active == 'false')) {
@@ -2362,22 +2902,18 @@ var andflow = {
     conn.getOverlay('animation').length = this._themeObj.default_link_strokeWidth_g * 2;
     conn.getOverlay('animation').setVisible(false);
    
-    //连线文本信息
-    var linkLabel = $('<div/>')
-      .text(link.title || link.label || '')
-      .html();
+    //连线文本信息 
+    var linkLabel = link.title || link.label || '';
+
     conn.getOverlay('label').setVisible(linkLabel.length > 0);
     conn.getOverlay('label').setLabel(linkLabel);
     
-    var linkLabelSource = $('<div/>')
-    .text(link.label_source || '')
-    .html();
+    var linkLabelSource = link.label_source || '';
+
     conn.getOverlay('label_source').setVisible(linkLabelSource.length > 0);
     conn.getOverlay('label_source').setLabel(linkLabelSource);
     
-    var linkLabelTarget = $('<div/>')
-    .text(link.label_target || '')
-    .html();
+    var linkLabelTarget =  link.label_target || '';
    
     conn.getOverlay('label_target').setVisible(linkLabelTarget.length > 0);
     conn.getOverlay('label_target').setLabel(linkLabelTarget);
@@ -2456,7 +2992,7 @@ var andflow = {
     var instance = this;
     instance.containerId = containerId;
 
-    $.extend(instance, option);
+    instance = andflow_util.extend(instance, option);
 
     if (instance.flowModel == null) {
       instance.flowModel = {};
@@ -2490,6 +3026,7 @@ var andflow = {
 
     return instance;
   },
+
   //刷新
   refresh: function () {
     this.flowModel = this.getFlow();
@@ -2514,15 +3051,14 @@ var andflow = {
     this.flowModel.theme = theme || this.flowModel.theme || 'flow_theme_default';
     this._themeObj = flow_themes[this.flowModel.theme];
    
-    for (var k in flow_themes) {
-      $('#' + this.containerId)
-        .find('.andflow')
-        .removeClass(k);
-    }
-    $('#' + this.containerId)
-      .find('.andflow')
-      .addClass(this.flowModel.theme);
+    var andflowEl = document.getElementById(this.containerId).querySelector('.andflow');
     
+    for (var k in flow_themes) {
+      andflow_util.removeClass(andflowEl, k);
+       
+    }
+    andflow_util.addClass(andflowEl, this.flowModel.theme);
+     
     if(this._plumb){
       this._plumb.repaintEverything();
     }
@@ -2546,6 +3082,7 @@ var andflow = {
     }
     return null;
   },
+
   getMetadatas: function () {
     return this.metadata;
   },
@@ -2563,6 +3100,7 @@ var andflow = {
     }
     return null;
   },
+
   getDicts: function () {
     var dicts = this.getFlow().dict;
 
@@ -2572,18 +3110,24 @@ var andflow = {
   getActionInfo: function (id) {
     return this._actionInfos[id];
   },
+
   setActionInfo: function (action) { 
     this._actionInfos[action.id] = action; 
     //渲染
     this.renderAction(action);
   },
+
   renderAction: function (action) { 
     var $this = this;
-    var actionElement = $('#'+this.containerId + ' #' + action.id);
-    if(actionElement==0 || !actionElement.length || actionElement.length<=0){
+    
+    var actionElement = document.getElementById(action.id);
+    
+    if(!actionElement){
       return;
     }
+   
     var id = action.id;
+    
     if (id == null) {
       return;
     }
@@ -2593,6 +3137,7 @@ var andflow = {
       return;
     } 
 
+    
     var action_meta = this.getMetadata(name) || {};
 
     var title =  action.title || action.des || action_meta.title || action_meta.des || '';
@@ -2625,19 +3170,25 @@ var andflow = {
       body_width = action.body_width;
       body_height = action.body_height;
     }
-
+    
     //action
-    actionElement.find('.action').addClass(css); 
-    actionElement.find('.action').attr("title",title);
-    actionElement.find('.action').attr("name",name);
-    actionElement.find('.action').attr("icon",icon);
-
+    if(css&& css.length>0){
+      andflow_util.addClass(actionElement.querySelector('.action'),css); 
+    }
+    
+    andflow_util.setAttr(actionElement.querySelector('.action'), 'title', title);
+    andflow_util.setAttr(actionElement.querySelector('.action'), 'name', name);
+    andflow_util.setAttr(actionElement.querySelector('.action'), 'icon', icon);
+    
     //样式 
     for (var k in action_themes) { 
-      actionElement.removeClass(k);
+      andflow_util.removeClass(actionElement, k) 
     }   
-    actionElement.addClass(actionThemeName||""); 
+    if(actionThemeName && actionThemeName.length>0){
+      andflow_util.addClass(actionElement, actionThemeName);
+    }
     
+   
     //图标
     var iconImgPath = '';
     if(icon && icon.length > 0 && icon.indexOf("base64")>=0) {
@@ -2647,40 +3198,43 @@ var andflow = {
     } else {
       iconImgPath = ($this.img_path || '') + 'node.png'; 
     }
+   
     
-    actionElement.find('.action-icon img').attr("src",iconImgPath);
-    actionElement.find('.action-header').html(title);
-    actionElement.find('.action-header').html(title);
-    var bodystyle = '';
+    andflow_util.setAttr(actionElement.querySelector('.action-icon img'),'src', iconImgPath);
+    
+    if(actionElement.querySelector('.action-header')){
+      actionElement.querySelector('.action-header').innerHTML = title;
+    }
+    
+  
     if (this.flowModel.show_action_body == 'false') {
-      bodystyle = 'style="visibility: hidden"';
+       andflow_util.hide(actionElement.querySelector('.action-body'));
     }
-    actionElement.find('.action-body').addClass(bodystyle);
-
-    var contentstyle = '';
+   
     if (this.flowModel.show_action_content == 'false') {
-      contentstyle = 'style="visibility: hidden"';
-    }
-    actionElement.find('.action-content').addClass(contentstyle);
+       andflow_util.hide(actionElement.querySelector('.action-content'));
+    } 
+
+    
 
     //color
     if(border_color){
-      actionElement.get(0).style.setProperty("--action-border-color", border_color);
+      actionElement.style.setProperty("--action-border-color", border_color);
     }
-    if(header_color){
-      actionElement.get(0).style.setProperty("--action-header-color", header_color);
+    if(header_color){ 
+      actionElement.style.setProperty("--action-header-color", header_color);
     }
     if(header_text_color){
-      actionElement.get(0).style.setProperty("--action-header-text-color", header_text_color);
+      actionElement.style.setProperty("--action-header-text-color", header_text_color);
     }
     if(body_color){
-      actionElement.get(0).style.setProperty("--action-body-color", body_color);
+      actionElement.style.setProperty("--action-body-color", body_color);
     }
     if(body_text_color){
-      actionElement.get(0).style.setProperty("--action-body-text-color", body_text_color);
+      actionElement.style.setProperty("--action-body-text-color", body_text_color);
     }
 
- 
+    
     //content
     if(content){
       if(typeof content === 'string'){
@@ -2692,30 +3246,58 @@ var andflow = {
 
     
     //position
-    actionElement.css('position', 'absolute').css('left', left).css('top', top);
-    
-    //size
-    if (width && width.length > 0) {
-      actionElement.css("width",width);
-      actionElement.find(".action-master").css('width', width);
+    andflow_util.setStyle(actionElement, 'position', 'absolute');
+  
+    if(left && (left+"").indexOf('px')>=0){
+      andflow_util.setStyle(actionElement, 'left', left);
+    }else{
+      andflow_util.setStyle(actionElement, 'left', left+'px');
     }
-    if (height && height.length > 0) {
-      actionElement.css("height",height);
-      actionElement.find(".action-master").css('height', height);
+    if(top && (top+"").indexOf('px')>=0){ 
+      andflow_util.setStyle(actionElement, 'top', top);
+    }else{
+      andflow_util.setStyle(actionElement, 'top', top+'px');
+
+    }
+    //size 
+    if (width) { 
+    
+      if(width && (width+"").indexOf("px")>=0){
+        andflow_util.setStyle(actionElement.querySelector('.action-master'),'width',width); 
+      }else{
+        andflow_util.setStyle(actionElement.querySelector('.action-master'),'width',width+'px'); 
+      }
+
+    } 
+    if (height) { 
+      
+      if(height && (height+"").indexOf("px")>=0){
+        andflow_util.setStyle(actionElement.querySelector('.action-master'),'height',height); 
+      }else{
+        andflow_util.setStyle(actionElement.querySelector('.action-master'),'height',height+"px"); 
+      }
     }
 
     //body
     if (body_width && body_width.length > 0) {
-      actionElement.attr('body_width', body_width);
-      actionElement.find('.action-body').css('width', body_width);
+      andflow_util.setAttr(actionElement, 'body_width', body_width);
+      if(body_width.indexOf('px')<0){
+        body_width=body_width+'px';
+      }
+      andflow_util.setStyle(actionElement.querySelector('.action-body'), 'width', body_width);
     } else {
-      actionElement.find('.action-body').css('width', '');
+      andflow_util.setStyle(actionElement.querySelector('.action-body'), 'width', '');
     }
-    if (body_height && body_height.length > 0) {
-      actionElement.attr('body_height', body_height);
-      actionElement.find('.action-body').css('height', body_height);
+
+    if (body_height && body_height.length > 0) { 
+      andflow_util.setAttr(actionElement, 'body_height', body_height);
+      if(body_height.indexOf('px')<0){
+        body_height=body_height+'px';
+      }
+      andflow_util.setStyle(actionElement.querySelector('.action-body'), 'height', body_height);
+
     } else {
-      actionElement.find('.action-body').css('height', '');
+      andflow_util.setStyle(actionElement.querySelector('.action-body'), 'height', ''); 
     }
   },
   
@@ -2776,13 +3358,17 @@ var andflow = {
     //渲染
     this.renderGroup(group);
   },
+  
   renderGroup: function(group){
+
     var $this = this;
-    var groupElement = $('#' + $this.containerId + ' #' +group.id);
-    if(!groupElement || !groupElement.length || groupElement.length<=0){
+    
+    
+    var groupElement = document.getElementById(group.id);
+    if(!groupElement){
       return;
     }
- 
+   
     var id = group.id;
     var name = group.name;
 
@@ -2798,30 +3384,38 @@ var andflow = {
  
     var members = group.members || [];
 
-    for (var k in action_themes) { 
-      groupElement.removeClass(k);
+    for (var k in action_themes) {  
+      andflow_util.removeClass(groupElement,k);
     }    
-    groupElement.addClass(theme);
-   
+    if(theme && theme.length>0){
+      andflow_util.addClass(groupElement, theme);
+    }
+    
+    
     if(border_color){
-      groupElement.get(0).style.setProperty("--group-border-color", border_color);
+      groupElement.style.setProperty("--group-border-color", border_color);
     }
     if(header_color){
-      groupElement.get(0).style.setProperty("--group-header-color", header_color);
+      groupElement.style.setProperty("--group-header-color", header_color);
     }
     if(header_text_color){
-      groupElement.get(0).style.setProperty("--group-header-text-color", header_text_color);
+      groupElement.style.setProperty("--group-header-text-color", header_text_color);
     }
     if(body_color){
-      groupElement.get(0).style.setProperty("--group-body-color", body_color);
+      groupElement.style.setProperty("--group-body-color", body_color);
     }
     if(body_text_color){
-      groupElement.get(0).style.setProperty("--group-body-text-color", body_text_color);
+      groupElement.style.setProperty("--group-body-text-color", body_text_color);
     }
 
     //title\body
-    groupElement.find('.group-header').html(group.title || '');
-    groupElement.find('.group-body').html(group.des || '');
+    if(groupElement.querySelector('.group-header')){
+      groupElement.querySelector('.group-header').innerHTML = (group.title || '');
+    }
+    if(groupElement.querySelector('.group-body')){
+      groupElement.querySelector('.group-body').innerHTML = (group.des || '');
+    }
+    
 
 
     //位置
@@ -2829,26 +3423,32 @@ var andflow = {
     var padding_left=10;
     var padding_right=10;
     var padding_bottom=10;
+    
 
+    var canvasElement = document.querySelector('#' + $this.containerId + ' #canvas');
     //left
     if(group.left==null || group.left=="auto"){
       if(members.length>0){
         var minLeft = 9999999999999;
         
         for(var i in members){
-          let l = $("#"+members[i]).offset().left - canvasElement.offset().left;
+
+          let l = document.getElementById(members[i]).offsetLeft - canvasElement.offsetLeft;
+          
           if(minLeft>l){
             minLeft = l;
           }  
         }
         minLeft = minLeft - padding_left;
-        groupElement.css("left",minLeft+"px");
+        
+        andflow_util.setStyle(groupElement, 'left', minLeft+'px');
+        
       } 
     }else{
       if((group.left+"").indexOf("px")>=0){
-        groupElement.css("left", group.left);
+        andflow_util.setStyle(groupElement, 'left', group.left); 
       }else{
-        groupElement.css("left", group.left+"px");
+        andflow_util.setStyle(groupElement, 'left', group.left+'px');
       } 
     }
 
@@ -2858,19 +3458,21 @@ var andflow = {
         var minTop = 999999999;
 
         for(var i in members){
-          let t = $("#"+members[i]).offset().top - canvasElement.offset().top;
+
+          let t = document.getElementById(members[i]).offsetTop - canvasElement.offsetTop;
           if(minTop>t){
             minTop = t;
           }  
         }
         minTop = minTop - padding_top;
-        groupElement.css("top",minTop+"px");
+        andflow_util.setStyle(groupElement, 'top',minTop+"px" );
+        
       } 
     }else{ 
       if((group.top+"").indexOf("px")>=0){
-        groupElement.css("top", group.top);
+        andflow_util.setStyle(groupElement, 'top',group.top); 
       }else{
-        groupElement.css("top", group.top+"px");
+        andflow_util.setStyle(groupElement, 'top',group.top+'px'); 
       }
     }
 
@@ -2881,10 +3483,10 @@ var andflow = {
 
         for(var i in members){
 
-          $("#"+members[i]).find("div").each(function(index,el){
+          document.getElementById(members[i]).querySelectorAll("div").forEach(function(el,index){
             
-            let w = $(el).offset().left+$(el).width();
-            w = w - groupElement.position().left - canvasElement.offset().left;
+            let w = el.offsetLeft+ el.offsetWidth;
+            w = w - groupElement.offsetLeft - canvasElement.offsetLeft;
 
             if(w > maxWidth){
               maxWidth = w;
@@ -2893,13 +3495,13 @@ var andflow = {
         }
         maxWidth = maxWidth+padding_right;
 
-        groupElement.find(".group-main").width(maxWidth);
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),'width',maxWidth);
       } 
     }else{
       if((group.width+"").indexOf("px")>=0){
-        groupElement.find(".group-main").css("width", group.width);
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),"width", group.width); 
       }else{
-        groupElement.find(".group-main").css("width", group.width+"px"); 
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),"width", group.width+"px"); 
       }  
     }
 
@@ -2910,10 +3512,10 @@ var andflow = {
 
         for(var i in members){
 
-          $("#"+members[i]).find("div").each(function(index,el){
+          document.getElementById(members[i]).querySelector("div").forEach(function(el,index){
             
-            let h = $(el).offset().top+$(el).height();
-            h = h - groupElement.position().top - canvasElement.offset().top;
+            let h = el.offsetTop + el.offsetHeight;
+            h = h - groupElement.offsetTop - canvasElement.offsetTop;
 
             if(h > maxHeight){
               maxHeight = h;
@@ -2922,17 +3524,20 @@ var andflow = {
         }
         maxHeight = maxHeight+padding_bottom;
 
-        groupElement.find(".group-main").height(maxHeight);
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),'height', maxHeight);
       } 
     }else{
+
       if((group.height+"").indexOf("px")>=0){
-        groupElement.find(".group-main").css("height", group.height);
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),'height',group.height); 
       }else{
-        groupElement.find(".group-main").css("height", group.height+"px"); 
-      }  
+        andflow_util.setStyle(groupElement.querySelector(".group-main"),'height',group.height+'px');
+      }
+
     }
  
   },
+
   getGroupTitle: function(id){
     var group = this._groupInfos[id];
     return group.title;
@@ -2944,9 +3549,10 @@ var andflow = {
     }
     group.title = title;
     this._groupInfos[group.id] = group;
-    var groupEl = $('#'+this.containerId + ' #'+group.id);
-    groupEl.find('.group-header').html(group.title);
+    var groupEl = document.querySelector('#'+this.containerId + ' #'+group.id);
+    groupEl.querySelector('.group-header').innerHTML = group.title;
   },
+
   setGroupBorderColor: function(id, color){
     if(this._groupInfos[id]){
       this._groupInfos[id].border_color=color;
@@ -2984,13 +3590,15 @@ var andflow = {
     this._listInfos[list.id] = list; 
     this.renderList(list);
   },
+ 
   renderList: function(list){
     var $this = this;
 
-    var listElement = $('#' + $this.containerId+ ' #' + list.id);
-    if(!listElement || !listElement.length || listElement.length<=0){
+    var listElement = document.getElementById(list.id);
+    if(!listElement){
       return;
     }
+
     var id = list.id;
     var name = list.name;
     var meta = this.getMetadata(name) || {};
@@ -3008,40 +3616,43 @@ var andflow = {
     var top = list.top; 
 
     for (var k in action_themes) { 
-      listElement.removeClass(k);
+      andflow_util.removeClass(listElement, k); 
     }    
-    listElement.addClass(theme);
+    if(theme && theme.length>0){
+      andflow_util.addClass(listElement, theme);
+    } 
+ 
+    listElement.querySelector('.list-header').innerHTML = list.title||'';
 
-    listElement.find(".list-header").html(list.title||'');
-    
     if(border_color){
-      listElement.get(0).style.setProperty("--list-border-color", border_color);
+      listElement.style.setProperty("--list-border-color", border_color);
     }
     if(header_color){
-      listElement.get(0).style.setProperty("--list-header-color", header_color);
+      listElement.style.setProperty("--list-header-color", header_color);
     }
     if(header_text_color){
-      listElement.get(0).style.setProperty("--list-header-text-color", header_text_color);
+      listElement.style.setProperty("--list-header-text-color", header_text_color);
     }
     if(body_color){
-      listElement.get(0).style.setProperty("--list-body-color", body_color);
+      listElement.style.setProperty("--list-body-color", body_color);
     }
     if(body_text_color){
-      listElement.get(0).style.setProperty("--list-body-text-color", body_text_color);
+      listElement.style.setProperty("--list-body-text-color", body_text_color);
     }
     if(item_color){
-      listElement.get(0).style.setProperty("--list-item-color", item_color);
+      listElement.style.setProperty("--list-item-color", item_color);
     }
     if(item_text_color){
-      listElement.get(0).style.setProperty("--list-item-text-color", item_text_color);
+      listElement.style.setProperty("--list-item-text-color", item_text_color);
     }
 
     //width
     if(list.width!=undefined && list.width!=null){
       if((list.width+"").indexOf("px")>=0){
-        listElement.find(".list-main").css("width", list.width);
+        andflow_util.setStyle(listElement.querySelector(".list-main"), "width", list.width);
+        
       }else{
-        listElement.find(".list-main").css("width", list.width+"px"); 
+        andflow_util.setStyle(listElement.querySelector(".list-main"), "width", list.width+'px'); 
       }  
     }
 
@@ -3049,29 +3660,31 @@ var andflow = {
     if(list.height!=undefined && list.height!=null){
       
       if((list.height+"").indexOf("px")>=0){
-        listElement.find(".list-main").css("height", list.height);
+        andflow_util.setStyle(listElement.querySelector(".list-main"), "height", list.height); 
       }else{
-        listElement.find(".list-main").css("height", list.height+"px"); 
+        andflow_util.setStyle(listElement.querySelector(".list-main"), "height", list.height+'px'); 
+
       }  
     }
 
 
     //top
     if((top+"").indexOf("px")>=0){
-      listElement.css("top", top);
+      andflow_util.setStyle(listElement, 'top', top);
     }else{
-      listElement.css("top", top+"px");
+      andflow_util.setStyle(listElement, 'top', top+'px');
     }
     //left
     if((left+"").indexOf("px")>=0){
-      listElement.css("left", left);
+      andflow_util.setStyle(listElement, 'left', left);
     }else{
-      listElement.css("left", left+"px");
+      andflow_util.setStyle(listElement, 'left', left+'px');
     }
     //items
     $this._setListItems(id,items); 
  
   },
+
   getListTitle: function(id){
     return (this._listInfos[id]||{}).title;
   },
@@ -3082,9 +3695,9 @@ var andflow = {
     }
     list.title = title;
     this._listInfos[list.id] = list;
-    var listEl = $('#'+this.containerId + ' #'+list.id);
-    listEl.find('.list-header').html(list.title); 
+    document.getElementById(list.id).querySelector('.list-header').innerHTML = list.title||'';
   },
+
   getListItems: function(id){
     return (this._listInfos[id]||{}).items;
   },
@@ -3148,9 +3761,11 @@ var andflow = {
      //渲染
      this.renderTip(tip);
   },
+
   renderTip:function(tip){
-    var tipElement = $('#'+this.containerId + ' #' + tip.id);
-    if(tipElement==0 || !tipElement.length || tipElement.length<=0){
+
+    var tipElement = document.getElementById(tip.id);
+    if(!tipElement){
       return;
     }
 
@@ -3169,54 +3784,57 @@ var andflow = {
 
 
     for (var k in action_themes) { 
-      tipElement.removeClass(k);
+      andflow_util.removeClass(tipElement,k);
     }    
-    tipElement.addClass(theme);
+    if(theme && theme.length>0){
+      andflow_util.addClass(tipElement, theme);
+    }
+    
 
     //位置 
     //left
-    if((tip.left+"").indexOf("px")>=0){
-      tipElement.css("left", tip.left);
-    }else{
-      tipElement.css("left", tip.left+"px");
+    if((tip.left+"").indexOf("px")>=0){ 
+      andflow_util.setStyle(tipElement, 'left', tip.left);
+    }else{ 
+      andflow_util.setStyle(tipElement, 'left', tip.left+'px');
     } 
     //top
-    if((tip.top+"").indexOf("px")>=0){
-      tipElement.css("top", tip.top);
+    if((tip.top+"").indexOf("px")>=0){ 
+      andflow_util.setStyle(tipElement, 'top', tip.top);
     }else{
-      tipElement.css("top", tip.top+"px");
+      andflow_util.setStyle(tipElement, 'top', tip.top+'px'); 
     }
 
     //width 
     if((tip.width+"").indexOf("px")>=0){ 
-      tipElement.find(".tip-main").css("width", tip.width);
+      andflow_util.setStyle( tipElement.querySelector(".tip-main"), 'width', tip.width);
     }else{
-      tipElement.find(".tip-main").css("width", tip.width+"px"); 
+      andflow_util.setStyle( tipElement.querySelector(".tip-main"), 'width', tip.width+'px');
     }  
     
 
     //height 
-    if((tip.height+"").indexOf("px")>=0){
-      tipElement.find(".tip-main").css("height", tip.height);
-    }else{
-      tipElement.find(".tip-main").css("height", tip.height+"px"); 
+    if((tip.height+"").indexOf("px")>=0){ 
+      andflow_util.setStyle( tipElement.querySelector(".tip-main"), 'height', tip.height); 
+    }else{ 
+      andflow_util.setStyle( tipElement.querySelector(".tip-main"), 'height', tip.height+'px');
     }  
 
     //color
     if(border_color){
-      tipElement.get(0).style.setProperty("--tip-border-color",border_color);
+      tipElement.style.setProperty("--tip-border-color",border_color);
     }
     if(header_color){
-      tipElement.get(0).style.setProperty("--tip-header-color",header_color);
+      tipElement.style.setProperty("--tip-header-color",header_color);
     }
     if(header_text_color){
-      tipElement.get(0).style.setProperty("--tip-header-text-color",header_text_color);
+      tipElement.style.setProperty("--tip-header-text-color",header_text_color);
     }
     if(body_color){
-      tipElement.get(0).style.setProperty("--tip-body-color",body_color);
+      tipElement.style.setProperty("--tip-body-color",body_color);
     }
     if(body_text_color){
-      tipElement.get(0).style.setProperty("--tip-body-text-color",body_text_color);
+      tipElement.style.setProperty("--tip-body-text-color",body_text_color);
     }
 
     if(content){
@@ -3225,8 +3843,8 @@ var andflow = {
     
 
     //title\body
-    tipElement.find('.tip-header').html(tip.title || '');
-    tipElement.find('.tip-body').html(content||'' );
+    tipElement.querySelector('.tip-header').innerHTML = (tip.title || '');
+    tipElement.querySelector('.tip-body').innerHTML = (content||'' );
 
   },
   getTipTitle: function(id){
@@ -3237,9 +3855,10 @@ var andflow = {
   },
   setTipTitle: function(id, title){
     if(this._tipInfos[id]){
-      var tipElement = $('#'+this.containerId + ' #' + id); 
+
+      var tipElement = document.getElementById(id); 
       this._tipInfos[id].title = title;
-      tipElement.find('.tip-header').html(title || '');
+      tipElement.querySelector('.tip-header').innerHTML = (title || '');
     }
   },
   getTipContent: function(id){
@@ -3250,30 +3869,30 @@ var andflow = {
   },
   setTipContent: function(id, content){
     if(this._tipInfos[id]){
-      var tipElement = $('#'+this.containerId + ' #' + id); 
+      var tipElement = document.getElementById(id); 
       this._tipInfos[id].content = content;
-      tipElement.find('.tip-body').html(content || '');
+      tipElement.querySelector('.tip-body').innerHTML = (content || '');
     }
   },
   setTipBorderColor: function(id, color){
     if(this._tipInfos[id]){
-      var tipElement = $('#'+this.containerId + ' #' + id); 
+      var tipElement = document.getElementById(id); 
       this._tipInfos[id].border_color = color;
-      tipElement.get(0).style.setProperty("--tip-border-color",color);
+      tipElement.style.setProperty("--tip-border-color",color);
     }
   },
   setTipBodyColor: function(id, color){
     if(this._tipInfos[id]){
-      var tipElement = $('#'+this.containerId + ' #' + id); 
+      var tipElement = document.getElementById(id); 
       this._tipInfos[id].body_color = color;
-      tipElement.get(0).style.setProperty("--tip-body-color",color);
+      tipElement.style.setProperty("--tip-body-color",color);
     }
   },
   setTipBodyTextColor: function(id, color){
     if(this._tipInfos[id]){
-      var tipElement = $('#'+this.containerId + ' #' + id); 
+      var tipElement = document.getElementById(id); 
       this._tipInfos[id].body_text_color = color;
-      tipElement.get(0).style.setProperty("--tip-body-text-color",color);
+      tipElement.style.setProperty("--tip-body-text-color",color);
     }
   },
 
@@ -3283,7 +3902,7 @@ var andflow = {
 
   setLinkInfo: function (link) {
     var linkInfo = this._linkInfos[link.source_id + '-' + link.target_id];
-    $.extend(linkInfo, link); 
+    linkInfo = andflow_util.extend(linkInfo, link); 
     this._linkInfos[link.source_id + '-' + link.target_id] = linkInfo;
 
     this.renderLink(linkInfo);
@@ -3359,27 +3978,29 @@ var andflow = {
   //删除列表
   removeList: function(id){
     var $this = this;  
-    var element = $("#"+$this.containerId+" #"+id);
+    var element = document.getElementById(id);
     
     $this._plumb.remove(element);
-    element.remove();
+    
+    andflow_util.removeElement(element);
   },
 
   //删除Tip
   removeTip: function(id){
     var $this = this; 
     
-    var element = $("#"+$this.containerId+" #"+id);
+    var element = document.getElementById(id);
     
     $this._plumb.remove(element);
-    element.remove();
+    andflow_util.removeElement(element);
+
   },
   //删除节点
   removeAction: function (actionId) {
     var $this = this;
-    var element = $('#'+$this.containerId+' #canvas #' + actionId);
+    var element = document.getElementById(actionId);
 
-    if (element == null) {
+    if (!element) {
       return;
     }
 
@@ -3390,14 +4011,16 @@ var andflow = {
       var ms = groups[i].getMembers();
       for(var j in ms){
         if( ms[j].id == actionId ){ 
-          groups[i].remove(element.get(0),null,true);
+          groups[i].remove(element,null,true);
         }
       } 
     }
 
     //remove from canvas
     $this._plumb.remove(element);
-    $(element).remove();
+    
+    andflow_util.removeElement(element);
+
 
     var action_info = $this._actionInfos[actionId];
 
@@ -3481,9 +4104,9 @@ var andflow = {
   setEditable: function (editable) {
     this.editable = editable;
     if (this.editable == true) {
-      $('#' + this.containerId + ' .andflow').removeClass('state');
+      andflow_util.removeClass('#' + this.containerId + ' .andflow', 'state'); 
     } else {
-      $('#' + this.containerId + ' .andflow').addClass('state');
+      andflow_util.addClass('#' + this.containerId + ' .andflow', 'state'); 
     }
   },
   getEditable: function () {
@@ -3514,24 +4137,25 @@ var andflow = {
 
     //删除所有连线，重新画
     this._plumb.deleteEveryConnection();
-    $('.action').parent().each(function (i, e) {
-      $this._plumb.remove(e);
-      $this._plumb.remove($(e).children());
-      $(e).remove();
+    document.querySelectorAll('.action').forEach(function ( e,i) {
+      var act = e.parentElement;
+
+      $this._plumb.remove(act);
+      andflow_util.removeElement(act);
     });
 
-    $('.group').each(function (i, e) {
-      $this._plumb.remove(e);
-      $(e).remove();
+    document.querySelectorAll('.group').forEach(function (e,i) {
+      $this._plumb.remove(e); 
+      andflow_util.removeElement(e);
     });
-    $('.tip').each(function (i, e) {
-      $this._plumb.remove(e);
-      $(e).remove();
+    document.querySelectorAll('.tip').forEach(function (e,i) {
+      $this._plumb.remove(e); 
+      andflow_util.removeElement(e);
     });
     
-    $('.list-item').each(function (i, e) {
+    document.querySelectorAll('.list-item').forEach(function (e,i) {
       $this._plumb.remove(e);
-      $(e).remove();
+      andflow_util.removeElement(e);
     });
 
     //删除所有组，和成员节点
@@ -3539,7 +4163,7 @@ var andflow = {
     
 
     //清空画布
-    $('#canvas').html('');
+    document.getElementById('canvas').innerHtml = '';
     
     //建立节点
     var obj = this.flowModel;
@@ -3632,100 +4256,102 @@ var andflow = {
     this.flowModel.lists = lists;
     this.flowModel.links = links;
     this.flowModel.tips = tips;
-
+    
     return this.flowModel;
   },
-
   clearActionState: function () {
-    $('#' + this.containerId)
-      .find('.action')
-      .removeClass('error');
-    $('#' + this.containerId)
-      .find('.action')
-      .removeClass('execute');
-    $('#' + this.containerId)
-      .find('.action')
-      .removeClass('reject');
-    $('#' + this.containerId)
-      .find('.action')
-      .removeClass('success');
+    var actionEl = document.querySelector('#' + this.containerId+' .action');
+    andflow_util.removeClass(actionEl, 'error');
+    andflow_util.removeClass(actionEl, 'execute');
+    andflow_util.removeClass(actionEl, 'reject');
+    andflow_util.removeClass(actionEl, 'success');
+ 
   },
+
   setActionSelected: function (actionId, selected) {
-    if (actionId == null || actionId == '' || $('#' + actionId).length == 0) {
+    if (actionId == null || actionId == '' || !document.getElementById(actionId)) {
       return;
     }
+
     if (selected) {
-      $('#' + actionId).find(".action").addClass('selected');
+      andflow_util.addClass(document.getElementById(actionId).querySelector(".action"),'selected');
     } else {
-      $('#' + actionId).find(".action").removeClass('selected');
+      andflow_util.removeClass(document.getElementById(actionId).querySelector(".action"),'selected');
     }
   },
   
+ 
   //设置节点图标
   setActionIcon: function (actionId, action_icon) {
     if (action_icon != null && action_icon.length > 0) {
-      $('#' + actionId)
-        .find('.action-icon img')
-        .attr('src', this.img_path + action_icon);
+ 
+      andflow_util.setAttr(document.getElementById(actionId).querySelector('.action-icon img'),'src', this.img_path + action_icon) ;
     }
   },
+   
   //设置节点样式状态
   setActionState: function (actionId, state) {
     if (actionId == null || actionId == '') {
       return;
     }
 
-    var element = $('#' + this.containerId).find('#' + actionId).find('.action');
+    var element = document.getElementById(actionId).querySelector('.action');
 
     if (state == null || state == '' || state == 0) {
-      element.removeClass('error');
-      element.removeClass('execute');
-      element.removeClass('reject');
-      element.removeClass('success');
+      andflow_util.removeClass(element, 'error');
+      andflow_util.removeClass(element, 'execute');
+      andflow_util.removeClass(element, 'reject');
+      andflow_util.removeClass(element, 'success'); 
       return;
     }
  
     
     if (state == -1 || state == 'error') {
-      element.removeClass('error');
-      element.removeClass('execute');
-      element.removeClass('reject');
-      element.removeClass('success');
+      andflow_util.removeClass(element, 'error');
+      andflow_util.removeClass(element, 'execute');
+      andflow_util.removeClass(element, 'reject');
+      andflow_util.removeClass(element, 'success'); 
       
       if (!element.hasClass('error')) {
-        element.addClass('error');
+        andflow_util.addClass(element, 'error');
       }
     } else if (state == 1 || state == 'success') {
-      element.removeClass('error');
-      element.removeClass('execute');
-      element.removeClass('reject');
-      element.removeClass('success');
+      andflow_util.removeClass(element, 'error');
+      andflow_util.removeClass(element, 'execute');
+      andflow_util.removeClass(element, 'reject');
+      andflow_util.removeClass(element, 'success'); 
 
       if (!element.hasClass('success')) {
-        element.addClass('success');
+        andflow_util.addClass(element, 'success');
       }
-    } else if (state == 0 || state == 'reject') {
-      element.removeClass('error');
-      element.removeClass('execute');
-      element.removeClass('reject');
-      element.removeClass('success');
 
-      if (!element.hasClass('reject')) {
-        element.addClass('reject');
+    } else if (state == 0 || state == 'reject') {
+      andflow_util.removeClass(element, 'error');
+      andflow_util.removeClass(element, 'execute');
+      andflow_util.removeClass(element, 'reject');
+      andflow_util.removeClass(element, 'success'); 
+
+      if (!element.hasClass('reject')) { 
+        andflow_util.addClass(element, 'reject');
       }
     }
   },
 
+  
   //设置节点状态样式
   setActionStates: function (action_states) {
     if (action_states == undefined || action_states == null) {
       action_states = this._action_states;
     }
     this._action_states = action_states;
-    var elements = $('#' + this.containerId).find('.action');
-    elements.removeClass('success');
-    elements.removeClass('error');
-    elements.removeClass('execute');
+    var elements = document.querySelectorAll('#' + this.containerId+' .action');
+    elements.forEach(function(e, index){
+      andflow_util.removeClass(e, 'success');
+      andflow_util.removeClass(e, 'error');
+      andflow_util.removeClass(e, 'execute');
+      
+    });
+    
 
     var action_state_map = {};
     for (var k in action_states) {
@@ -3814,7 +4440,7 @@ var andflow = {
     this.flowModel.link_type = link_type;
     this.refresh();
   },
-
+ 
   //获取group
   getGroups: function(){
     var $this = this;
@@ -3825,7 +4451,7 @@ var andflow = {
     for(var i in gs){
       var item = gs[i];
       var id = item.id;
-      var el = $(item.getEl());
+      var el = item.getEl();
       var ms = item.getMembers(); 
       var group = $this._groupInfos[id];
       //children
@@ -3837,52 +4463,55 @@ var andflow = {
       }
 
       if(group.left!="auto"){ 
-        let left = el.css("left");
+        let left = el.offsetLeft;
         group.left = left;
       }
       if(group.top!="auto"){ 
-        let top = el.css("top");
+        let top = el.offsetTop;
         group.top = top;
       }
       if(group.width!="auto"){ 
-        let w = el.css('width');
+        let w = el.offsetWidth;
         group.width = w;
       }
       if(group.height!="auto"){ 
-        let h = el.css('height');
+        let h = el.offsetHeight;
         group.height = h;
       }
     
       groups.push(group);
     }
-
+    
 
     return groups;
   },
-
+  
   getLists: function(){
     var $this = this;
 
     var lists = [];
-    $("#"+$this.containerId + " #canvas").find(".list").each(function( index, e ){ 
 
-      var el = $(e);
-      var id = el.attr("id");
-      var item = $this._listInfos[id]||{id:el.attr("id"),left:"",top:"",width:"",height:""};
+    document.querySelectorAll("#"+$this.containerId + " #canvas"+" .list").forEach(function(el, index){ 
+ 
+      var id = el.id;
+
+      var item = $this._listInfos[id]||{id: id,left:"",top:"",width:"",height:""};
    
-      let ingroup = el.parent().hasClass("group-container");
+
+
+      let ingroup = el.parentElement.className.indexOf("group-container")>=0;
 
       if(ingroup){
         
-        item.left = (el.position().left+el.parent().position().left)+"px";
-        item.top = (el.position().top+ el.parent().position().top)+"px";
+        item.left = (el.offsetLeft+el.parentElement.offsetLeft)+"px";
+        item.top = (el.offsetTop+ el.parentElement.offsetTop)+"px";
       }else{ 
-        item.left = el.css("left"); 
-        item.top = el.css("top"); 
+        item.left = el.offsetLeft; 
+        item.top = el.offsetTop; 
       } 
 
-      item.width = el.css('width'); 
-      item.height = el.css('height');
+      item.width = el.offsetWidth; 
+      item.height = el.offsetHeight;
       
       lists.push(item);
     });
@@ -3896,25 +4525,24 @@ var andflow = {
     var $this = this;
 
     var tips = [];
-    $("#"+$this.containerId + " #canvas").find(".tip").each(function( index, e ){ 
-
-      var el = $(e);
-      var id = el.attr("id");
-      var item = $this._tipInfos[id]||{id:el.attr("id"),left:"",top:"",width:"",height:""};
+    document.querySelectorAll("#"+$this.containerId + " #canvas"+" .tip").forEach(function( el ,index){ 
+ 
+      var id = el.id;
+      var item = $this._tipInfos[id]||{id: id,left:"",top:"",width:"",height:""};
    
-      let ingroup = el.parent().hasClass("group-container");
+      let ingroup = el.parentElement.className.indexOf("group-container")>=0;
 
       if(ingroup){
         
-        item.left = (el.position().left+el.parent().position().left)+"px";
-        item.top = (el.position().top+ el.parent().position().top)+"px";
+        item.left = (el.offsetLeft+el.parentElement.offsetLeft)+"px";
+        item.top = (el.offsetTop+ el.parentElement.offsetTop)+"px";
       }else{ 
-        item.left = el.css("left"); 
-        item.top = el.css("top"); 
+        item.left = el.offsetLeft; 
+        item.top = el.offsetTop; 
       } 
 
-      item.width = el.css('width'); 
-      item.height = el.css('height');
+      item.width = el.offsetWidth;
+      item.height = el.offsetHeight;
       
       tips.push(item);
     });
@@ -3923,56 +4551,50 @@ var andflow = {
 
   },
 
+
   //获取Action节点
   getActions: function () {
     var $this = this;
     var actions = [];
-    var canvas = $('#'+this.containerId+' #canvas');
+    var canvas = document.querySelector('#'+this.containerId+' #canvas');
 
-    canvas.find('.action').each(function (index, element) {
+    canvas.querySelectorAll('.action').forEach(function (actionEl,index) {
 
-        var actionBox = $(element).parent();
-        var actionEl = $(element);
+      var actionBox = actionEl.parentElement; 
 
-        var id = actionBox.attr('id');
+      var id = actionBox.id;
 
-        var action = $this._actionInfos[id];
-        if (action == null) {
-          action = {};
-        }
-        
-        let ingroup = actionBox.parent().hasClass("group-container");
-
-
-        action['id'] = id;
-        action['name'] = actionEl.attr('name')||action.name;
-        action['title'] = actionEl.attr('title')||action.title;
-        action['icon'] = actionEl.attr('icon')||action.icon;
-        action['des'] = actionEl.attr('des')||action.des;
-        
-       
-        if(ingroup){
-          action['left'] = (actionBox.position().left + actionBox.parent().position().left)+"px";
-          action['top'] = (actionBox.position().top + actionBox.parent().position().top)+"px";
-        }else{
-          action['left'] = actionBox.position().left+"px";
-          action['top'] = actionBox.position().top+"px";
-        }
-
-        action['width'] = actionBox.css('width');
-        action['height'] = actionBox.css('height');
-        action['body_width'] = actionBox.attr('body_width');
-        action['body_height'] = actionBox.attr('body_height');
-         
-
-        actions.push(action);
-      });
-
-    for(var i in actions){
-      var id = actions[i].id;
-      //set action state\content
-    }
+      var action = $this._actionInfos[id];
+      if (action == null) {
+        action = {};
+      }
       
+      let ingroup = actionBox.parentElement.className.indexOf("group-container")>=0;
+
+
+      action['id'] = id;
+      action['name'] = andflow_util.getAttr(actionEl,'name')||action.name;
+      action['title'] = andflow_util.getAttr(actionEl,'title')||action.title;
+      action['icon'] = andflow_util.getAttr(actionEl,'icon')||action.icon;
+      action['des'] = andflow_util.getAttr(actionEl,'des')||action.des;
+      
+      
+      if(ingroup){
+        action['left'] = (actionBox.offsetLeft + actionBox.parentElement.offsetLeft)+"px";
+        action['top'] = (actionBox.offsetTop + actionBox.parentElement.offsetTop)+"px";
+      }else{
+        action['left'] = actionBox.offsetLeft+"px";
+        action['top'] = actionBox.offsetTop+"px";
+      }
+
+      action['width'] = actionBox.offsetWidth;
+      action['height'] = actionBox.offsetHeight;
+      action['body_width'] = andflow_util.getAttr(actionBox,'body_width');
+      action['body_height'] = andflow_util.getAttr(actionBox,'body_height');
+      
+      actions.push(action);
+    });
+  
     return actions;
   },
 
@@ -4095,22 +4717,26 @@ var andflow = {
     this.setLinkStates(this._link_states);
   },
 
+  
   //获取截图
   getSnapshot: function (callback, opts) {
-    if ($('#canvas').is(':hidden')) {
+      
+    if (!andflow_util.isVisible('#canvas')) {
+      
       return;
     }
-
+    
     var options = { backgroundColor: 'white', ignore_svg:false };
 
     if (opts) {
-      $.extend(options, opts);
+      options = andflow_util.extend(options, opts);
     }
 
-    const cardBox = document.querySelector('#canvas');
+    const cardBox = document.getElementById('canvas');
+
     const rect = cardBox.getBoundingClientRect();
-    const offsetX = $(cardBox).offset().left; 
-    const offsetY = $(cardBox).offset().top; 
+    const offsetX = cardBox.offsetLeft; 
+    const offsetY = cardBox.offsetTop; 
     const w = cardBox.scrollWidth;
     const h = cardBox.scrollHeight;
 
@@ -4118,8 +4744,8 @@ var andflow = {
     if(!options.ignore_svg){ 
       var nodesToRecover = [];
       var nodesToRemove = [];
-      var svgElem = $(cardBox).find('svg'); //divReport为需要截取成图片的dom的id
-      svgElem.each(function (index, node) {
+      var svgElems = cardBox.querySelectorAll('svg'); //divReport为需要截取成图片的dom的id
+      svgElems.forEach(function (node,index) {
         var parentNode = node.parentNode;
         var svg = node.outerHTML.trim();
         var subCanvas = document.createElement('canvas');
@@ -4179,31 +4805,31 @@ var andflow = {
         callback(cvs);
       }
     });
-    $(canvas).remove();
+    andflow_util.removeElement(canvas);
+    
   },
 
   //截图,并保存为
   snap: function (name) {
     var $this=this;
-
+   
     name = name || 'andflow';
 
     var ext = 'jpeg';
 
     this.getSnapshot(
       function (canvas) {
-      
+        
         var url = canvas.toDataURL('image/jpeg'); //生成下载的url
 
-        var triggerDownload = $('<a></a>')
-          .attr('href', url)
-          .attr('download', name + '.' + ext); // 把url放到我们的a标签中，并得到a标签对象
-        triggerDownload[0].click(); //模拟点击一下a标签，即可下载啦！
+        var triggerDownload = andflow_util.parseHtml('<a href="'+url+'" download="'+name + '.' + ext+'"></a>');
+        // 把url放到我们的a标签中，并得到a标签对象
+        triggerDownload.click(); //模拟点击一下a标签，即可下载啦！
+
       },
       { scale: 1, backgroundColor: 'white' ,ignore_svg: false}
     );
- 
-
+  
   }, 
 
   setActionContents: function (actioncontentMap) {
@@ -4222,19 +4848,20 @@ var andflow = {
     var action = this._actionInfos[action_id];
     return action.title;
   },
+
+
   setActionTitle:function(action_id, title){
     this._actionInfos[action_id].title = title;
-    $('#'+this.containerId+' #canvas').find("#"+action_id).find(".action-header").html(title);
+    document.getElementById(action_id).querySelector(".action-header").innerHTML = (title);
   },
   setActionTheme: function (action_id, theme) {
     this._actionInfos[action_id].theme = theme;
  
     for (var k in flow_themes) {
-      $('#' + this.containerId).find("#"+action_id).removeClass(k);
+      andflow_util.removeClass(document.getElementById(action_id),k)
     }
  
-    $('#' + this.containerId).find("#"+action_id).addClass(theme);
-    
+    andflow_util.addClass(document.getElementById(action_id), theme);  
     if(this._plumb){
       this._plumb.repaintEverything();
     }
@@ -4244,6 +4871,7 @@ var andflow = {
     var actioncontent = this._actionContents[action_id];
     return actioncontent;
   },
+ 
   setActionContent: function (action_id, content, content_type) {
     if(action_id==undefined || action_id==null || action_id=="" || this._actionInfos[action_id]==null){
       return;
@@ -4259,8 +4887,10 @@ var andflow = {
       return;
     }
     
-    var element = $('#' + this.containerId).find('#' + action_id + ' .action-content');
-
+    var element = document.getElementById(action_id).querySelector('.action-content');
+    if(!element){
+      return;
+    }
     switch (content_type) {
       case 'msg':
         if (this._actionCharts[action_id] != null) {
@@ -4268,24 +4898,25 @@ var andflow = {
           this._actionCharts[action_id] = null;
         }
 
-        element.html("<div class='action-msg'>" + content + '</div>');
+        element.innerHTML = ("<div class='action-msg'>" + content + '</div>');
 
         break;
       case 'keyvalue':
         var data = JSON.parse(content);
-        var grid = $('<table class="action-result-table" style="width:100%"></table>');
+        var grid = andflow_util.parseHtml('<table class="action-result-table" style="width:100%"></table>');
         for (var k in data) {
-          grid.append(
-            '<tr><td class="action-result-label">' +
+          var row= andflow_util.parseHtml('<tr><td class="action-result-label">' +
               k +
               '</td><td class="action-result-value">' +
               data[k] +
-              '</td></tr>',
-          );
+              '</td></tr>');
+
+          grid.appendChild(row);
         }
-        element.html('');
-        element.append(grid);
-        element.css('overflow-y', 'auto');
+
+        element.innerHTML = '';
+        element.appendChild(grid);
+        andflow_util.setStyle(element, 'overflow-y', 'auto');
         break;
       case 'grid':
         if (this._actionCharts[action_id] != null) {
@@ -4314,16 +4945,16 @@ var andflow = {
           }
         }
 
-        var grid = $('<table class="table" style="width:100%"></table>');
+        var grid = andflow_util.parseHtml('<table class="table" style="width:100%"></table>');
 
         //header
-        var headerEl = $('<tr></tr>');
+        var headerEl = andflow_util.parseHtml('<tr></tr>');
         for (var j in columns) {
           var title = columns[j].title || columns[j].name;
-          var colEl = $('<th>' + title + '</th>');
-          headerEl.append(colEl);
+          var colEl = andflow_util.parseHtml('<th>' + title + '</th>');
+          headerEl.appendChild(colEl);
         }
-        grid.append(headerEl);
+        grid.appendChild(headerEl);
 
         //body
         for (var i in datas) {
@@ -4337,29 +4968,30 @@ var andflow = {
           } else {
             rowDatas.push(row);
           }
-          var rowEl = $('<tr></tr>');
+          var rowEl = andflow_util.parseHtml('<tr></tr>');
           for (var j in rowDatas) {
             var val = rowDatas[j];
             if (val instanceof Object) {
               val = JSON.stringify(val);
             }
-            var colEl = $('<td>' + val + '</td>');
-            rowEl.append(colEl);
+            var colEl = andflow_util.parseHtml('<td>' + val + '</td>');
+            rowEl.appendChild(colEl);
           }
-          grid.append(rowEl);
+          grid.appendChild(rowEl);
         }
-        element.html('');
-        element.append(grid);
-        element.css('overflow-y', 'auto');
-
+        element.innerHTML = '';
+        element.appendChild(grid);
+        andflow_util.setStyle(element, 'overflow-y', 'auto');
+        
         break;
       case 'html':
+
         if (this._actionCharts[action_id] != null) {
           this._actionCharts[action_id].dispose();
           this._actionCharts[action_id] = null;
         }
 
-        element.html("<div class='action-html'>" + content + '</div>');
+        element.innerHTML = ("<div class='action-html'>" + content + '</div>');
 
         break;
       case 'chart':
@@ -4367,16 +4999,19 @@ var andflow = {
 
         var id = 'chart_' + action_id;
 
-        var charDom = element.find('#' + id);
-        var actionChart = this._actionCharts[action_id];
-        if (actionChart == null || charDom == null || charDom.length == 0) {
-          element.html("<div id='" + id + "' class='action-chart'></div>");
-          var w = element.width();
-          var h = element.height();
-          $('#' + id).width(w);
-          $('#' + id).height(h);
+        var charDom = element.querySelector('#' + id);
 
+        var actionChart = this._actionCharts[action_id];
+        if (actionChart == null || !charDom) {
+          element.innerHTML = "<div id='" + id + "' class='action-chart'></div>";
+          var w = element.offsetWidth;
+          var h = element.offsetHeight;
+          var charEl=element.querySelector('#'+id); 
+          andflow_util.setStyle(charEl,'width',w+'px');
+          andflow_util.setStyle(charEl,'height',h+'px'); 
+          
           actionChart = echarts.init(document.getElementById(id));
+
         }
         actionChart.setOption(option);
         this._actionCharts[action_id] = actionChart;
@@ -4390,9 +5025,7 @@ var andflow = {
         var data = JSON.parse(content);
         var url = data.url;
 
-        element.html(
-          '<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
-        );
+        element.innerHTML='<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>';
 
         break;
       case 'web':
@@ -4400,11 +5033,7 @@ var andflow = {
           this._actionCharts[action_id].dispose();
           this._actionCharts[action_id] = null;
         }
-        element.html(
-          '<iframe src="' +
-            content +
-            '" style="width:100%;height: 100%;" frameborder="0"></iframe>',
-        );
+        element.innerHTML= '<iframe src="' + content +'" style="width:100%;height: 100%;" frameborder="0"></iframe>';
 
         break;
       default:
@@ -4413,7 +5042,7 @@ var andflow = {
           this._actionCharts[action_id] = null;
         }
 
-        element.html( content );
+        element.innerHTML =  content;
 
         break;
     }
@@ -4449,22 +5078,21 @@ var andflow = {
     this.setActionContent(action_id, content, content_type);
   },
 
-    
   setActionBodyVisible: function (v) {
     this.flowModel.show_action_body = v ? 'true' : 'false';
     if (this.flowModel.show_action_body == 'false') {
-      $('#' + this.containerId + ' .action-body').hide();
+      andflow_util.hide(document.querySelector('#' + this.containerId + ' .action-body')); 
     } else {
-      $('#' + this.containerId + ' .action-body').show();
+      andflow_util.show(document.querySelector('#' + this.containerId + ' .action-body')); 
     }
   },
 
   setActionContentVisible: function (v) {
     this.flowModel.show_action_content = v ? 'true' : 'false';
     if (this.flowModel.show_action_content == 'false' || this.flowModel.show_action_content==false) {
-      $('#' + this.containerId + ' .action-content').hide();
+      andflow_util.hide(document.querySelector('#' + this.containerId + ' .action-content')); 
     } else {
-      $('#' + this.containerId + ' .action-content').show();
+      andflow_util.show(document.querySelector('#' + this.containerId + ' .action-content')); 
     }
-  },
+  }
 };

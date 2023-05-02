@@ -4312,7 +4312,7 @@ var andflow = {
       andflow_util.removeClass(element, 'reject');
       andflow_util.removeClass(element, 'success'); 
       
-      if (!element.hasClass('error')) {
+      if (element.className.indexOf('error')<0) {
         andflow_util.addClass(element, 'error');
       }
     } else if (state == 1 || state == 'success') {
@@ -4321,7 +4321,7 @@ var andflow = {
       andflow_util.removeClass(element, 'reject');
       andflow_util.removeClass(element, 'success'); 
 
-      if (!element.hasClass('success')) {
+      if (element.className.indexOf('success')<0) {
         andflow_util.addClass(element, 'success');
       }
 
@@ -4331,7 +4331,7 @@ var andflow = {
       andflow_util.removeClass(element, 'reject');
       andflow_util.removeClass(element, 'success'); 
 
-      if (!element.hasClass('reject')) { 
+      if (element.className.indexOf('reject')<0) { 
         andflow_util.addClass(element, 'reject');
       }
     }
@@ -4463,19 +4463,19 @@ var andflow = {
       }
 
       if(group.left!="auto"){ 
-        let left = el.offsetLeft;
+        let left = el.offsetLeft+"px";
         group.left = left;
       }
       if(group.top!="auto"){ 
-        let top = el.offsetTop;
+        let top = el.offsetTop+"px";
         group.top = top;
       }
       if(group.width!="auto"){ 
-        let w = el.offsetWidth;
+        let w = el.offsetWidth+"px";
         group.width = w;
       }
       if(group.height!="auto"){ 
-        let h = el.offsetHeight;
+        let h = el.offsetHeight+"px";
         group.height = h;
       }
     
@@ -4506,12 +4506,12 @@ var andflow = {
         item.left = (el.offsetLeft+el.parentElement.offsetLeft)+"px";
         item.top = (el.offsetTop+ el.parentElement.offsetTop)+"px";
       }else{ 
-        item.left = el.offsetLeft; 
-        item.top = el.offsetTop; 
+        item.left = el.offsetLeft+"px"; 
+        item.top = el.offsetTop+"px"; 
       } 
 
-      item.width = el.offsetWidth; 
-      item.height = el.offsetHeight;
+      item.width = el.offsetWidth+"px"; 
+      item.height = el.offsetHeight+"px";
       
       lists.push(item);
     });
@@ -4537,12 +4537,12 @@ var andflow = {
         item.left = (el.offsetLeft+el.parentElement.offsetLeft)+"px";
         item.top = (el.offsetTop+ el.parentElement.offsetTop)+"px";
       }else{ 
-        item.left = el.offsetLeft; 
-        item.top = el.offsetTop; 
+        item.left = el.offsetLeft+"px"; 
+        item.top = el.offsetTop+"px"; 
       } 
 
-      item.width = el.offsetWidth;
-      item.height = el.offsetHeight;
+      item.width = el.offsetWidth+"px";
+      item.height = el.offsetHeight+"px";
       
       tips.push(item);
     });
@@ -4587,8 +4587,8 @@ var andflow = {
         action['top'] = actionBox.offsetTop+"px";
       }
 
-      action['width'] = actionBox.offsetWidth;
-      action['height'] = actionBox.offsetHeight;
+      action['width'] = actionBox.offsetWidth+"px";
+      action['height'] = actionBox.offsetHeight+"px";
       action['body_width'] = andflow_util.getAttr(actionBox,'body_width');
       action['body_height'] = andflow_util.getAttr(actionBox,'body_height');
       

@@ -544,6 +544,8 @@ var andflow = {
     html += '</div>';
 
     var htmlEl = andflow_util.parseHtml(html);
+
+    document.getElementById(containerId).innerHTML = '';
     document.getElementById(containerId).appendChild(htmlEl);
 
     document.getElementById(containerId).style.position = document.getElementById(containerId).style.position||'relative';

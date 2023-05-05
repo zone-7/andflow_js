@@ -337,7 +337,26 @@ var andflow_util={
     index > -1 ? classArr.splice(index, 1) : null;
     obj.className = classArr.join(" ");
   },
+  hasClass:function (id, name) {
+    
+    var obj = id;
 
+    if(typeof id === 'string'){
+      obj = document.querySelector(id);
+    } 
+    if(!obj){
+      return;
+    }
+
+    if (name) {
+        if(obj.className && obj.className.indexOf(name)>=0){
+          return true;
+        } 
+    } else {
+        throw new Error("请传递一个有效的class类名");
+    };
+    return false;
+  },
   removeElement: function(id){
     var obj = id;
 
@@ -351,7 +370,13 @@ var andflow_util={
     if(parentNode){
       parentNode.removeChild(obj);
     } 
-  }
+  },
+  isMobile: function() {
+    let userAgentInfo = navigator.userAgent;
+    let Agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
+    let getArr = Agents.filter(i => userAgentInfo.includes(i));
+    return getArr.length ? true : false;
+  } 
  
 };
 
@@ -372,6 +397,13 @@ var andflow = {
 
   drag_step: 10, //拖拉步进，<=1表示可以任意拖拉
 
+  isMobile: false,
+
+  mousedown_event_name: 'mousedown',//touchstart
+  mouseup_event_name: 'mouseup',  //touchend
+  mousemove_event_name: 'mousemove', //touchmove
+  click_event_name:'click',//touchend
+  dblclick_event_name:'dblclick',
   //渲染器
   render_action: null,
   render_action_helper: null,
@@ -425,14 +457,6 @@ var andflow = {
   _timer_thumbnail: null, 
 
   _drag_name: null, 
-  _icon_nav:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHJJREFUWEftlkEKgDAMBNOfKeRj/muhPk1yEbVaFCm5TO/tDAMlKZZ8SjLfEKAABW4LuHs1s2nEF5V0YvYEgr9cJEJs/iFWPwlI2mHuHkWaB97KPN3vFkCAAhSgAAUokF0gdR8YAo/RLWk9jnB2QgpQYAN8cboh/l0GAAAAAABJRU5ErkJggg==',
-  _icon_eye:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC',
-  _icon_eye_close:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==',
-  _icon_cursor_hand:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAfJJREFUWEft1r+rz1Ecx/HHLdNdlGK4g1gw3IHUNRgw2GxSBuqSDErcJIv8GCySDAqDRUnXaiJhUTJQymJScv+A272Tgd51jo6P637P53z79o186vSp8/mc9/t5Xud93u/3hDE/E2P2768H2IRv+Nqq5DAKvMGu5PghjrRA9AWYxSS24XRy+Ap7E8B6vMCHWpg+AI9xqGM41ofzl535C7heA1ELcAWX8QhrCpASYBl3cRARG1cRc6HG0z/B1ALEDmOn+xCSf08GS4CYj+8ZtvQZMDH/2zNKgHC6FmexgK1Y6hKMGiB2nRXJ6v3C8E8ARMC9xjMcK3acz30oBU5iCns6Qfg26TizQlxFsMaIoIzRDHAfxzsO8jluSfOfKu56E0Ck2Ei1T9LdPt9RoMLvz1+aAM7hRkomYaCbB0YOcCDt/jn2p7QaaTiO4HMf760xEOn2PaaxE+96Oi1/bzqCMJCPYR6HxwGwLqmwEZsbpM/MzQqEgUgml3AHpxpVGAogdh6xEEUlxmIDRJTiHdjQWg1v4Qyu4WJPgAc4ittFB9W7GG1PKnzEiZSgajjyVf6C3Yh3cz9QtmO58RgEkW9R9I6hwIpPbTmOxVGY7iUrNetWDb5MU2OoJC9bsUEK/AeYw82ikR06BgZJ3vS9bww0OVlt0Q8nvokhubPnZQAAAABJRU5ErkJggg==',
-  _icon_cursor_auto:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAlZJREFUWEfV10vITWEUxvHfN1IkmRhgIERSiiRKuUwkjMhIbgMmQkpMhFIYuSdKiEgiyTXFRy7lOpOBXDKiyIARoaW1azvOOd85Ovsrq87ofc/7/Pd617P22l2YjiVYqrrYjdu4UCvRhS2YlhuqQpiLb5hSD+AntiZIVQDxkJsxA91lkcjAfwUwAu/xpc1UdSwD5zEGy/GgDYiOAdxK13xIiMstQnQUIDTDut+xDCdbgOg4wHo8SuE12NsDRMcBwk5D8BSD0sJh5UZRCUCI9cFDjMssRDbqRWUAhdg1zMp6WJy9pQxSOUCIHct3SjgjID6VCHoFIPS2Y2P2iIB4mRC9BhB6a7ELLzIjUSNh2/gFyB/R7rsgGlFEuKBZLMIJRMOKTFxvtLkqgNCbjSvZsALidD2IKgFCbxJuoh9W4UBvXUFZZ3hewUhswrbyYtUZKLQG4GpORFGg64qFqgCi4utFCM/D8WIGrQJgGF734JLCSd3NhtIY1WK9iPBwIxvGWuHxvviKG7jfBOT3/hBoZSwvhtZ6AEULjg64MwUPYQUm4FmzbJSfsIWs/ZWBmPfjDXgvrTY+D5mY88I+rK4KoOjv+/Eun34hzqZgXMFk9K8C4BQO4xwWYDTu4g7mp2B0v6j2lbm3Lse/XkHUTUzFU/EjTz6Sg+pYPMdAPMbH7IgdAwjxN1m8b0unzsGlvIooyIgd2ICoiSf1CNrNwMWcfGZm4dWeGdcQfWBojbsafvq1CzAKg2u/70oUUfF7cj0y9QpHEYX6uRMZ6MmqMSGfSUseTPGm//kFAJG9IcmEOX4AAAAASUVORK5CYII=',
-  _icon_drag_start:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAhxJREFUWEft1kvITHEYx/HPu2EhRYnEwpawkZV7IgrJZcEKJRGFhcsKK1m4RBZs3BZKSZIUC5QoiY0QCxYkykYWFoqe+o+OMTPv/z9nXi/lqWk6M8//PN/ze26nzyBb3yDH9x+grgJzcadOGksBxuEd9mNOJfCBBDIBb0qAcgHWYR8iwEEsw9YUdBvW4gXCLwAC6GwOSA5ABH2NpXiKW/iGiZUA33Eee7EQZzA+qdWRIwcg5A5rfG9PaoxsAtiBY+m3e/iM4Qn2Mi7iUzPNQAE8x1AswWhcwq5WaRkogI94hRnpiU9iDFZ1o0CjmKLAGhb1cK1yfQQ7K9cPcT0VYyN90TXzSgEuYD6uYnNOVSefSXhW8W+0bRFAHJqKl/haKcICjp+uxQCLU1vNxJqmLvgjAEcxAusRcoZVJS2FKFbgNu7WlL0K+e8BXEnFt7tU6zb+xQrEgolVu7JHAPFA77Eldw5EAcY8P5wWSx2OIfiA2BW/bchOo3h1muEbakKsQCyj6KbYEb9Yf7tgEW5gE053KcPbNLZbTtL+ACJmLJRIxx4cKoSIdo50zsKXVmdzAOLcNJxLIzneBwKok43FCczGctxv55wL0Dgf7RSvZsfxAI9Tu8b/UWwLMD35nEpFHGu5rZUCxI2imDamV7IpGIYniL0RQPGJtruZk65uAJrvOwqT8ahdnnutQM6DZfv0QoHsYHW6oFaQvzoFPwAAmG4hmL5K1gAAAABJRU5ErkJggg==',
-  _icon_code:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAf5JREFUWEftl79rFEEUx79v4FotQqwsTB1IZWmRNBYai0BiKRF2392hV8RKsDAH/gdy4e7NgmdrSCFoI0LSpEwRCLZerQimOzhunsw5e2zMSbjcJkvITbXszrz5zPf9mLeEggcVvD+mAKcUiKJokYjWAKwR0ax3kXNuKUmSvXHc5e0YY3bDmg6AxDm3/6+dUwDM/ArAm+xmOQAMzKnqlrX2Wdb2KIDvAO6o6vDEqlo/jwJE9DrdjIgWVfWntfbWWQAaaPestUvjyP6/uXEc73oA/11EThx6lAJTgGusQDZ3fRZcRBAS0Xyr1fo2zI5s5DLzWwDPw7sdEVnNIwvK5fI7VV0PtjZFpD4ECJVvxhizrKqPAMyENHxqrW3nARBF0QNjzOdg65iI9p1z26raIWYeBF1mfAWwXSqVdhqNxq88AJj5JoAqgIcA7p0oRIUDFO6CAoKwLiKbI7Og8DT0VGlMZOsAM98H0ALwPqWv1Wo3ut3uR7+m1+uttNvt32G9P92qMeZls9n85N9NfBkx8wffoADoiMicN1qtVhf6/f6hf3bO3U2S5CAAHAGY/3vxSTkXgGDYK+CL05fUf8w88GXWp5VKZdk590REHqfzJlZg0lpwtQDiOP7hm9EiWzLva87KfqlNaQi4DQAvANwOUX55bfmkATfu+umvWeEK/AFYAJFq0iBzXAAAAABJRU5ErkJggg==',
-  _icon_design:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBBJREFUWEfFl1mIXUUQhv86CAHBxzwEQXxRXNA4JLhBHBRUhEBccERRBLldDerkQSOCC+OOkkwEdZSuvkpQUDBRRxExuCGJGcVM4oYE9zyYgD4p+OTcLik9Zzj3zFnuBGQaDvfC6e7/66rqqjqEFR60wvroBGBmTinN9/v9+eXAOudOjTF+17WmFYCZlYj2qOoGALeLyEzXhvbeey8ppSuJaDWACRHZ2bSuEcDEATwoIg/0er2zsyz7DMB9IjLdBsHMzwM4S0TOZeZrAbzaBlELUBYvxLz3Z6jqXgDbROSxOghmPkhEFEI4p3jfBbEEoE68AvE+ADHLlCGY+SUA4wD+JKKJEMK3JYibAeyos8QQQJt4BeJtAC8WEM65l4noRBEZd849TkQbR4VYBGBmO9EaEfFlsZTSTIzx4vJpc3dYYO0kotNVdbWIXFI68XYAlzVBiMii7uKfXq+3Lsuy/UR0YQhhLhexANpVNXce6RYTcwC+F5H11Zjw3s+o6ngNxO8ANojIIVtTdQEDeArALQDuaRK3hcxscCeIyBVNt6IKwcz7AcyXrVwXhAbxrKruiDH26tyRix8vIhu78oJzbpqILs8Pu7csvsQCxWb5opuIaFPZHUT0gqqeD2CViGzqEi/FxBEAR+pc1ZaINgO4C8Dd5g4ielhVryGi40IIVy9D/HMAB6onL9a3pmLn3BYi2grAWVSrKsUYLbuNNJj5UwBfNok3uqC8u3NulojsGu4WkYmRlP8L0m8AfNImPhKABZwVlRDCUC7oqAd7AJwJYFpEHm2b21UN7apZ3l3OyT8GcEhVnyOi1+w3xritCaItCI9F/MM8Mf2bTb33F6iq7bNVRCy/LBlN1fBYxK1I/Vj1eQ7xJoD7RSRUCeoS0ZT5b5lm301Eh1X1PVW9taZ2mCXetWttZbQMsQTAe/96SumtGKOVz87BzO8AOArABMxyV4nIbHVhbomPAGwuQ9RZ4Id8k6+71L33c6p6GoCHAGxX1UtjjOaK2pFD7EsprS96zGoxOgnA4XK5bNqMmc2vfwD4CcAUEd0QQnilmG+dUJ07mNni4GhRYYcAnHPWSDwhInaHGwczv0FEf4UQbrRJzGzuusgaEeuEmtqwvOeYqu0H8o3uVVVrp62Fqh3MvAvA3yJyfXlCvrlVUkvd1pAMdcN14ra+aoHZLMs+CCE8bS8nJydXLSwsjA0GgzEiGkspnZJl2W8hhOvq6JjZegjLfHeIyJMld1i3NXTy4l0V4Ncsy7aklNYS0VoA9qwB8AuAL/LCMtSMVkGY+U4Aj6SUzuv3+181nbwWgJn3AThZVa29tufAYDA42O/3f+66ERV33AbgmeKjpi2oOz/NliNcnpv3mOuqiae63/8GMCr4igP8A88tOz9MyKreAAAAAElFTkSuQmCC',
   _connectionTypes: {
     Flowchart: {
       anchor: 'Continuous',
@@ -550,242 +574,11 @@ var andflow = {
 
     document.getElementById(containerId).style.position = document.getElementById(containerId).style.position||'relative';
 
-
-    //events
-    
-    
-    //nav button 
-    andflow_util.setStyle('#' + containerId+' .nav_btn', 'background-image','url(' + this._icon_nav + ')' ); 
-
-    andflow_util.setAttr('#' + containerId+' .nav_btn', 'state','open'); 
-
-    var containerEl= document.getElementById(containerId);
-    var navBtnEl = containerEl.querySelector('.nav_btn');
-
-    andflow_util.addEventListener(navBtnEl, 'click', function (e) {
-  
-        var state = andflow_util.getAttr('#' + $this.containerId+' .nav_btn','state');
-
-        if (state == 'open') {
- 
-          andflow_util.setAttr('#' + $this.containerId+' .nav_btn', 'state','close');
- 
-
-          andflow_util.addClass('#' + $this.containerId+' .andflow','fold');
-
-        } else {
-           andflow_util.setAttr('#' + $this.containerId+' .nav_btn', 'state','open');
- 
-
-          andflow_util.removeClass('#' + $this.containerId+' .andflow','fold');
-        }
-      });
-
-    //scale 
-    andflow_util.addEventListener(containerEl.querySelector('.scale_up_btn'), 'click', function (e) {
-
-        var value = document.querySelector('#' + $this.containerId+' .scale_value').innerHTML * 1.0;
-  
-
-        value = value + 1;
-        var v = value / 100.0; 
-
-        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(' + v + ')');
-        
- 
-        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = value;
-
-      });
-
-    andflow_util.addEventListener(containerEl.querySelector('.scale_down_btn'), 'click', function (e) {
-
-        var value = document.querySelector('#' + $this.containerId+' .scale_value').innerHTML * 1.0;
-
-
-        value = value - 1;
-        var v = value / 100.0;
-
-        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(' + v + ')');
-
-        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = value;
-
-      });
-
-    andflow_util.addEventListener(containerEl.querySelector('.scale_info'), 'click', function (e) {
- 
-        andflow_util.setStyle('#' + $this.containerId+' .canvas', 'transform', 'scale(1)');
- 
-        document.querySelector('#' + $this.containerId+' .scale_value').innerHTML = '100';
-
-      });
-
-    
-    //drag and move
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mousedown',function(e){
-      
-      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'true');
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
-      andflow_util.addClass('#' + containerId+' .canvas', 'canvas-move');
-
-      $this._resizeCanvas();
-
-    });
-
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseup',function(e){
-     
-      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
-      if(drag=="true"){
-        $this._onCanvasChanged();
-      }
- 
- 
-      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false');
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
-      andflow_util.removeClass('#' + containerId+' .canvas', 'canvas-move');
-
-    });
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseout',function(e){
-    
-      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false');
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', e.offsetX);
-      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', e.offsetY);
-
-    });
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mousemove',function(e){
-      
-      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
-
-      if(drag=="true"){
-        
-        let startX = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_x');
-        let startY = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_y');
-        
-        let offsetX = e.offsetX - startX;
-        let offsetY = e.offsetY - startY;
-         
-
-        scrollLeft = document.querySelector('#' + containerId+' .canvasContainer').scrollLeft - offsetX;
-        scrollTop = document.querySelector('#' + containerId+' .canvasContainer').scrollTop - offsetY;
-        document.querySelector('#' + containerId+' .canvasContainer').scrollLeft = scrollLeft;
-        document.querySelector('#' + containerId+' .canvasContainer').scrollTop = scrollTop;
-      }
-    });
-
-    //show code
-    andflow_util.setStyle('#'+containerId+' .code_btn','background-image','url('+$this._icon_code+')');
-
-    andflow_util.addEventListener(containerEl.querySelector('.code_btn'), 'click', function (e) {
-      
-      try{
-        
-        if(andflow_util.isVisible('#codeContainer')){
-          var txt = andflow_util.getValue('#codeContainer textarea')||"{}";
-          
-          var m = JSON.parse(txt); 
-           
-          andflow_util.hide('#codeContainer');
-
-          $this.showFlow(m); 
- 
-          andflow_util.setStyle('#'+containerId+' .code_btn', 'background-image','url('+$this._icon_code+')');
-
-        }else{
-          var code = $this.getFlow();
-          var content = JSON.stringify(code,null,'\t');
- 
-          andflow_util.show('#codeContainer');
-
-          andflow_util.setValue('#codeContainer textarea', content); 
-
-          andflow_util.setStyle('#'+containerId+' .code_btn', 'background-image','url('+$this._icon_design+')');
-
-        }
-
-      }catch(e){ 
-        console.error(e);
-      }
-
-    });
-
+    //nav button  
+    andflow_util.setAttr('#' + containerId+' .nav_btn', 'state','open');  
     //thumbnail
-    andflow_util.setStyle(containerEl.querySelector('.thumbnail_btn'),'background-image', 'url(' + this._icon_eye_close + ')');
-    andflow_util.setAttr(containerEl.querySelector('.thumbnail_btn'), 'state', 'close');
-     
-    andflow_util.addEventListener(containerEl.querySelector('.thumbnail_btn'), 'click', function (e) {
- 
-        var state = andflow_util.getAttr('#' + $this.containerId+' .thumbnail_btn', 'state');
-
-        if (state == 'open') {
-          andflow_util.setAttr('#' + $this.containerId+' .thumbnail_btn', 'state', 'close');
-
-          andflow_util.setStyle('#' + $this.containerId+' .thumbnail_btn', 'background-image', 'url(' + $this._icon_eye_close + ')'); 
-
-          andflow_util.hide('#' + $this.containerId + ' .flow_thumbnail');
-
-
-        } else {
-          andflow_util.setAttr('#' + $this.containerId+' .thumbnail_btn', 'state', 'open');
-
-          andflow_util.setStyle('#' + $this.containerId+' .thumbnail_btn', 'background-image', 'url(' + $this._icon_eye + ')'); 
-
-          andflow_util.show('#' + $this.containerId + ' .flow_thumbnail');
-
-          $this._showThumbnail();
-        }
-    });
- 
-    andflow_util.addEventListener(containerEl.querySelector('.flow_thumbnail_mask'),'mousedown',function (e) {
-        
-        var xx = e.pageX;
-        var yy = e.pageY;
+    andflow_util.setAttr('#'+containerId+' .thumbnail_btn', 'state', 'close');
        
-        andflow_util.addEventListener(containerEl,'mousemove',function (e) {
- 
-          var elSel='#' + $this.containerId+' .flow_thumbnail_mask';
-
-          var el = document.querySelector(elSel);
-          var parentEl = el.parentElement;
-          
-          if(el){ 
-            var x = e.pageX -  xx;
-            var y = e.pageY - yy; 
-
-            if(x<0){
-              x =0 ;
-            }
-            if(y<0){
-              y=0;
-            }
-
-            if(x+el.offsetWidth>parentEl.offsetWidth){ 
-              x = (parentEl.offsetWidth-el.offsetWidth); 
-            }
-            if(y+el.offsetHeight>parentEl.offsetHeight){
-              y= (parentEl.offsetHeight-el.offsetHeight);
-            }
-            
-            andflow_util.setStyle(elSel, 'left', x+'px');
-            andflow_util.setStyle(elSel, 'top', y+'px');
-             
-            var canvasEl = document.querySelector('#' + $this.containerId + ' .canvas');
-            var canvasContainerEl = canvasEl.parentElement;
-
-            var sca = canvasContainerEl.offsetWidth/el.offsetWidth;
- 
-
-            var l = el.offsetLeft * sca;
-            var t = el.offsetTop * sca; 
-
-            canvasContainerEl.scrollLeft = l;
-            canvasContainerEl.scrollTop = t;
-             
-
-          }
-          
-        });
-    });    
      
   }, 
 
@@ -854,39 +647,317 @@ var andflow = {
 
   },
 
-
-  _initEvents: function () {
-    var $this = this;
-    andflow_util.addEventListener(document.getElementById($this.containerId), 'mouseup',function (e) {
-      andflow_util.removeEventListener(this, 'mousemove');
  
-      andflow_util.setStyle('#' + $this.containerId, 'cursor','default');
+  _initEvents: function () {
+    var $this = this; 
+    var containerId = $this.containerId;
+    var containerEl= document.getElementById(containerId); 
 
-      $this._drag_name=null;
+    //nav btn
+    andflow_util.addEventListener(containerEl.querySelector('.nav_btn'), 'click', function (e) {
+  
+      var state = andflow_util.getAttr('#' + $this.containerId+' .nav_btn','state');
 
-      var drag_helperEl = document.getElementById('drag_helper');
+      if (state == 'open') { 
+        andflow_util.setAttr('#' +  containerId+' .nav_btn', 'state','close'); 
+        andflow_util.addClass('#' +  containerId+' .andflow','fold');
+        andflow_util.addClass('#' +  containerId+' .nav_btn','close');
+
+      } else {
+        andflow_util.setAttr('#' + containerId+' .nav_btn', 'state','open');  
+        andflow_util.removeClass('#' + containerId+' .andflow','fold');
+        andflow_util.removeClass('#' +  containerId+' .nav_btn','close');
+
+      }
+    });
+
+    //scale 
+    andflow_util.addEventListener(containerEl.querySelector('.scale_up_btn'), 'click', function (e) {
+
+        var value = document.querySelector('#' + containerId+' .scale_value').innerHTML * 1.0;
+  
+
+        value = value + 1;
+        var v = value / 100.0; 
+
+        andflow_util.setStyle('#' +  containerId+' .canvas', 'transform', 'scale(' + v + ')');
+        
+ 
+        document.querySelector('#' + containerId+' .scale_value').innerHTML = value;
+
+      });
+    //scale down
+    andflow_util.addEventListener(containerEl.querySelector('.scale_down_btn'), 'click', function (e) {
+
+        var value = document.querySelector('#' + containerId+' .scale_value').innerHTML * 1.0;
+
+
+        value = value - 1;
+        var v = value / 100.0;
+
+        andflow_util.setStyle('#' + containerId+' .canvas', 'transform', 'scale(' + v + ')');
+
+        document.querySelector('#' + containerId+' .scale_value').innerHTML = value;
+
+      });
+    //scale info  
+    andflow_util.addEventListener(containerEl.querySelector('.scale_info'), 'click', function (e) {
+ 
+        andflow_util.setStyle('#' +  containerId+' .canvas', 'transform', 'scale(1)');
+ 
+        document.querySelector('#' + containerId+' .scale_value').innerHTML = '100';
+
+      });
+
+    
+    //drag and move
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousedown_event_name,function(e){
+      
+      if(!e.target.className || e.target.className.indexOf('canvas')<0){
+        return;
+      }
+ 
+      var pageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var pageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+ 
+      var offsetX = e.offsetX;
+      var offsetY = e.offsetY;
+
+      if(!offsetX){
+        offsetX = pageX - andflow_util.getPageLeft('#' + containerId+' .canvas');
+      }
+      if(!offsetY){
+        offsetY = pageY - andflow_util.getPageTop('#' + containerId+' .canvas');
+      }
+ 
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'true');
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_x', offsetX);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'offset_y', offsetY);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'page_x', pageX);
+      andflow_util.setAttr('#' + containerId+' .canvas', 'page_y', pageY); 
+      andflow_util.addClass('#' + containerId+' .canvas', 'canvas-move');
+
+      $this._resizeCanvas();
+
+    });
+
+    //canvas mouseup
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mouseup_event_name,function(e){
+     
+      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
+      if(drag=="true"){
+        $this._onCanvasChanged();
+      }
+
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false'); 
+      andflow_util.removeClass('#' + containerId+' .canvas', 'canvas-move');
+      e.preventDefault();
+    });
+    //canvas mouse out
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseout',function(e){
+      
+      andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false'); 
+
+    });
+    //canvas mousemove
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousemove_event_name,function(e){
+      
+      var drag = andflow_util.getAttr('#' + containerId+' .canvas', 'drag');
+ 
+      if(drag=="true"){
+        
+ 
+        let startOffsetX = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_x');
+        let startOffsetY = andflow_util.getAttr('#' + containerId+' .canvas', 'offset_y');
+         
+        var endPageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+        var endPageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+        
+        var endOffsetX = e.offsetX;
+        var endOffsetY = e.offsetY; 
        
-      if(drag_helperEl){
-        andflow_util.removeElement(drag_helperEl) 
+        if(!endOffsetX){
+          endOffsetX = endPageX - andflow_util.getPageLeft('#' + containerId+' .canvas');
+
+        }
+        if(!endOffsetY){
+          endOffsetY = endPageY - andflow_util.getPageTop('#' + containerId+' .canvas');
+        }
+
+ 
+
+        let offsetX = endOffsetX - startOffsetX ;
+        let offsetY = endOffsetY - startOffsetY;
+   
+
+        scrollLeft = document.querySelector('#' + containerId+' .canvasContainer').scrollLeft - offsetX;
+        scrollTop = document.querySelector('#' + containerId+' .canvasContainer').scrollTop - offsetY;
+        document.querySelector('#' + containerId+' .canvasContainer').scrollLeft = scrollLeft;
+        document.querySelector('#' + containerId+' .canvasContainer').scrollTop = scrollTop;
+      }
+    });
+
+    //show code 
+    andflow_util.addEventListener(containerEl.querySelector('.code_btn'), 'click', function (e) {
+      
+      try{
+        
+        if(andflow_util.isVisible('#codeContainer')){
+          var txt = andflow_util.getValue('#codeContainer textarea')||"{}";
+          
+          var m = JSON.parse(txt); 
+           
+          andflow_util.hide('#codeContainer');
+
+          $this.showFlow(m); 
+ 
+          andflow_util.removeClass('#'+containerId+' .code_btn', 'design' ); 
+
+        }else{
+          var code = $this.getFlow();
+          var content = JSON.stringify(code,null,'\t');
+ 
+          andflow_util.show('#codeContainer');
+
+          andflow_util.setValue('#codeContainer textarea', content); 
+
+          andflow_util.addClass('#'+containerId+' .code_btn', 'design' );
+
+        }
+
+      }catch(e){ 
+        console.error(e);
       }
 
     });
 
-    andflow_util.addEventListener(document,'mouseup',function(e){
+    //thumbnail
+    // thumbnail_btn
+    andflow_util.addEventListener(containerEl.querySelector('.thumbnail_btn'), 'click', function (e) {
+ 
+        var state = andflow_util.getAttr('#' + containerId+' .thumbnail_btn', 'state');
 
-      var containerEl = document.getElementById($this.containerId);
-      andflow_util.removeEventListener(containerEl, 'mousemove');
+        if (state == 'open') {
+          andflow_util.setAttr('#' + containerId+' .thumbnail_btn', 'state', 'close');
+ 
+          andflow_util.hide('#' + containerId + ' .flow_thumbnail');
+
+          andflow_util.removeClass('#' +  containerId+' .thumbnail_btn', 'open'); 
+
+        } else {
+          andflow_util.setAttr('#' + containerId+' .thumbnail_btn', 'state', 'open');
+
+ 
+          andflow_util.show('#' +  containerId + ' .flow_thumbnail');
+
+          andflow_util.addClass('#' +  containerId+' .thumbnail_btn', 'open'); 
+
+
+          $this._showThumbnail();
+
+
+        }
+    });
+ 
+    //thumbnail_mask
+    andflow_util.addEventListener(containerEl.querySelector('.flow_thumbnail_mask'),$this.mousedown_event_name,function (e) {
+        
+        var xx = e.pageX;
+        var yy = e.pageY;
        
-      andflow_util.setStyle(containerEl, 'cursor','default');
+        andflow_util.addEventListener(containerEl, $this.mousemove_event_name ,function (e) {
+ 
+          var elSel='#' + containerId+' .flow_thumbnail_mask';
+
+          var el = document.querySelector(elSel);
+          var parentEl = el.parentElement;
+          
+          if(el){ 
+            var x = e.pageX -  xx;
+            var y = e.pageY - yy; 
+
+            if(x<0){
+              x =0 ;
+            }
+            if(y<0){
+              y=0;
+            }
+
+            if(x+el.offsetWidth>parentEl.offsetWidth){ 
+              x = (parentEl.offsetWidth-el.offsetWidth); 
+            }
+            if(y+el.offsetHeight>parentEl.offsetHeight){
+              y= (parentEl.offsetHeight-el.offsetHeight);
+            }
+            
+            andflow_util.setStyle(elSel, 'left', x+'px');
+            andflow_util.setStyle(elSel, 'top', y+'px');
+             
+            var canvasEl = document.querySelector('#' + containerId + ' .canvas');
+            var canvasContainerEl = canvasEl.parentElement;
+
+            var sca = canvasContainerEl.offsetWidth/el.offsetWidth;
+ 
+
+            var l = el.offsetLeft * sca;
+            var t = el.offsetTop * sca; 
+
+            canvasContainerEl.scrollLeft = l;
+            canvasContainerEl.scrollTop = t;
+             
+
+          }
+          
+        });
+    });    
+
+
+    andflow_util.addEventListener(document.getElementById(containerId), $this.mouseup_event_name,function (e) {
+      
+      if(e.target.className.indexOf('canvas')>=0){
+        
+        document.querySelectorAll('.canvas .focus').forEach(function(e){
+          andflow_util.removeClass(e, 'focus');
+        });
+
+      }
+
+      //helper
+      var drag_helperEl = document.getElementById('drag_helper'); 
+      if(drag_helperEl){
+         
+        //drop helper
+        var canvasEl = document.querySelector('#' + $this.containerId+ ' .canvas');
+
+        var ll = drag_helperEl.getAttribute("p_x")||10;
+        var tt = drag_helperEl.getAttribute("p_y")||10; 
+        
+        var pageX = drag_helperEl.getAttribute("page_x")||0;
+        var pageY = drag_helperEl.getAttribute("page_y")||0;
+       
+        if(pageX>=0 && pageY>=0){
+          var l = pageX - andflow_util.getPageLeft(canvasEl) - ll*1;
+          var t = pageY - andflow_util.getPageTop(canvasEl) - tt*1;
+            
+          if(l >= 0 && t>=0){
+            $this._dropComponent($this._drag_name,l,t);
+          }
+        } 
+        //remove helper 
+        andflow_util.removeElement(drag_helperEl) 
+      }
+      
+
+      //move event
+      andflow_util.removeEventListener(this, $this.mousemove_event_name);
+ 
+      andflow_util.setStyle('#' + $this.containerId, 'cursor','default');
 
       $this._drag_name=null;
-
-      var drag_helperEl = document.getElementById('drag_helper');
-      if(drag_helperEl){
-        andflow_util.removeElement(drag_helperEl);
-      }
  
-    })
+      
+    });
+ 
 
 
   },
@@ -1307,6 +1378,7 @@ var andflow = {
    * @param Data
    */
   _showMetadata: function (tag) {
+   
     var $this = this;
     var list = this.metadata;
     //先进行分组
@@ -1334,12 +1406,10 @@ var andflow = {
     for (var g in groups) {
       var openClass = index == 0 ? 'menu-is-opening menu-open' : '';
       var openBody = index == 0 ? '' : 'display:none';
+ 
+      var group_title_html =  '<li class="actionMenuGroup"  ><a href="#" class="group-title">' + g + '<i class="pull-right ico"></i></a></li>'; 
 
-      var html ='<div>';
-
-      html +=  '<li class="actionMenuGroup"  ><a href="#" class="group-title">' +
-        g +
-        '<i class="pull-right ico"></i></a></li>'; 
+      document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(group_title_html));
 
       var item = groups[g];
       for (var i in item) {
@@ -1352,7 +1422,7 @@ var andflow = {
           img = '<img src="' + ($this.img_path || '') + icon + '" draggable="false" />';
         }
 
-        var element_str =
+        var element_html =
           '<li id="' +
           name +
           '"  action_name="' +
@@ -1365,30 +1435,32 @@ var andflow = {
           img +
           title +
           '</a></li>';
-        html += element_str;
-      }
-      
-      html+='</div>';
- 
-      document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(html));
- 
+
+        document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(element_html));
+  
+       }
+       
+       
       index++;
     }
+    
     document.querySelectorAll('#actionMenu .actionMenuItem').forEach(function(item, index){
-      andflow_util.addEventListener(item, "mousedown", function(e){ 
+      
+      andflow_util.addEventListener(item, $this.mousedown_event_name, function(e){ 
+        
         //如果是编码状态不可拖动 
         if(andflow_util.isVisible('#codeContainer')){
           return;
         } 
         
         var name = this.getAttribute("action_name");
-       
+        
         $this._drag_name = name; 
-        andflow_util.addEventListener(document.querySelector('#' + $this.containerId+" .andflow"),'mousemove',function (e) {
+        andflow_util.addEventListener(document.querySelector('#' + $this.containerId+" .andflow"), $this.mousemove_event_name,function (e) {
           if($this._drag_name==null){
             return;
           }
-           
+             
           var endflowEl = document.querySelector('#' + $this.containerId+' .andflow');
   
           var helper =  document.getElementById('drag_helper');
@@ -1399,22 +1471,30 @@ var andflow = {
               return;
             }
             endflowEl.appendChild(helper);
-  
+             
           }
           
           var ll = helper.offsetWidth/2 || 10;
           var tt = helper.offsetHeight/2 || 10;
     
-          var x = e.pageX - andflow_util.getPageLeft(endflowEl) - ll;
-          var y = e.pageY - andflow_util.getPageTop(endflowEl) - tt;
-  
+
+          var pageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+          var pageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+          
+
+          var x = pageX - andflow_util.getPageLeft(endflowEl) - ll;
+          var y = pageY - andflow_util.getPageTop(endflowEl) - tt;
+           
   
           helper.style.left = x+"px";
           helper.style.top = y+"px";
           helper.setAttribute('p_x',ll);
           helper.setAttribute('p_y',tt);
-           
-  
+
+          helper.setAttribute('page_x',pageX); 
+          helper.setAttribute('page_y',pageY);
+
+          
         });
   
       });
@@ -1475,22 +1555,26 @@ var andflow = {
     helperEl.querySelectorAll('img').forEach(element => {
       element.setAttribute('draggable','false');
     });
+    
+    // andflow_util.addEventListener(helperEl, $this.mouseup_event_name,function(e){
+      
+    //   var canvasEl = document.querySelector('#' + $this.containerId+ ' .canvas');
 
-    andflow_util.addEventListener(helperEl, "mouseup",function(e){
-      var canvasEl = document.querySelector('#' + $this.containerId+ ' .canvas');
- 
-      var ll = helperEl.getAttribute("p_x")||10;
-      var tt = helperEl.getAttribute("p_y")||10; 
-     
-
-      var l = e.pageX - andflow_util.getPageLeft(canvasEl) - ll*1;
-      var t = e.pageY - andflow_util.getPageTop(canvasEl) - tt*1;
+    //   var ll = helperEl.getAttribute("p_x")||10;
+    //   var tt = helperEl.getAttribute("p_y")||10; 
+      
+      
+    //   var pageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+    //   var pageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+          
+    //   var l = pageX - andflow_util.getPageLeft(canvasEl) - ll*1;
+    //   var t = pageY - andflow_util.getPageTop(canvasEl) - tt*1;
        
-      if(l >= 0 && t>=0){
-        $this._dropComponent($this._drag_name,l,t);
-      }
+    //   if(l >= 0 && t>=0){
+    //     $this._dropComponent($this._drag_name,l,t);
+    //   }
  
-    });
+    // });
 
     return helperEl; 
 
@@ -1618,17 +1702,30 @@ var andflow = {
     }
     
     //event
-    andflow_util.addEventListener(groupElement, 'mouseup', function () {
+    andflow_util.addEventListener(groupElement, $this.mouseup_event_name, function (el) {
+      
+      //如果是移动就根据点击来显示编辑
+      if($this.editable && $this.isMobile){
+        document.querySelectorAll(".canvas .group.focus").forEach(function(e,index){ 
+          andflow_util.removeClass(e,'focus');  
+        });  
+        andflow_util.addClass(groupElement,'focus'); 
+      }
+
       $this._onCanvasChanged();
+
+      el.preventDefault();
     });
-    andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), 'click', function () {
+
+
+    andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), $this.click_event_name, function () {
       var sure = confirm('确定删除分组?');
       if (sure) {
         $this.removeGroup(id);
       }  
     });
  
-    andflow_util.addEventListener(groupElement.querySelector('.group-header'), 'dblclick',function(event){
+    andflow_util.addEventListener(groupElement.querySelector('.group-header'), $this.dblclick_event_name,function(event){
       if ($this.editable) { 
         event.preventDefault();
 
@@ -1676,7 +1773,7 @@ var andflow = {
       } 
     });
 
-    andflow_util.addEventListener(groupElement.querySelector('.group-body'), 'dblclick',function(event){
+    andflow_util.addEventListener(groupElement.querySelector('.group-body'), $this.dblclick_event_name,function(event){
       if ($this.editable) {
         event.preventDefault();
 
@@ -1715,21 +1812,28 @@ var andflow = {
 
     
     //group event
-   andflow_util.addEventListener( groupElement.querySelector('.group-resize'), 'mousedown',function (e) {
+   andflow_util.addEventListener( groupElement.querySelector('.group-resize'), $this.mousedown_event_name,function (e) {
       var containerEl = document.querySelector('#' + $this.containerId);
       containerEl.style.cursor = 'nwse-resize';
      
       var group_main = groupElement.querySelector(".group-master");
-      var x1 = e.pageX;
-      var y1 = e.pageY;
+      // var x1 = e.pageX;
+      // var y1 = e.pageY;
       
+      var x1 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var y1 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+
       
       var width = group_main.offsetWidth;
       var height = group_main.offsetHeight;
 
-      andflow_util.addEventListener(containerEl , 'mousemove',function (e) {
-        var x2 = e.pageX;
-        var y2 = e.pageY;
+      andflow_util.addEventListener(containerEl , $this.mousemove_event_name,function (e) {
+        // var x2 = e.pageX;
+        // var y2 = e.pageY;
+
+        var x2 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+        var y2 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
@@ -1788,10 +1892,17 @@ var andflow = {
    
    
     //event
-    andflow_util.addEventListener(listElement, 'mouseup', function () {
+    andflow_util.addEventListener(listElement, $this.mouseup_event_name, function () {
+      if ($this.editable && $this.isMobile) {
+        document.querySelectorAll('.focus').forEach(function(e){
+          andflow_util.removeClass(e,'focus');
+        });
+        andflow_util.addClass(listElement,'focus'); 
+      }
+
       $this._onCanvasChanged();
     });
-    andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), 'click', function () {
+    andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), $this.click_event_name, function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeList(id);
@@ -1801,21 +1912,28 @@ var andflow = {
     //resize
     var list_main = listElement.querySelector(".list-main");
 
-    andflow_util.addEventListener(listElement.querySelector('.list-resize'), 'mousedown',function (e) {
+    andflow_util.addEventListener(listElement.querySelector('.list-resize'),$this.mousedown_event_name,function (e) {
       
       var containerEl = document.getElementById($this.containerId);
       containerEl.style.cursor = 'nwse-resize'; 
 
-      var x1 = e.pageX;
-      var y1 = e.pageY;
+      // var x1 = e.pageX;
+      // var y1 = e.pageY;
+
+      var x1 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var y1 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
 
 
       var width = list_main.offsetWidth;
       var height = list_main.offsetHeight;
 
-      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
-        var x2 = e.pageX;
-        var y2 = e.pageY;
+      andflow_util.addEventListener(containerEl, $this.mousemove_event_name,function (e) {
+        // var x2 = e.pageX;
+        // var y2 = e.pageY;
+
+        var x2 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+        var y2 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
@@ -1835,7 +1953,7 @@ var andflow = {
       e.preventDefault();
     }); 
 
-    andflow_util.addEventListener(listElement.querySelector('.list-header'), 'dblclick',function(event){
+    andflow_util.addEventListener(listElement.querySelector('.list-header'), $this.dblclick_event_name,function(event){
      
       if ($this.editable) {
         
@@ -1890,7 +2008,7 @@ var andflow = {
 
     });
 
-    andflow_util.addEventListener(listElement.querySelector('.list-body'), 'dblclick',function(event){
+    andflow_util.addEventListener(listElement.querySelector('.list-body'), $this.dblclick_event_name,function(event){
       
       if ($this.editable) {
 
@@ -2150,7 +2268,7 @@ var andflow = {
       var epElement = andflow_util.parseHtml(epHtml); 
       andflow_util.addClass(epElement, 'ep');
 
-      actionElement.appendChild(epElement);
+      actionElement.querySelector(".action").appendChild(epElement);
       
       //resizer
       var resizerHtml = '<div class="action-resize"></div>'; //改变大小的三角形框
@@ -2200,66 +2318,86 @@ var andflow = {
       } 
     });
     //mouseup
-    andflow_util.addEventListener(actionElement, 'mouseup', function () {
+    andflow_util.addEventListener(actionElement, $this.mouseup_event_name, function () {
       $this._onCanvasChanged();
     });
 
-    andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), 'click', function () {
+    andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), $this.click_event_name, function () {
       var sure = confirm('确定删除该节点?');
       if (sure) {
         $this.removeAction(id);
       }
     });
 
+    andflow_util.addEventListener(actionElement, $this.mousedown_event_name, function (event) {
+      andflow_util.setAttr(actionElement, 'mousedown','true');
+      andflow_util.setAttr(actionElement, 'mousedown','true');
+      
+    });
     //双击打开配置事件,在设计模式和步进模式下才可以用
-    andflow_util.addEventListener(actionElement, 'click', function (event) {
-      if ($this.editable) {
+    andflow_util.addEventListener(actionElement, $this.mouseup_event_name, function (event) {
+      andflow_util.setAttr(actionElement, 'mousedown','false');
+      //如果是移动就根据点击来显示编辑
+      if($this.editable && $this.isMobile){
+        document.querySelectorAll(".canvas .focus").forEach(function(e,index){ 
+          andflow_util.removeClass(e,'focus');  
+        });
+
+        andflow_util.addClass(actionElement.querySelector(".action"),'focus'); 
+      }
+
+      if ($this.editable) { 
         if ($this.event_action_click && $this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
           $this._timer_action = setTimeout(function () {
             $this.event_action_click(action_meta, action);
           }, 300);
+
         } else if ($this.event_action_click) {
           $this.event_action_click(action_meta, action);
         }
       }
+       
+      
+      event.preventDefault();
+
     });
 
-    andflow_util.addEventListener(actionElement, 'dblclick', function (event) {
+    andflow_util.addEventListener(actionElement, $this.dblclick_event_name, function (event) {
+       
       if ($this.editable) {
         if ($this.event_action_dblclick) {
-          $this._timer_action && clearTimeout($this._timer_action);
-
+          $this._timer_action && clearTimeout($this._timer_action); 
           $this.event_action_dblclick(action_meta, action);
         }
       }
+
     });
 
-    andflow_util.addEventListener(actionElement, 'mouseover', function (e) {
-      if (name != 'end') {
-        andflow_util.show(this.querySelector('.ep'));
-      }
-    });
-
-    andflow_util.addEventListener(actionElement, 'mouseout', function (e) {
-      andflow_util.hide(this.querySelector('.ep'));
-    });
 
     //改变大小事件，鼠标按下去
-    andflow_util.addEventListener(actionElement.querySelector('.action-resize'), 'mousedown',function (e) {
+    andflow_util.addEventListener(actionElement.querySelector('.action-resize'), $this.mousedown_event_name,function (e) {
+       
       var containerEl = document.getElementById($this.containerId);
     
       containerEl.style.cursor = 'nwse-resize';
 
-      var x1 = e.pageX;
-      var y1 = e.pageY;
+      // var x1 = e.pageX;
+      // var y1 = e.pageY;
+      
+      var x1 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var y1 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
 
       var width = actionElement.querySelector(".action-master").offsetWidth;
       var height = actionElement.querySelector(".action-master").offsetHeight;
 
-      andflow_util.addEventListener(containerEl, 'mousemove',function (e2) {
-        var x2 = e2.pageX;
-        var y2 = e2.pageY;
+      andflow_util.addEventListener(containerEl, $this.mousemove_event_name,function (e2) {
+        // var x2 = e2.pageX;
+        // var y2 = e2.pageY;
+
+        var x2 = e2.targetTouches? e2.targetTouches[0].pageX: e2.pageX;
+        var y2 = e2.targetTouches? e2.targetTouches[0].pageY: e2.pageY;
+
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
@@ -2309,20 +2447,26 @@ var andflow = {
     });
 
     //改变Body大小事件，鼠标按下去
-    andflow_util.addEventListener(actionElement.querySelector('.body-resize'), 'mousedown',function (e) {
-
+    andflow_util.addEventListener(actionElement.querySelector('.body-resize'), $this.mousedown_event_name,function (e) {
+       
       var containerEl = document.getElementById($this.containerId); 
       containerEl.style.cursor = 'nwse-resize';
        
-      var x1 = e.pageX;
-      var y1 = e.pageY;
+      // var x1 = e.pageX;
+      // var y1 = e.pageY;
+
+      var x1 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var y1 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
 
       var width = actionElement.querySelector('.action-body').offsetWidth; 
       var height = actionElement.querySelector('.action-body').offsetHeight;
 
-      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
-        var x2 = e.pageX;
-        var y2 = e.pageY;
+      andflow_util.addEventListener(containerEl, $this.mousemove_event_name,function (e) {
+        // var x2 = e.pageX;
+        // var y2 = e.pageY; 
+
+        var x2 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+        var y2 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
@@ -2497,18 +2641,26 @@ var andflow = {
     });
 
     //event
-    andflow_util.addEventListener(tipElement,'mouseup', function () {
+    andflow_util.addEventListener(tipElement,$this.mouseup_event_name, function () {
+
+      if ($this.editable && $this.isMobile) {
+        document.querySelectorAll('.focus').forEach(function(e){
+          andflow_util.removeClass(e,'focus');
+        });
+        andflow_util.addClass(tipElement,'focus'); 
+      }
+
       $this._onCanvasChanged();
     });
 
-    andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'),'click', function () {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'),$this.click_event_name, function () {
       var sure = confirm('确定删除?');
       if (sure) {
         $this.removeTip(id);
       }  
     });
 
-    andflow_util.addEventListener(tipElement.querySelector('.tip-header'), 'dblclick',function(event){
+    andflow_util.addEventListener(tipElement.querySelector('.tip-header'), $this.dblclick_event_name,function(event){
       
       if ($this.editable) {
         
@@ -2553,7 +2705,7 @@ var andflow = {
         });
       } 
     });
-    andflow_util.addEventListener(tipElement.querySelector('.tip-body'),'dblclick',function(event){
+    andflow_util.addEventListener(tipElement.querySelector('.tip-body'), $this.dblclick_event_name,function(event){
        
       if ($this.editable) {
 
@@ -2597,7 +2749,7 @@ var andflow = {
 
   
     //event
-    andflow_util.addEventListener(tipElement.querySelector('.tip-resize'), 'mousedown',function (e) {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-resize'), $this.mousedown_event_name,function (e) {
       
       var containerEl = document.getElementById($this.containerId);
 
@@ -2605,16 +2757,24 @@ var andflow = {
 
       var tip_main = tipElement.querySelector(".tip-master");
 
-      var x1 = e.pageX;
-      var y1 = e.pageY;
+      // var x1 = e.pageX;
+      // var y1 = e.pageY;
       
+      var x1 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+      var y1 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+
       var width = tip_main.offsetWidth;
       var height = tip_main.offsetHeight;
 
 
-      andflow_util.addEventListener(containerEl, 'mousemove',function (e) {
-        var x2 = e.pageX;
-        var y2 = e.pageY;
+      andflow_util.addEventListener(containerEl, $this.mousemove_event_name,function (e) {
+        // var x2 = e.pageX;
+        // var y2 = e.pageY;
+
+
+        var x2 = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
+        var y2 = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
+
 
         var w = width + (x2 - x1);
         var h = height + (y2 - y1);
@@ -2993,6 +3153,15 @@ var andflow = {
   newInstance: function (containerId, option) {
     var instance = this;
     instance.containerId = containerId;
+
+    instance.isMobile = andflow_util.isMobile();
+    if(instance.isMobile){
+      instance.mousedown_event_name = 'touchstart';
+      instance.mouseup_event_name = 'touchend'; 
+      instance.mousemove_event_name = 'touchmove';
+      instance.click_event_name = 'touchend';
+      instance.dblclick_event_name = 'longtap';
+    }
 
     instance = andflow_util.extend(instance, option);
 

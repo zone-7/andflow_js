@@ -181,12 +181,12 @@
 
     var options={
         tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素
+        metadata:metadata,    //组件元素 
         flowModel:flowModel,  //流程模型
         img_path: "../img/meta/",
         editable:true,   //是否可编辑，默认true
         show_toolbar: true,
-        metadata_position: 'default', //top,left,default
+        metadata_position: 'top', //top,left,default
         render_action:function(metadata,action,html){ return html; },//节点渲染
         render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
         render_state_list: function(datas){return null},             //流程状态列表渲染

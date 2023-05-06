@@ -69,7 +69,6 @@ github: https://github.com/zone-7/andflow_go
 # 3.开发说明
 
 ## 3.1 相关js依赖
-* jquery
 * jsplumb
 * canvg.js
 * html2canvas.min.js
@@ -78,7 +77,6 @@ github: https://github.com/zone-7/andflow_go
 
 ### 3.2.1引用依赖js
 ```html
-<script src="/static/plugins/jquery/jquery.min.js"></script>
 <script src="/static/plugins/jsplumb/js/jsplumb.min.js"></script>
 <script src="/static/plugins/html2canvas/html2canvas.js"></script>
 <script src="/static/plugins/canvg/canvg.js"></script>

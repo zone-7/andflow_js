@@ -238,7 +238,7 @@ flow_theme_default
     display: none;
 }
 .action_theme_default .action.focus .ep{
-    display: none;
+    display: block;
 }
 
 /* selected */

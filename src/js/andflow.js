@@ -713,7 +713,7 @@ var andflow = {
     //drag and move
     andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousedown_event_name,function(e){
       
-      if(!e.target.className || e.target.className.indexOf('canvas')<0){
+      if(!e.target || !e.target.className || e.target.className.indexOf('canvas')<0){
         return;
       }
  
@@ -914,7 +914,7 @@ var andflow = {
 
     andflow_util.addEventListener(document.getElementById(containerId), $this.mouseup_event_name,function (e) {
       
-      if(e.target.className.indexOf('canvas')>=0){
+      if(e.target && e.target.className && e.target.className.indexOf('canvas')>=0){
         
         document.querySelectorAll('.canvas .focus').forEach(function(e){
           andflow_util.removeClass(e, 'focus');

@@ -275,7 +275,7 @@ flow_theme_default
     display: none;
 }
 .flow_theme_default .action.focus .ep{
-    display: none;
+    display: block;
 }
 
 

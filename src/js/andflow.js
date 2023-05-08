@@ -9,6 +9,19 @@
  *
  */
 var andflow_util={
+  uuid:function(){
+    var s = [];
+    var hexDigits = "0123456789abcdef";
+    for (var i = 0; i < 36; i++) {
+        s[i] = hexDigits.substring(Math.floor(Math.random() * 0x10), 1);
+    }
+    s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substring((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = "-";
+ 
+    var uuid = s.join("");
+    return uuid;
+  },
   extend:function (src,dst){
     if(src){
       for(var k in dst){
@@ -103,7 +116,7 @@ var andflow_util={
 
     if(callback){
       obj.removeEventListener(event, callback, useCapture);
-      removeEventList(obj, event, callback, useCapture);
+      andflow_util.removeEventList(obj, event, callback, useCapture);
     }else{
       var list = andflow_util.getEventList(obj, event);
       if(list && list.length>0){
@@ -135,6 +148,26 @@ var andflow_util={
     return !ret;
   },
   
+  getRect:function(element) { 
+      var rect = element.getBoundingClientRect();
+
+      var top = document.documentElement.clientTop;
+
+      var left= document.documentElement.clientLeft;
+
+      return{
+
+          top    :   rect.top - top,
+
+          bottom :   rect.bottom - top,
+
+          left   :   rect.left - left,
+
+          right  :   rect.right - left
+
+      }
+
+  },
   getPageLeft:function (e){
     if(typeof e === 'string'){
       e = document.querySelector(e);
@@ -143,11 +176,9 @@ var andflow_util={
     if(!e){
       return 0;
     }  
-    var l = e.offsetLeft - e.scrollLeft;
-    if(e.parentElement){
-      l += andflow_util.getPageLeft(e.parentElement);
-    }
-    return l;
+    return andflow_util.getRect(e).left + window.scrollX;
+
+  
 
   },
   getPageTop:function (e){
@@ -159,13 +190,8 @@ var andflow_util={
     if(!e){
       return 0;
     }
-
-    
-    var t = e.offsetTop - e.scrollTop;
-    if(e.parentElement){
-      t += andflow_util.getPageTop(e.parentElement);
-    }
-    return t;
+    return andflow_util.getRect(e).top + window.scrollY;
+     
 
   },
 
@@ -289,7 +315,7 @@ var andflow_util={
     }
     else if (window.getComputedStyle) //非IE
     {
-      propprop = prop.replace (/([A-Z])/g, "-$1");
+      let propprop = prop.replace (/([A-Z])/g, "-$1");
       propprop = prop.toLowerCase ();
       return document.defaultView.getComputedStyle(obj,null)[propprop];
     }
@@ -713,7 +739,7 @@ var andflow = {
     //drag and move
     andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousedown_event_name,function(e){
       
-      if(!e.target || !e.target.className || e.target.className.indexOf('canvas')<0){
+      if(!e.target || !e.target.className || !e.target.className.indexOf || e.target.className.indexOf('canvas')<0){
         return;
       }
  
@@ -790,8 +816,8 @@ var andflow = {
         let offsetY = endOffsetY - startOffsetY;
    
 
-        scrollLeft = document.querySelector('#' + containerId+' .canvasContainer').scrollLeft - offsetX;
-        scrollTop = document.querySelector('#' + containerId+' .canvasContainer').scrollTop - offsetY;
+        var scrollLeft = document.querySelector('#' + containerId+' .canvasContainer').scrollLeft - offsetX;
+        var scrollTop = document.querySelector('#' + containerId+' .canvasContainer').scrollTop - offsetY;
         document.querySelector('#' + containerId+' .canvasContainer').scrollLeft = scrollLeft;
         document.querySelector('#' + containerId+' .canvasContainer').scrollTop = scrollTop;
       }
@@ -914,12 +940,10 @@ var andflow = {
 
     andflow_util.addEventListener(document.getElementById(containerId), $this.mouseup_event_name,function (e) {
       
-      if(e.target && e.target.className && e.target.className.indexOf('canvas')>=0){
-        
+      if(e.target && e.target.className && e.target.className.indexOf && e.target.className.indexOf('canvas')>=0){
         document.querySelectorAll('.canvas .focus').forEach(function(e){
           andflow_util.removeClass(e, 'focus');
         });
-
       }
 
       //helper
@@ -1039,28 +1063,30 @@ var andflow = {
     var $this = this;
          
     var metaInfo = $this.getMetadata(name);
-     
+    if(!metaInfo){
+      return;
+    } 
     if(metaInfo.tp=="group"){
-      var groupId = 'group_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var groupId = 'group_'+andflow_util.uuid().replaceAll('-', '');
       var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
       
 
       $this._createGroup(group);
 
     }else if(metaInfo.tp=="list"){
-      var listId = 'list_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var listId = 'list_'+andflow_util.uuid().replaceAll('-', '');
       var list = { id: listId, name:metaInfo.name, left: left, top: top, items:[]};
         
       $this._createList(list);
 
     }else if(metaInfo.tp=="tip"){
-      var tipId = 'tip_'+jsPlumbUtil.uuid().replaceAll('-', '');
+      var tipId = 'tip_'+andflow_util.uuid().replaceAll('-', '');
       var tip = { id: tipId, name:metaInfo.name, left: left, top: top, content:""};
         
       $this._createTip(tip);
 
     }else{
-      var actionId = jsPlumbUtil.uuid().replaceAll('-', '');
+      var actionId = andflow_util.uuid().replaceAll('-', '');
       var action = { id: actionId, left: left, top: top, name: name, params: {} };
       
       if (metaInfo != null) {
@@ -1608,19 +1634,18 @@ var andflow = {
       //render
       if(group.render){
 
-        var r = group.render(group_meta, group, group_main_html);
-
+        let r = group.render(group_meta, group, group_main_html); 
         if (r && r.length > 0) {
           group_main_html = r;
         }
       }else if(group_meta.render){
-        var r = group_meta.render(group_meta, group, group_main_html);
+        let r = group_meta.render(group_meta, group, group_main_html);
         if (r && r.length > 0) {
           group_main_html = r;
         }
       } 
 
-      group_main_element = andflow_util.parseHtml(group_main_html); 
+      var group_main_element = andflow_util.parseHtml(group_main_html); 
 
       //removebtn 
       group_main_element.appendChild(andflow_util.parseHtml('<div class="group-remove-btn">X</div>'));
@@ -1630,7 +1655,7 @@ var andflow = {
       //endpoint
       var epHtml = '<div class="group-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
       if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_meta, action, epHtml);
+        var epr = $this.render_endpoint(group_meta, group, epHtml);
         if (epr && epr.length > 0) {
           epHtml = epr;
         }
@@ -1680,8 +1705,8 @@ var andflow = {
     $this._plumb.draggable(groupElement,{
       stop:function(event){
         if($this.drag_step>1){
-          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
-          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          var x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          var y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
           andflow_util.setStyle(event.el, 'left', x+'px');
           andflow_util.setStyle(event.el, 'top', y+'px'); 
 
@@ -2075,8 +2100,8 @@ var andflow = {
     $this._plumb.draggable(listElement, {
       stop:function(event){
         if($this.drag_step>1){
-          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
-          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          var x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          var y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
           
           andflow_util.setStyle(event.el, 'left', x+'px');
           andflow_util.setStyle(event.el, 'top', y+'px');
@@ -2247,7 +2272,7 @@ var andflow = {
       var render = action.render || action_meta.render || $this.render_action;
 
       if(render){
-        var r = render(action_meta, action, action_main_html);
+        let r = render(action_meta, action, action_main_html);
         if (r && r.length > 0) {
           action_main_html = r;
         }
@@ -2514,8 +2539,8 @@ var andflow = {
     this._plumb.draggable(el, {
       stop:function(event){
         if($this.drag_step>1){
-          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
-          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          var x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          var y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
           andflow_util.setStyle(event.el, "left", x+"px");
           andflow_util.setStyle(event.el, "top", y+"px");
         }
@@ -2572,29 +2597,29 @@ var andflow = {
 
       //render
       if(tip.render){
-        var r = tip.render(tip_meta, tip, tip_main_html);
+        let r = tip.render(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
           tip_main_html = r;
         }
       }else if(tip_meta.render){
-        var r = tip_meta.render(tip_meta, tip, tip_main_html);
+        let r = tip_meta.render(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
           tip_main_html = r;
         }
       }else if ($this.render_tip) {
-        var r = $this.render_tip(tip_meta, tip, tip_main_html);
+        let r = $this.render_tip(tip_meta, tip, tip_main_html);
         if (r && r.length > 0) {
           tip_main_html = r;
         }
       }
-      tip_main_element = andflow_util.parseHtml(tip_main_html); 
+      var tip_main_element = andflow_util.parseHtml(tip_main_html); 
       andflow_util.addClass(tip_main_element, "tip-master");
       tipElement.appendChild(tip_main_element);
   
       //endpoint
       var epHtml = '<div class="tip-ep" title="拖拉连线">→</div>'; //拖拉连线焦点
       if ($this.render_endpoint) {
-        var epr = $this.render_endpoint(action_meta, tip, epHtml);
+        var epr = $this.render_endpoint(tip_meta, tip, epHtml);
         if (epr && epr.length > 0) {
           epHtml = epr;
         }
@@ -2618,8 +2643,8 @@ var andflow = {
     this._plumb.draggable(tipElement, {
       stop:function(event){
         if($this.drag_step>1){
-          x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
-          y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
+          var x = Math.round(event.pos[0]/$this.drag_step) * $this.drag_step;
+          var y = Math.round(event.pos[1]/$this.drag_step) * $this.drag_step; 
           andflow_util.setStyle(event.el, 'left', x+'px');
           andflow_util.setStyle(event.el, 'top', y+'px');
 

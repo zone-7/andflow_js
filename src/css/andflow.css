@@ -223,8 +223,7 @@ div{
 
 .andflow .actionMenuGroup{
     margin-top: 10px;
-
-
+    text-align: left; 
 }
 .andflow .actionMenuGroup>a{
     cursor:default;

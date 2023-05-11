@@ -13,6 +13,8 @@ flow_theme_default
     --default-action-border-color-custom: #b67fb6;
     --default-action-body-color: white;
     --default-action-body-text-color: #808080;
+    --default-action-content-color: transparent; 
+
     --default-action-header-color: #007bff;
     --default-action-header-text-color: none; 
 
@@ -296,12 +298,15 @@ flow_theme_default
     color: var(--action-header-text-color, white);
     text-align: left;
     padding: 0px;
+    padding-top: 0px;
+    padding-bottom:0px ;  
     padding-left: 5px;
     padding-right:20px ;
     height: 20px;
     width: 100%; 
     overflow: hidden;
     border-radius: 3px;
+    border-left:0px;
     font-weight: bold;
     font-size: 10px; 
     transform: inherit;
@@ -346,6 +351,7 @@ flow_theme_default
     width: 100%;
     height: 100%;
     overflow: auto;
+    background-color: var(--action-content-color,var(--default-action-content-color)); 
     color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_default .action-html{
@@ -1253,6 +1259,9 @@ flow_theme_icon
     text-align: center;
     padding-top: 5px;
     padding-bottom:5px ;
+    padding-left: 0px;
+    padding-right: 0px;
+
     width: 100%;
     height: 20px;
     overflow: visible;
@@ -1291,6 +1300,8 @@ flow_theme_icon
     width: 100%; 
     height: auto;
     background-color: transparent;
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
+
     border-radius: 0px;
     overflow: hidden;
 }
@@ -1301,7 +1312,8 @@ flow_theme_icon
     width: 100%;
     height: auto;
     overflow: auto;
-    color: #808080  var(--action-body-text-color,var(--default-action-body-text-color));
+    background-color: var(--action-content-color,var(--default-action-content-color)); 
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_icon .action-html{
     height: 100%;
@@ -2214,6 +2226,8 @@ flow_theme_zone
     text-align: center;     
     padding-left: 0px;
     padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     width: 20px;
     height: 100%;
     left: 0px;
@@ -2253,6 +2267,8 @@ flow_theme_zone
     top: 0px;
     left: 0px;
     background-color: var(--action-body-color,var(--default-action-body-color));
+    color: var(--action-body-text-color,var(--default-action-body-text-color));
+
     border-radius: 3px;
     overflow: hidden;
 }
@@ -2263,6 +2279,7 @@ flow_theme_zone
     width: 100%;
     height: 100%;
     overflow: auto;
+    background-color: var(--action-content-color,var(--default-action-content-color)); 
     color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 .flow_theme_zone  .action-html{
@@ -3157,13 +3174,20 @@ flow_theme_zone
     z-index: 21;
     left: 30%;
     top:50%; 
+    padding: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
     transform: translate(0%, -50%);
     text-align: center; 
     width: 70%;  
+    height: auto;
     overflow: hidden;
     border-radius: 10px;
     font-weight: bold;
     font-size: 10px;
+    border: 0px;
     color: var(--action-header-text-color,var(--default-action-border-color));
     background-color: transparent;
 }
@@ -3197,7 +3221,7 @@ flow_theme_zone
     height: auto;
     left: 0px;
     top: calc(100% + 10px);
-    background-color: var(--action-body-color,var(--default-action-body-color));
+    background-color: transparent;
     color: var(--action-body-text-color,var(--default-action-body-text-color));
     border-radius: 10px;
     overflow: hidden;
@@ -3208,6 +3232,7 @@ flow_theme_zone
     width: 100%;
     height: 100%;
     overflow: auto;
+    background-color: var(--action-content-color,var(--default-action-content-color)); 
     color: var(--action-body-text-color,var(--default-action-body-text-color));
 }
 

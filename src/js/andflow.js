@@ -1,13 +1,4 @@
-/*!
- * andflow.js v1.0.0
- * @url https://github.com/zone-7/andflow_js
- * @date 2021-11-17
- * @author zone-7
- * @email 502782757@qq.com
- *
- * Released under the MIT License
- *
- */
+
 var andflow_util={
   uuid: function () {
     function S4() {
@@ -142,23 +133,23 @@ var andflow_util={
   },
   
   getRect:function(element) { 
-      var rect = element.getBoundingClientRect();
+    var rect = element.getBoundingClientRect();
 
-      var top = document.documentElement.clientTop;
+    var top = document.documentElement.clientTop;
 
-      var left= document.documentElement.clientLeft;
+    var left= document.documentElement.clientLeft;
 
-      return{
+    return{
 
-          top    :   rect.top - top,
+        top    :   rect.top - top,
 
-          bottom :   rect.bottom - top,
+        bottom :   rect.bottom - top,
 
-          left   :   rect.left - left,
+        left   :   rect.left - left,
 
-          right  :   rect.right - left
+        right  :   rect.right - left
 
-      }
+    }
 
   },
   getPageLeft:function (e){
@@ -169,9 +160,9 @@ var andflow_util={
     if(!e){
       return 0;
     }  
-    return andflow_util.getRect(e).left + window.scrollX;
 
-  
+    return andflow_util.getRect(e).left + window.scrollX;
+ 
 
   },
   getPageTop:function (e){
@@ -231,6 +222,7 @@ var andflow_util={
     }
     
     if(name=='TEXTAREA'){
+      obj.value = value;
       obj.innerHTML = value; 
     }
   
@@ -445,7 +437,7 @@ var andflow = {
   event_link_remove: null,
 
   event_canvas_click: null,
-
+  event_canvas_dblclick: null,
   event_canvas_changed: null,
 
   animation_timer: null,
@@ -726,7 +718,7 @@ var andflow = {
  
         document.querySelector('#' + containerId+' .scale_value').innerHTML = '100';
 
-      });
+    });
 
     
     //drag and move
@@ -771,7 +763,7 @@ var andflow = {
       andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false'); 
       andflow_util.removeClass('#' + containerId+' .canvas', 'canvas-move');
 
-      //click
+      // //click
       if($this.event_canvas_click){
         if ($this.event_canvas_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -783,7 +775,6 @@ var andflow = {
           $this.event_canvas_click(e);
         }
       } 
-
       e.preventDefault();
     });
     //canvas mouse out
@@ -829,37 +820,39 @@ var andflow = {
         document.querySelector('#' + containerId+' .canvasContainer').scrollTop = scrollTop;
       }
     });
- 
+    
     // bind a double click listener to "canvas"; add new node when this occurs.
     andflow_util.addEventListener(document.querySelector('.canvas'), $this.dblclick_event_name, function(e) {
-      if($this.event_canvas_dblclick){ 
+      
+      if($this.event_canvas_dblclick){  
+        $this._timer_action && clearTimeout($this._timer_action);
         $this.event_canvas_dblclick(e); 
       }
     });
+
     //show code 
     andflow_util.addEventListener(containerEl.querySelector('.code_btn'), 'click', function (e) {
       
       try{
         
         if(andflow_util.isVisible('#codeContainer')){
-          var txt = andflow_util.getValue('#codeContainer textarea')||"{}";
-          
-          var m = JSON.parse(txt); 
-           
-          andflow_util.hide('#codeContainer');
+          if($this.editable){
+            var txt = andflow_util.getValue('#codeContainer textarea')||"{}";
+            
+            var m = JSON.parse(txt);  
 
-          $this.showFlow(m); 
- 
+            $this.showFlow(m); 
+          }
+
+
+          andflow_util.hide('#codeContainer'); 
           andflow_util.removeClass('#'+containerId+' .code_btn', 'design' ); 
-
         }else{
           var code = $this.getFlow();
-          var content = JSON.stringify(code,null,'\t');
- 
-          andflow_util.show('#codeContainer');
+          var content = JSON.stringify(code,null,'\t');  
+          andflow_util.setValue('#codeContainer textarea', content);  
 
-          andflow_util.setValue('#codeContainer textarea', content); 
-
+          andflow_util.show('#codeContainer'); 
           andflow_util.addClass('#'+containerId+' .code_btn', 'design' );
 
         }
@@ -1402,7 +1395,8 @@ var andflow = {
         }
       }
     });
- 
+
+    
  
   },
 
@@ -1514,7 +1508,6 @@ var andflow = {
           var pageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
           var pageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
           
-
           var x = pageX - andflow_util.getPageLeft(endflowEl) - ll;
           var y = pageY - andflow_util.getPageTop(endflowEl) - tt;
            
@@ -1588,27 +1581,7 @@ var andflow = {
     helperEl.querySelectorAll('img').forEach(element => {
       element.setAttribute('draggable','false');
     });
-    
-    // andflow_util.addEventListener(helperEl, $this.mouseup_event_name,function(e){
-      
-    //   var canvasEl = document.querySelector('#' + $this.containerId+ ' .canvas');
-
-    //   var ll = helperEl.getAttribute("p_x")||10;
-    //   var tt = helperEl.getAttribute("p_y")||10; 
-      
-      
-    //   var pageX = e.targetTouches? e.targetTouches[0].pageX: e.pageX;
-    //   var pageY = e.targetTouches? e.targetTouches[0].pageY: e.pageY;
-          
-    //   var l = pageX - andflow_util.getPageLeft(canvasEl) - ll*1;
-    //   var t = pageY - andflow_util.getPageTop(canvasEl) - tt*1;
-       
-    //   if(l >= 0 && t>=0){
-    //     $this._dropComponent($this._drag_name,l,t);
-    //   }
- 
-    // });
-
+     
     return helperEl; 
 
   },
@@ -1641,12 +1614,13 @@ var andflow = {
       //render
       if(group.render){
 
-        let r = group.render(group_meta, group, group_main_html); 
+        var r = group.render(group_meta, group, group_main_html);
+
         if (r && r.length > 0) {
           group_main_html = r;
         }
       }else if(group_meta.render){
-        let r = group_meta.render(group_meta, group, group_main_html);
+        var r = group_meta.render(group_meta, group, group_main_html);
         if (r && r.length > 0) {
           group_main_html = r;
         }
@@ -2279,7 +2253,7 @@ var andflow = {
       var render = action.render || action_meta.render || $this.render_action;
 
       if(render){
-        let r = render(action_meta, action, action_main_html);
+        var r = render(action_meta, action, action_main_html);
         if (r && r.length > 0) {
           action_main_html = r;
         }
@@ -2362,8 +2336,9 @@ var andflow = {
     });
 
     andflow_util.addEventListener(actionElement, $this.mousedown_event_name, function (event) {
-      andflow_util.setAttr(actionElement, 'mousedown','true');
-      andflow_util.setAttr(actionElement, 'mousedown','true');
+      andflow_util.setAttr(actionElement, 'mousedown','true'); 
+      andflow_util.setAttr(actionElement, 'mousedown_time', new Date().getTime());
+
       
     });
     //双击打开配置事件,在设计模式和步进模式下才可以用
@@ -2377,17 +2352,23 @@ var andflow = {
 
         andflow_util.addClass(actionElement.querySelector(".action"),'focus'); 
       }
-
+       
       if ($this.editable) { 
-        if ($this.event_action_click && $this.event_action_dblclick) {
-          $this._timer_action && clearTimeout($this._timer_action);
-          $this._timer_action = setTimeout(function () {
-            $this.event_action_click(action_meta, action);
-          }, 300);
 
-        } else if ($this.event_action_click) {
-          $this.event_action_click(action_meta, action);
-        }
+        var now=new Date().getTime();
+        var last = andflow_util.getAttr(actionElement, 'mousedown_time' );
+        if($this.event_action_click){
+          if ($this.event_action_dblclick) {
+            $this._timer_action && clearTimeout($this._timer_action);
+            $this._timer_action = setTimeout(function () {
+              $this.event_action_click(action_meta, action);
+            }, 300);
+  
+          } else  {
+            $this.event_action_click(action_meta, action);
+          }
+        } 
+
       }
        
       
@@ -2395,6 +2376,8 @@ var andflow = {
 
     });
 
+   
+    
     andflow_util.addEventListener(actionElement, $this.dblclick_event_name, function (event) {
        
       if ($this.editable) {
@@ -2403,7 +2386,7 @@ var andflow = {
           $this.event_action_dblclick(action_meta, action);
         }
       }
-
+      event.preventDefault();
     });
 
 
@@ -2926,6 +2909,7 @@ var andflow = {
       $this._showThumbnail(); 
       //调整画布大晓 
       $this._resizeCanvas(); 
+      
       if ($this.event_canvas_changed) {
         $this.event_canvas_changed();
       }
@@ -3187,6 +3171,7 @@ var andflow = {
     instance.containerId = containerId;
 
     instance.isMobile = andflow_util.isMobile();
+    
     if(instance.isMobile){
       instance.mousedown_event_name = 'touchstart';
       instance.mouseup_event_name = 'touchend'; 
@@ -4920,7 +4905,10 @@ var andflow = {
     this.setLinkStates(this._link_states);
   },
 
-  
+  test:function(){
+    alert(html2canvas);
+    alert(jsPlumb.getInstance);
+  },
   //获取截图
   getSnapshot: function (callback, opts) {
       
@@ -4938,13 +4926,13 @@ var andflow = {
     const cardBox = document.getElementById('canvas');
 
     const rect = cardBox.getBoundingClientRect();
-    const offsetX = cardBox.offsetLeft; 
-    const offsetY = cardBox.offsetTop; 
+    const offsetX = andflow_util.getPageLeft(cardBox);
+    const offsetY =  andflow_util.getPageTop(cardBox);
     const w = cardBox.scrollWidth;
     const h = cardBox.scrollHeight;
 
 
-    if(!options.ignore_svg){ 
+    if(!options.ignore_svg && canvg){ 
       var nodesToRecover = [];
       var nodesToRemove = [];
       var svgElems = cardBox.querySelectorAll('svg'); //divReport为需要截取成图片的dom的id
@@ -5299,3 +5287,5 @@ var andflow = {
     }
   }
 };
+
+ 

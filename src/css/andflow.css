@@ -303,6 +303,7 @@ div{
     height:100%;
     border: 0px;
     box-sizing: border-box;
+    resize: none;
 }
 
 .canvasContainer{
@@ -391,6 +392,7 @@ div{
 }
 .flow_tools a{
     display: inline-block;
+    text-decoration:none;
     min-width: 25px;
     height: 25px;
     line-height: 25px;

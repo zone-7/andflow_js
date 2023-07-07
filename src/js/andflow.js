@@ -6,6 +6,12 @@ var andflow_util={
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
   } ,
+  confirm:function(msg,callback){
+    var res = confirm(msg);
+    if(res){
+      callback();
+    }
+  },
   extend:function (src,dst){
     if(src){
       for(var k in dst){
@@ -1725,10 +1731,10 @@ var andflow = {
 
 
     andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), $this.click_event_name, function () {
-      var sure = confirm('确定删除分组?');
-      if (sure) {
+      andflow_util.confirm('确定删除分组?',function(){
         $this.removeGroup(id);
-      }  
+      });
+      
     });
  
     andflow_util.addEventListener(groupElement.querySelector('.group-header'), $this.dblclick_event_name,function(event){
@@ -1909,10 +1915,10 @@ var andflow = {
       $this._onCanvasChanged();
     });
     andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), $this.click_event_name, function () {
-      var sure = confirm('确定删除?');
-      if (sure) {
+      andflow_util.confirm('确定删除?', function(){
         $this.removeList(id);
-      }  
+      });
+      
     });
     
     //resize
@@ -2329,10 +2335,10 @@ var andflow = {
     });
 
     andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), $this.click_event_name, function () {
-      var sure = confirm('确定删除该节点?');
-      if (sure) {
+      andflow_util.confirm('确定删除该节点?',function(){
         $this.removeAction(id);
-      }
+      });
+       
     });
 
     andflow_util.addEventListener(actionElement, $this.mousedown_event_name, function (event) {
@@ -2669,10 +2675,11 @@ var andflow = {
     });
 
     andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'),$this.click_event_name, function () {
-      var sure = confirm('确定删除?');
-      if (sure) {
+      andflow_util.confirm('确定删除?',function(){
         $this.removeTip(id);
-      }  
+
+      });
+     
     });
 
     andflow_util.addEventListener(tipElement.querySelector('.tip-header'), $this.dblclick_event_name,function(event){

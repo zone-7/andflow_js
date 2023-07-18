@@ -407,8 +407,13 @@ var andflow = {
   metadata: null, //控件信息
   flowModel: null, //流程数据
 
-  show_toolbar: true, //是否显示工具栏
   show_grid:true,
+  show_toolbar: true, //是否显示工具栏 
+  show_code_btn:true,
+  show_scale_btn:true,
+  show_small_btn:true,
+
+
   metadata_style: '',
   metadata_position: '',
 
@@ -546,12 +551,17 @@ var andflow = {
     html += '<a class="nav_btn">&nbsp;</a>';
     html += '</div>';
     html += '<div class="right">'; 
-    html += '<a class="code_btn" title="code">&nbsp;</a>';
-    html += '<a class="scale_down_btn" title="缩小">-</a>';
-    html += '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
-    html += '<a class="scale_up_btn"  title="放大">+</a>';
-
-    html += '<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
+    if($this.show_code_btn){
+      html += '<a class="code_btn" title="code">&nbsp;</a>';
+    }
+    if($this.show_scale_btn){ 
+      html += '<a class="scale_down_btn" title="缩小">-</a>';
+      html += '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
+      html += '<a class="scale_up_btn"  title="放大">+</a>';
+    }
+    if($this.show_small_btn){
+      html += '<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
+    }
     html += '</div>';
 
     html += '</div>';
@@ -2822,12 +2832,19 @@ var andflow = {
   _showThumbnail: function () {
     var $this = this;
      
+    var isvisible = andflow_util.isVisible('#' +  $this.containerId + ' .flow_thumbnail');
+    if(!isvisible){
+      return;
+    }
+
 
     //视觉框
     var canvas = document.getElementById($this.containerId).querySelector(".canvas");
 
     var canvasView = canvas.parentElement;
     var thumbnail= document.getElementById($this.containerId).querySelector('.flow_thumbnail');
+
+
     var mask= document.getElementById($this.containerId).querySelector('.flow_thumbnail_mask');
 
     var full_width = canvas.offsetWidth; 
@@ -2836,7 +2853,7 @@ var andflow = {
     var canvas_width = canvasView.offsetWidth;
     var canvas_height = canvasView.offsetHeight;
 
-    var thumbnail_width = (thumbnail.offsetWidth||100);
+    var thumbnail_width =  1/5 * full_width ; 
 
     var scale = thumbnail_width*1.0 / full_width*1.0;
      
@@ -2863,7 +2880,7 @@ var andflow = {
         function (canvas) {
           try { 
             
-            var url = canvas.toDataURL('image/png'); //生成下载的url
+            var url = canvas.toDataURL('image/png',0.3); //生成下载的url
              
             andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
 
@@ -2871,7 +2888,7 @@ var andflow = {
              console.error(e);
           }  
         },
-        { scale: 0.5, backgroundColor: 'transparent' ,ignore_svg: true},
+        {backgroundColor: 'transparent' ,ignore_svg: true},
       );
     }, 10); 
 
@@ -2912,16 +2929,16 @@ var andflow = {
   _onCanvasChanged: function () {
     var $this = this;
     setTimeout(function(){
-      //显示缩略图
-      $this._showThumbnail(); 
-      //调整画布大晓 
-      $this._resizeCanvas(); 
-      
+      //调整画布大小调整
+      $this._resizeCanvas();  
       if ($this.event_canvas_changed) {
         $this.event_canvas_changed();
       }
-    },50);
+    },10); 
+    //显示缩略图
+    $this._showThumbnail(); 
     
+
   },
 
   _formateDateTime: function (value) {

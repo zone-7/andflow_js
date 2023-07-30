@@ -4594,6 +4594,7 @@ var andflow = {
 
       //内容
       var actionContent = action_state.content;
+      actionContent.action_id = actionId;
       this.showActionContent(actionContent);
     }
  

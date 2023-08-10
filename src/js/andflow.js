@@ -1090,7 +1090,7 @@ var andflow = {
     } 
     if(metaInfo.tp=="group"){
       var groupId = 'group_'+andflow_util.uuid().replaceAll('-', '');
-      var group = { id: groupId, name:metaInfo.name, left: left, top: top, actions:[]};
+      var group = { id: groupId, name:metaInfo.name, left: left, top: top, members:[]};
       
 
       $this._createGroup(group);
@@ -1104,7 +1104,6 @@ var andflow = {
     }else if(metaInfo.tp=="tip"){
       var tipId = 'tip_'+andflow_util.uuid().replaceAll('-', '');
       var tip = { id: tipId, name:metaInfo.name, left: left, top: top, content:""};
-        
       $this._createTip(tip);
 
     }else{
@@ -2370,18 +2369,18 @@ var andflow = {
       }
        
       if ($this.editable) { 
-
-        var now=new Date().getTime();
-        var last = andflow_util.getAttr(actionElement, 'mousedown_time' );
+        var act = $this.getAction(id);
+         
         if($this.event_action_click){
           if ($this.event_action_dblclick) {
             $this._timer_action && clearTimeout($this._timer_action);
             $this._timer_action = setTimeout(function () {
-              $this.event_action_click(action_meta, action);
+
+              $this.event_action_click(action_meta, act);
             }, 300);
   
           } else  {
-            $this.event_action_click(action_meta, action);
+            $this.event_action_click(action_meta, act);
           }
         } 
 
@@ -2399,7 +2398,8 @@ var andflow = {
       if ($this.editable) {
         if ($this.event_action_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action); 
-          $this.event_action_dblclick(action_meta, action);
+          var act = $this.getAction(id);
+          $this.event_action_dblclick(action_meta, act);
         }
       }
       event.preventDefault();
@@ -4764,8 +4764,46 @@ var andflow = {
 
   },
 
+  //获取Action节点信息
+  getAction: function(id){
 
-  //获取Action节点
+    var $this = this;
+     
+    var actionBox = document.getElementById(id);
+    var actionEl = actionBox.querySelector(".action");
+    
+    var action = $this._actionInfos[id];
+    if (action == null) {
+      action = {};
+    }
+    
+    let ingroup = actionBox.parentElement.className.indexOf("group-container")>=0;
+
+
+    action['id'] = id;
+    action['name'] = andflow_util.getAttr(actionEl,'name')||action.name;
+
+    action['title'] = andflow_util.getAttr(actionEl,'title')||action.title;
+    action['icon'] = andflow_util.getAttr(actionEl,'icon')||action.icon;
+    action['des'] = andflow_util.getAttr(actionEl,'des')||action.des;
+    action['tp'] = andflow_util.getAttr(actionEl,'tp')||action.tp;
+
+    
+    if(ingroup){
+      action['left'] = (actionBox.offsetLeft + actionBox.parentElement.offsetLeft)+"px";
+      action['top'] = (actionBox.offsetTop + actionBox.parentElement.offsetTop)+"px";
+    }else{
+      action['left'] = actionBox.offsetLeft+"px";
+      action['top'] = actionBox.offsetTop+"px";
+    }
+
+    action['width'] = actionBox.offsetWidth+"px";
+    action['height'] = actionBox.offsetHeight+"px";
+    action['body_width'] = andflow_util.getAttr(actionBox,'body_width');
+    action['body_height'] = andflow_util.getAttr(actionBox,'body_height');
+    return action;
+  },
+  //获取所有Action节点信息
   getActions: function () {
     var $this = this;
     var actions = [];
@@ -4777,33 +4815,7 @@ var andflow = {
 
       var id = actionBox.id;
 
-      var action = $this._actionInfos[id];
-      if (action == null) {
-        action = {};
-      }
-      
-      let ingroup = actionBox.parentElement.className.indexOf("group-container")>=0;
-
-
-      action['id'] = id;
-      action['name'] = andflow_util.getAttr(actionEl,'name')||action.name;
-      action['title'] = andflow_util.getAttr(actionEl,'title')||action.title;
-      action['icon'] = andflow_util.getAttr(actionEl,'icon')||action.icon;
-      action['des'] = andflow_util.getAttr(actionEl,'des')||action.des;
-      
-      
-      if(ingroup){
-        action['left'] = (actionBox.offsetLeft + actionBox.parentElement.offsetLeft)+"px";
-        action['top'] = (actionBox.offsetTop + actionBox.parentElement.offsetTop)+"px";
-      }else{
-        action['left'] = actionBox.offsetLeft+"px";
-        action['top'] = actionBox.offsetTop+"px";
-      }
-
-      action['width'] = actionBox.offsetWidth+"px";
-      action['height'] = actionBox.offsetHeight+"px";
-      action['body_width'] = andflow_util.getAttr(actionBox,'body_width');
-      action['body_height'] = andflow_util.getAttr(actionBox,'body_height');
+      var action = $this.getAction(id);
       
       actions.push(action);
     });

@@ -348,10 +348,13 @@ var andflow_util={
     }
 
     //将className属性转为数组
-    let classArr = obj.className.split(" "),
-        index = classArr.indexOf(name);
+    var classArr = obj.className.split(" ");
+    var index = classArr.indexOf(name);
     //将符合条件的class类删除
-    index > -1 ? classArr.splice(index, 1) : null;
+    if(index > -1){
+      classArr.splice(index, 1);
+    } 
+
     obj.className = classArr.join(" ");
   },
   hasClass:function (id, name) {
@@ -411,7 +414,7 @@ var andflow = {
   show_toolbar: true, //是否显示工具栏 
   show_code_btn:true,
   show_scale_btn:true,
-  show_small_btn:true,
+  show_small_btn:false,
 
 
   metadata_style: '',
@@ -580,7 +583,7 @@ var andflow = {
     }
     
     html += '<div id="canvasContainer" class="canvasContainer" style="'+bgstyle+'">'; 
-    html += '<div id="canvas" class="canvas"></div>';  
+    html += '<div id="canvas" class="canvas" ></div>';  
     html += '</div>'; 
     //end canvasContainer
  
@@ -880,7 +883,7 @@ var andflow = {
     });
 
     //thumbnail
-    // thumbnail_btn
+    //thumbnail_btn click
     andflow_util.addEventListener(containerEl.querySelector('.thumbnail_btn'), 'click', function (e) {
  
         var state = andflow_util.getAttr('#' + containerId+' .thumbnail_btn', 'state');
@@ -902,8 +905,8 @@ var andflow = {
 
 
           $this._showThumbnail();
-
-
+          $this._showThumbnailImage();
+           
         }
     });
  
@@ -2827,7 +2830,24 @@ var andflow = {
     }); 
  
   }, //end createTip
+  _showThumbnailImage: function(){
+    //缩略图
+    var $this = this;
+    $this.getSnapshot(
+      function (canvas) {
+        try { 
+          
+          var url = canvas.toDataURL('image/png',0.3); //生成下载的url
+           
+          andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
 
+        } catch (e) {
+           console.error(e);
+        }  
+      },
+      {backgroundColor: 'transparent' ,ignore_svg: true},
+    );
+  },
   //缩略图
   _showThumbnail: function () {
     var $this = this;
@@ -2872,25 +2892,7 @@ var andflow = {
     andflow_util.setStyle(mask, 'left', mask_l);
     andflow_util.setStyle(mask, 'top', mask_t);
  
-    //缩略图
-    $this._timer_thumbnail && clearTimeout($this._timer_thumbnail);
-    $this._timer_thumbnail = setTimeout(function () {
-      
-      $this.getSnapshot(
-        function (canvas) {
-          try { 
-            
-            var url = canvas.toDataURL('image/png',0.3); //生成下载的url
-             
-            andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
 
-          } catch (e) {
-             console.error(e);
-          }  
-        },
-        {backgroundColor: 'transparent' ,ignore_svg: true},
-      );
-    }, 10); 
 
   },
 
@@ -2934,11 +2936,11 @@ var andflow = {
       if ($this.event_canvas_changed) {
         $this.event_canvas_changed();
       }
-    },10); 
-    //显示缩略图
-    $this._showThumbnail(); 
-    
+      //显示缩略图
+      $this._showThumbnail(); 
 
+    },10); 
+     
   },
 
   _formateDateTime: function (value) {
@@ -2977,7 +2979,7 @@ var andflow = {
   //画连接线基础样式 
   _paintConnection: function (conn, link) {
     if (link == null) {
-      link == {};
+      link = {};
     }
 
     var linktype = link.link_type || this.flowModel.link_type || 'Flowchart';
@@ -3320,7 +3322,7 @@ var andflow = {
   },
 
   getActionInfo: function (id) {
-    return this._actionInfos[id];
+    return this.getAction(id); 
   },
 
   setActionInfo: function (action) { 
@@ -5018,6 +5020,19 @@ var andflow = {
       scrollX: 0, 
       scrollY: 0,
       useCORS: true,
+      ignoreElements: e => {
+        
+        if (  
+          e.className ==='ep' ||
+          e.className ==='action-resize' ||
+          e.className ==='body-resize' || 
+          e.tagName === 'STYLE' ||
+          e.tagName === 'LINK' 
+        ) { 
+          return true;
+        } 
+        return false;
+      }
     }).then(function (cvs) {
        
       for (var k in nodesToRemove) {
@@ -5309,20 +5324,31 @@ var andflow = {
   setActionBodyVisible: function (v) {
     this.flowModel.show_action_body = v ? 'true' : 'false';
     if (this.flowModel.show_action_body == 'false') {
-      andflow_util.hide(document.querySelector('#' + this.containerId + ' .action-body')); 
+      document.querySelectorAll('#' + this.containerId + ' .action-body').forEach(function(el){
+        andflow_util.hide(el); 
+      });
+     
     } else {
-      andflow_util.show(document.querySelector('#' + this.containerId + ' .action-body')); 
+      document.querySelectorAll('#' + this.containerId + ' .action-body').forEach(function(el){
+        andflow_util.show(el); 
+      });
+     
     }
   },
 
   setActionContentVisible: function (v) {
     this.flowModel.show_action_content = v ? 'true' : 'false';
     if (this.flowModel.show_action_content == 'false' || this.flowModel.show_action_content==false) {
-      andflow_util.hide(document.querySelector('#' + this.containerId + ' .action-content')); 
+      document.querySelectorAll('#' + this.containerId + ' .action-content').forEach(function(el){
+        andflow_util.hide(el); 
+      });
+     
+
     } else {
-      andflow_util.show(document.querySelector('#' + this.containerId + ' .action-content')); 
+      document.querySelectorAll('#' + this.containerId + ' .action-content').forEach(function(el){
+        andflow_util.show(el); 
+      });
+      
     }
   }
 };
-
- 

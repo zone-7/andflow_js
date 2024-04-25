@@ -158,6 +158,44 @@ var andflow_util={
     }
 
   },
+  getLeftInCanvas(e){
+    if(typeof e === 'string'){
+      e = document.querySelector(e);
+    } 
+
+    if(!e){
+      return 0;
+    }  
+    
+    var left = e.offsetLeft;
+    var index = 0; 
+    while(e.parentNode && e.parentNode.className.indexOf("canvas")<0  && index++<100){
+      left+=e.parentNode.offsetLeft;
+      e = e.parentNode;
+    }
+    return left;
+  },
+  getTopInCanvas(e){
+    if(typeof e === 'string'){
+      e = document.querySelector(e);
+    } 
+
+    if(!e){
+      return 0;
+    }  
+    
+    var top = e.offsetTop;
+    var index = 0; 
+    while(e.parentNode && e.parentNode.className.indexOf("canvas")<0 && index++<100){
+      top+=e.parentNode.offsetTop;
+      e = e.parentNode;
+    }
+    return top;
+  },
+
+  
+
+
   getPageLeft:function (e){
     if(typeof e === 'string'){
       e = document.querySelector(e);
@@ -414,7 +452,7 @@ var andflow = {
   show_toolbar: true, //是否显示工具栏 
   show_code_btn:true,
   show_scale_btn:true,
-  show_small_btn:false,
+  show_small_btn:true, //缩略图
 
 
   metadata_style: '',
@@ -782,7 +820,7 @@ var andflow = {
       andflow_util.setAttr('#' + containerId+' .canvas', 'drag', 'false'); 
       andflow_util.removeClass('#' + containerId+' .canvas', 'canvas-move');
 
-      // //click
+      //click
       if($this.event_canvas_click){
         if ($this.event_canvas_dblclick) {
           $this._timer_action && clearTimeout($this._timer_action);
@@ -904,8 +942,7 @@ var andflow = {
           andflow_util.addClass('#' +  containerId+' .thumbnail_btn', 'open'); 
 
 
-          $this._showThumbnail();
-          $this._showThumbnailImage();
+          $this._showThumbnail(); 
            
         }
     });
@@ -2254,16 +2291,16 @@ var andflow = {
     var actionElement = document.getElementById(action.id);
     if(!actionElement){
     
-      var actionHtml = '<div id="' + id + '"  draggable="true" ondragend="" class="action-container"><div  class="action" ></div></div>'; 
+      var actionHtml = '<div id="' + id + '"  draggable="true" ondragend="" class="action-container" ><div  class="action" ></div></div>'; 
 
       actionElement = andflow_util.parseHtml(actionHtml); 
 
       //main
       var action_main_html = '<div class="action-main action-master" >';
-      action_main_html += '<div class="action-icon"  ><img src=""  ></div>'; 
-      action_main_html += '<div class="action-header"></div>'; //标题  
-      action_main_html += '<div class="action-body" >';
-      action_main_html += '<div class="action-content" ></div>'; //消息内容,html,chart
+      action_main_html += '<div class="action-icon" ><img src=""  ></div>'; 
+      action_main_html += '<div class="action-header" ></div>'; //标题  
+      action_main_html += '<div class="action-body"  >';
+      action_main_html += '<div class="action-content"  ></div>'; //消息内容,html,chart
       action_main_html += '<div class="body-resize"></div>'; //改变Body内容大小的三角形框
       action_main_html += '</div>'; 
       action_main_html += '</div>'; //end action-main
@@ -2830,25 +2867,81 @@ var andflow = {
     }); 
  
   }, //end createTip
-  _showThumbnailImage: function(){
-    //缩略图
-    var $this = this;
-    $this.getSnapshot(
-      function (canvas) {
-        try { 
-          
-          var url = canvas.toDataURL('image/png',0.3); //生成下载的url
-           
-          andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
 
-        } catch (e) {
-           console.error(e);
-        }  
-      },
-      {backgroundColor: 'transparent' ,ignore_svg: true},
-    );
+  // 显示缩略图-图片
+  _showThumbnailImage: function(){
+     
+    var $this = this;
+    
+    const cardBox = document.getElementById('canvas'); 
+    const width = cardBox.scrollWidth;
+    const height = cardBox.scrollHeight;
+    const scale = 1; 
+    
+    var dist_canvas = document.createElement('canvas');   
+    dist_canvas.width = width;
+    dist_canvas.height = height;
+
+    document.body.append(dist_canvas);
+
+    try{
+
+      if(dist_canvas.getContext){
+        var ctx = dist_canvas.getContext("2d");
+        // draw action
+        ctx.fillStyle="#CCCCCC";
+        cardBox.querySelectorAll('.action-container').forEach(function (el,index) {
+          var x = andflow_util.getLeftInCanvas(el);
+          var y = andflow_util.getTopInCanvas(el); 
+          var w = el.offsetWidth;
+          var h = el.offsetHeight; 
+          ctx.fillRect(x,y,w,h);   
+        });  
+
+        // draw tip
+        ctx.fillStyle="#CCCCCC";
+        cardBox.querySelectorAll('.tip-container').forEach(function (el,index) {
+          var x = andflow_util.getLeftInCanvas(el);
+          var y = andflow_util.getTopInCanvas(el); 
+          var w = el.offsetWidth;
+          var h = el.offsetHeight; 
+          ctx.fillRect(x,y,w,h);   
+        });  
+        // draw list
+        ctx.fillStyle="#CCCCCC";
+        cardBox.querySelectorAll('.list-container').forEach(function (el,index) {
+          var x = andflow_util.getLeftInCanvas(el);
+          var y = andflow_util.getTopInCanvas(el); 
+          var w = el.offsetWidth;
+          var h = el.offsetHeight; 
+          ctx.fillRect(x,y,w,h);   
+        });  
+
+        // draw group
+        ctx.lineWidth="3";
+        ctx.strokeStyle="#CCCCCC";
+        ctx.beginPath();
+        cardBox.querySelectorAll('.group-container').forEach(function (el,index) {
+          var x = andflow_util.getLeftInCanvas(el);
+          var y = andflow_util.getTopInCanvas(el); 
+          var w = el.offsetWidth;
+          var h = el.offsetHeight;
+          
+          ctx.rect(x,y,w,h);  
+        });
+        ctx.stroke(); 
+      }
+
+      var url = dist_canvas.toDataURL('image/png', 0.3); //生成下载的url
+      andflow_util.setStyle(document.getElementById($this.containerId).querySelector('.flow_thumbnail'), 'background-image', 'url('+url+')');
+
+
+    }finally{
+      andflow_util.removeElement(dist_canvas);
+    }
+     
   },
-  //缩略图
+  //缩略图框
   _showThumbnail: function () {
     var $this = this;
      
@@ -2891,8 +2984,9 @@ var andflow = {
     andflow_util.setStyle(mask, 'height', mask_h);
     andflow_util.setStyle(mask, 'left', mask_l);
     andflow_util.setStyle(mask, 'top', mask_t);
- 
-
+    
+    
+    $this._showThumbnailImage();
 
   },
 
@@ -2906,8 +3000,7 @@ var andflow = {
     canvasEl.querySelectorAll('div').forEach(function(e,index){
       
       
-      let left = e.offsetLeft;
-
+      let left = e.offsetLeft; 
       let width = e.offsetWidth; 
       let top = e.offsetTop;
       let height = e.offsetHeight; 
@@ -2936,8 +3029,10 @@ var andflow = {
       if ($this.event_canvas_changed) {
         $this.event_canvas_changed();
       }
+      
       //显示缩略图
       $this._showThumbnail(); 
+      
 
     },10); 
      
@@ -4969,45 +5064,17 @@ var andflow = {
     const offsetY =  andflow_util.getPageTop(cardBox);
     const w = cardBox.scrollWidth;
     const h = cardBox.scrollHeight;
-
-
-    if(!options.ignore_svg && canvg){ 
-      var nodesToRecover = [];
-      var nodesToRemove = [];
-      var svgElems = cardBox.querySelectorAll('svg'); //divReport为需要截取成图片的dom的id
-      svgElems.forEach(function (node,index) {
-        var parentNode = node.parentNode;
-        var svg = node.outerHTML.trim();
-        var subCanvas = document.createElement('canvas');
-        canvg(subCanvas, svg);
-        if (node.style.position) {
-          subCanvas.style.position = node.style.position;
-          subCanvas.style.left = node.style.left;
-          subCanvas.style.top = node.style.top;
-        }
-        nodesToRecover.push({
-          parent: parentNode,
-          child: node,
-        });
-        parentNode.removeChild(node);
-        nodesToRemove.push({
-          parent: parentNode,
-          child: subCanvas,
-        });
-        parentNode.appendChild(subCanvas);
-      });
-
-    }
-    
-    
-    let scale = options.scale || 1; 
-    let canvas = document.createElement('canvas');
+    const scale = options.scale || 1; 
  
-    canvas.style.width = w   + 'px';
-    canvas.style.height = h    + 'px'; 
+    let dist_canvas = document.createElement('canvas');
+    
+    document.body.append(dist_canvas);
+
+    dist_canvas.style.width = w + 'px';
+    dist_canvas.style.height = h + 'px'; 
   
     html2canvas(cardBox, {
-      canvas: canvas,
+      canvas: dist_canvas,
       scale: scale,  
       allowTaint: true,
       foreignObjectRendering: true,
@@ -5021,34 +5088,18 @@ var andflow = {
       scrollY: 0,
       useCORS: true,
       ignoreElements: e => {
-        
-        if (  
-          e.className ==='ep' ||
-          e.className ==='action-resize' ||
-          e.className ==='body-resize' || 
-          e.tagName === 'STYLE' ||
-          e.tagName === 'LINK' 
-        ) { 
-          return true;
-        } 
+    
         return false;
-      }
-    }).then(function (cvs) {
-       
-      for (var k in nodesToRemove) {
-        var node = nodesToRemove[k];
-        node.parent.removeChild(node.child);
-      }
-      for (var k in nodesToRecover) {
-        var node = nodesToRecover[k];
-        node.parent.appendChild(node.child);
-      } 
 
+      }
+
+    }).then(function (cvs) {
+      
       if (callback) {
         callback(cvs);
       }
     });
-    andflow_util.removeElement(canvas);
+    andflow_util.removeElement(dist_canvas);
     
   },
 

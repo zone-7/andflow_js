@@ -10,7 +10,7 @@ div{
 ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius   : 3px;
-    background-color: rgba(220, 220, 220, 0.7);
+    background-color: rgba(220, 220, 220, 0.5);
     background-image: -webkit-linear-gradient(
             45deg,
             rgba(255, 255, 255, 0.2) 25%,
@@ -149,14 +149,14 @@ div{
     background-color: #fff;
     background-clip: border-box;
     padding-top: 0px;
-
 }
 
 .andflow .metadata .tags{
     display: flex;
     padding: 0px;
     align-items: center;
-    border-bottom: 1px solid #E3E3E3;
+     
+    border: 0px;
     height: 25px;
     background-color: #E3E3E3;
     overflow: hidden;
@@ -199,64 +199,95 @@ div{
     background-position: calc(100% - 5px) 50%;
 
     padding-left: 10px;
-
+    padding-right: 10px;
+    overflow: hidden;
     color: #333333;
 
 }
 
 .andflow .metadata .actions{
+    border-top: 1px solid #E3E3E3;
     padding: 5px;
     height: calc(100% - 25px);
     overflow: auto;
 }
 
-.andflow .metadata .item-title{
-    text-decoration: none;
-    color: #333333;
-    font-size: 12px;
-}
-.andflow .actionMenu{
+
+.andflow .metadata .actionMenu{
     list-style-type: none;
     padding: 0px;
     margin:0px;
 }
 
-.andflow .actionMenuGroup{
+
+.andflow .metadata .actionMenuSpliter{
+    border-top: 1px solid #E3E3E3;
     margin-top: 10px;
+    height: 10px;
+}
+
+.andflow .metadata .actionMenuGroup{ 
     text-align: left; 
 }
-.andflow .actionMenuGroup>a{
+
+.andflow .metadata .actionMenuGroup .group-title{
     cursor:default;
     text-decoration: none;
     color: #333333;
     font-size: 14px;
 }
-.andflow .actionMenuGroupBody{
+.andflow .metadata .actionMenuGroup .group-title .group-label{
+
+    color: #8e8e8e;
+    font-size: 12px;
+}
+
+.andflow .metadata .actionMenuGroupBody{
     padding: 0px;
 }
-.andflow .actionMenuItem{
 
+.andflow .metadata .actionMenuItem{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding-left: 10px;
+    padding-right: 10px;
     list-style-type: none;
-    height: 25px;
-    line-height: 25px;
+    height: 40px;
+    line-height: 40px;
     font-size: 12px;
     cursor: pointer;
-
 }
-.andflow .actionMenuItem>a{
+.andflow .metadata .actionMenuItem .item-title{
     display: flex;
     align-content: center;
     align-items: center;
+    height: 100%;
 }
-.andflow .actionMenuItem>a>img{
+.andflow .metadata .actionMenuItem .item-title >img{
     height: 16px;width: 16px;
 }
 
 
-.andflow .actionMenuItem:hover{
+.andflow .metadata .actionMenuItem:hover{
     background-color: rgba(233,233,233,0.21);
 }
+
+
+.andflow .metadata .actionMenuItem .item-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    text-decoration: none;
+    color: #333333;
+    font-size: 12px;
+}
+.andflow .metadata .actionMenuItem .item-title .item-label{
+    color: #333333;
+    font-size: 12px;
+}
+
 
 
 .andflow .designer{
@@ -264,7 +295,6 @@ div{
     overflow: hidden;
     width: calc(100% - 200px);
     height: 100%;
-
     border-right: 5px solid transparent;
     box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
     position: relative;
@@ -421,12 +451,7 @@ div{
 .flow_tools .fold_btn{
     color: white;
 }
-/*.flow_tools .left a{*/
-/*    border-right: 1px solid white;*/
-/*}*/
-/*.flow_tools .right a{*/
-/*    border-left: 1px solid white;*/
-/*}*/
+ 
 
 
 .flow_thumbnail{
@@ -563,7 +588,7 @@ div{
     border-right: 1px solid #E3E3E3;
     min-width: 0;
     word-wrap: break-word;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
     background-clip: border-box;
     padding-top: 0px;
 }
@@ -600,7 +625,9 @@ div{
     z-index: 1000;
     left: 0px;
     top: 25px;
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
     width: 100%;
     height: auto;
     border-right: 0px;
@@ -608,7 +635,7 @@ div{
     border-bottom: 1px solid #E3E3E3;
     min-width: 0;
     word-wrap: break-word;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 0.8);
     background-clip: border-box;
     padding-top: 0px;
 }
@@ -618,11 +645,10 @@ div{
 }
 
 .andflow.metadata_float_top .metadata .tags{
-    float: left;
     width: 100px;
 }
 .andflow.metadata_float_top .metadata .actions{
-    float: right;
+    border: 0px;
     padding: 0px;
     height: auto;
     width: calc(100% - 100px);
@@ -630,7 +656,6 @@ div{
     overflow-x:auto;
     white-space: nowrap;
     box-sizing: border-box;
-
 }
 
 
@@ -668,7 +693,7 @@ div{
     /* display: inline-block; */
 
     width: 100%;
-    height: 100%;
+    height: calc(100% - 100px);
 
     border-right: 5px solid transparent;
     box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
@@ -714,10 +739,12 @@ div{
     display: none;
     visibility: hidden;
 }
+
 .andflow.state .action .action-resize{
     display: none;
     visibility: hidden;
 }
+
 .andflow.state .action .body-resize{
     display: none;
     visibility: hidden;
@@ -793,4 +820,55 @@ div{
     display: absolute; 
     width: auto;
     height: auto;
+}
+
+
+
+/* 小屏幕 */
+@media (max-width: 640px){
+    
+    .andflow .metadata{
+        position: relative;
+        display: inline-block; 
+        width: 50px;
+        height: 100%; 
+        border-right: 1px solid #E3E3E3;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        padding-top: 0px;
+    }
+    .andflow .metadata .tags>select{ 
+        text-align: center;
+        background: white;
+        padding: 0px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;      
+    }
+
+    .andflow .metadata .tags>select::-ms-expand{ 
+        display: none;
+    }
+    .andflow .metadata .item-label{
+         display: none;
+    } 
+    .andflow .metadata .actionMenuGroup .group-label{
+        display: none;
+    }
+    .andflow .designer{
+        display: inline-block; 
+        overflow: hidden;
+        width: calc(100% - 50px);
+    }
+
+    .andflow.metadata_float_left .metadata{
+        width: 50px;
+    }
+
+    .andflow.metadata_float_left .designer{
+        width: 100%;
+    }
+
 }

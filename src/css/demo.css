@@ -3,17 +3,18 @@ body{
     margin: 0px;
 }
 .bander{
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     height: 50px;  
     width:100%;
     padding-left: 10px;
     padding-right: 10px;
     border-bottom: 1px solid #DEDEDE;
     box-sizing: border-box;
+    overflow: hidden;
 }
-.bander>div{
-    display: inline-block;
-}
+ 
 .bander a{
     text-decoration-line: none;  
     color: #333333;
@@ -23,22 +24,25 @@ body{
     color: #333333;
 }
 
-.bander .logo{
-    display: inline-block;
-    height: 50px; 
-    float: left; 
+.bander .logo{ 
+    height: 40px;  
 }
 .bander .logo img{
-    height: 50px; 
+    height: 40px; 
 }
-.bander .title{ 
-    display: inline-block;
-    height: 50px; 
+.bander .title{  
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%; 
     font-size: 30px; 
 }
-.bander .subtitle{
-    display: inline-block;
-    height: 50px; 
+.bander .subtitle{ 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    height: 100%; 
     font-size: 20px; 
     padding-left: 20px;
 }

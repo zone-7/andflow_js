@@ -1,6 +1,6 @@
 div{box-sizing:border-box}
 ::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{border-radius:3px;background-color:rgba(220,220,220,0.7);background-image:-webkit-linear-gradient(
+::-webkit-scrollbar-thumb{border-radius:3px;background-color:rgba(220,220,220,0.5);background-image:-webkit-linear-gradient(
             45deg,rgba(255,255,255,0.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0.2) 75%,transparent 75%,transparent
     )}
 .hide{display:none}
@@ -19,19 +19,22 @@ div{box-sizing:border-box}
 .resize-bar:hover ~ .resize-line::after,.resize-bar:active ~ .resize-line::after{content:'';position:absolute;width:16px;height:16px;bottom:0;right:-8px;background:red;background-size:100% 100%}
 }.andflow{position:relative;display:inline-block;width:100%;height:100%;overflow:hidden;border:1px solid #E3E3E3;border-radius:0.25rem;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-khtml-user-select:none;user-select:none;color:#333333;text-align:left}
 .andflow .metadata{position:relative;display:inline-block;width:200px;height:100%;float:left;border-right:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;padding-top:0px}
-.andflow .metadata .tags{display:flex;padding:0px;align-items:center;border-bottom:1px solid #E3E3E3;height:25px;background-color:#E3E3E3;overflow:hidden}
+.andflow .metadata .tags{display:flex;padding:0px;align-items:center;border:0px;height:25px;background-color:#E3E3E3;overflow:hidden}
 .andflow .metadata .tags>label{display:inline-block;width:50px;height:100%;font-size:12px;background-color:#E3E3E3;color:#333333;line-height:25px;text-align:center;margin:0px}
-.andflow .metadata .tags>select{display:inline-block;width:100%;height:100%;font-size:12px;margin:0px;border:0px;outline:0px;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;-webkit-appearance:none;appearance:none;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGVJREFUOE9jZKAQMFKon2HUAAbahEEDAwPDVQYGhtVoMRTKwMCgzcDAAJKHA2yxAFK4ioGBIQzJEGxiYENwRSOyBpA6dAPxugAmCTMExEd2DYrPCCUkGajqJ7hSLCEDCKb0YWAAAPWaDREoXWNBAAAAAElFTkSuQmCC");background-repeat:no-repeat;background-position:calc(100% - 5px) 50%;padding-left:10px;color:#333333}
-.andflow .metadata .actions{padding:5px;height:calc(100% - 25px);overflow:auto}
-.andflow .metadata .item-title{text-decoration:none;color:#333333;font-size:12px}
-.andflow .actionMenu{list-style-type:none;padding:0px;margin:0px}
-.andflow .actionMenuGroup{margin-top:10px;text-align:left}
-.andflow .actionMenuGroup>a{cursor:default;text-decoration:none;color:#333333;font-size:14px}
-.andflow .actionMenuGroupBody{padding:0px}
-.andflow .actionMenuItem{padding-left:10px;list-style-type:none;height:25px;line-height:25px;font-size:12px;cursor:pointer}
-.andflow .actionMenuItem>a{display:flex;align-content:center;align-items:center}
-.andflow .actionMenuItem>a>img{height:16px;width:16px}
-.andflow .actionMenuItem:hover{background-color:rgba(233,233,233,0.21)}
+.andflow .metadata .tags>select{display:inline-block;width:100%;height:100%;font-size:12px;margin:0px;border:0px;outline:0px;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px;-webkit-appearance:none;appearance:none;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGVJREFUOE9jZKAQMFKon2HUAAbahEEDAwPDVQYGhtVoMRTKwMCgzcDAAJKHA2yxAFK4ioGBIQzJEGxiYENwRSOyBpA6dAPxugAmCTMExEd2DYrPCCUkGajqJ7hSLCEDCKb0YWAAAPWaDREoXWNBAAAAAElFTkSuQmCC");background-repeat:no-repeat;background-position:calc(100% - 5px) 50%;padding-left:10px;padding-right:10px;overflow:hidden;color:#333333}
+.andflow .metadata .actions{border-top:1px solid #E3E3E3;padding:5px;height:calc(100% - 25px);overflow:auto}
+.andflow .metadata .actionMenu{list-style-type:none;padding:0px;margin:0px}
+.andflow .metadata .actionMenuSpliter{border-top:1px solid #E3E3E3;margin-top:10px;height:10px}
+.andflow .metadata .actionMenuGroup{text-align:left}
+.andflow .metadata .actionMenuGroup .group-title{cursor:default;text-decoration:none;color:#333333;font-size:14px}
+.andflow .metadata .actionMenuGroup .group-title .group-label{color:#8e8e8e;font-size:12px}
+.andflow .metadata .actionMenuGroupBody{padding:0px}
+.andflow .metadata .actionMenuItem{display:flex;flex-direction:row;align-items:center;padding-left:10px;padding-right:10px;list-style-type:none;height:40px;line-height:40px;font-size:12px;cursor:pointer}
+.andflow .metadata .actionMenuItem .item-title{display:flex;align-content:center;align-items:center;height:100%}
+.andflow .metadata .actionMenuItem .item-title >img{height:16px;width:16px}
+.andflow .metadata .actionMenuItem:hover{background-color:rgba(233,233,233,0.21)}
+.andflow .metadata .actionMenuItem .item-title{display:flex;flex-direction:row;align-items:center;justify-content:start;text-decoration:none;color:#333333;font-size:12px}
+.andflow .metadata .actionMenuItem .item-title .item-label{color:#333333;font-size:12px}
 .andflow .designer{display:inline-block;overflow:hidden;width:calc(100% - 200px);height:100%;border-right:5px solid transparent;box-shadow:0 0 1px rgba(0,0,0,0.13);position:relative;display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:0 solid rgba(0,0,0,.125);border-radius:.25rem;box-sizing:border-box}
 .andflow .designer.max{width:100%;height:100%}
 .codeContainer{display:none;position:absolute;z-index:10000;top:25px;left:0px;background-color:transparent;width:100%;height:calc(100% - 25px);padding:0px;overflow:hidden;box-sizing:border-box}
@@ -69,19 +72,19 @@ div{box-sizing:border-box}
 .flow_state_list_content label.success{color:green}
 .andflow.toolbar_hide .flow_tools{display:none}
 .andflow.toolbar_hide .canvasContainer{height:100%}
-.andflow.metadata_float_left .metadata{position:absolute;z-index:100;left:0px;top:25px;display:inline-block;width:200px;height:calc(100% - 25px);border-right:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:rgba(255,255,255,0.5);background-clip:border-box;padding-top:0px}
+.andflow.metadata_float_left .metadata{position:absolute;z-index:100;left:0px;top:25px;display:inline-block;width:200px;height:calc(100% - 25px);border-right:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:rgba(255,255,255,0.9);background-clip:border-box;padding-top:0px}
 .andflow.metadata_float_left.toolbar_hide .metadata{top:0px;height:100%}
 .andflow.metadata_float_left .designer{display:inline-block;width:100%;height:100%;border-right:5px solid transparent;box-shadow:0 0 1px rgba(0,0,0,0.13);position:relative;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:0 solid rgba(0,0,0,.125)}
-.andflow.metadata_float_top .metadata{position:absolute;z-index:1000;left:0px;top:25px;display:inline-block;width:100%;height:auto;border-right:0px;border-left:0px;border-bottom:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:rgba(255,255,255,1);background-clip:border-box;padding-top:0px}
+.andflow.metadata_float_top .metadata{position:absolute;z-index:1000;left:0px;top:25px;display:flex;flex-direction:row;align-items:start;width:100%;height:auto;border-right:0px;border-left:0px;border-bottom:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:rgba(255,255,255,0.8);background-clip:border-box;padding-top:0px}
 .andflow.metadata_float_top.toolbar_hide .metadata{top:0px}
-.andflow.metadata_float_top .metadata .tags{float:left;width:100px}
-.andflow.metadata_float_top .metadata .actions{float:right;padding:0px;height:auto;width:calc(100% - 100px);overflow-y:hidden;overflow-x:auto;white-space:nowrap;box-sizing:border-box}
+.andflow.metadata_float_top .metadata .tags{width:100px}
+.andflow.metadata_float_top .metadata .actions{border:0px;padding:0px;height:auto;width:calc(100% - 100px);overflow-y:hidden;overflow-x:auto;white-space:nowrap;box-sizing:border-box}
 .andflow.metadata_float_top .metadata .actions .actionMenu{display:flex;align-items:center;align-content:center;flex-wrap:wrap;height:auto;width:100%}
 .andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup{display:none;height:25px;padding:0px;margin:0px;padding-left:5px;border-left:1px solid #E3E3E3}
 .andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup>a{font-size:10px;padding-left:5px;height:100%;line-height:25px;color:#A3A3A3}
 .andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem{display:inline-block}
 .andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem>a{display:flex}
-.andflow.metadata_float_top .designer{width:100%;height:100%;border-right:5px solid transparent;box-shadow:0 0 1px rgba(0,0,0,0.13);position:relative;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:0 solid rgba(0,0,0,.125)}
+.andflow.metadata_float_top .designer{width:100%;height:calc(100% - 100px);border-right:5px solid transparent;box-shadow:0 0 1px rgba(0,0,0,0.13);position:relative;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:0 solid rgba(0,0,0,.125)}
 .andflow.fold .metadata{display:none}
 .andflow.fold .designer{width:100%;height:100%}
 .andflow.state .metadata{display:none}
@@ -104,3 +107,12 @@ div{box-sizing:border-box}
 .animationLabel{background-color:red;height:30px;width:30px;border-radius:15px}
 .drag-helper{position:absolute;z-index:5}
 .action-container{display:absolute;width:auto;height:auto}
+@media (max-width:640px){.andflow .metadata{position:relative;display:inline-block;width:50px;height:100%;border-right:1px solid #E3E3E3;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;padding-top:0px}
+.andflow .metadata .tags>select{text-align:center;background:white;padding:0px;-webkit-appearance:none;-moz-appearance:none;appearance:none}
+.andflow .metadata .tags>select::-ms-expand{display:none}
+.andflow .metadata .item-label{display:none}
+.andflow .metadata .actionMenuGroup .group-label{display:none}
+.andflow .designer{display:inline-block;overflow:hidden;width:calc(100% - 50px)}
+.andflow.metadata_float_left .metadata{width:50px}
+.andflow.metadata_float_left .designer{width:100%}
+}

@@ -1489,8 +1489,13 @@ var andflow = {
       var openClass = index == 0 ? 'menu-is-opening menu-open' : '';
       var openBody = index == 0 ? '' : 'display:none';
  
-      var group_title_html =  '<li class="actionMenuGroup"  ><a href="#" class="group-title">' + g + '<i class="pull-right ico"></i></a></li>'; 
+      if(index>0){
+        var group_spliter_html =  '<li class="actionMenuSpliter"  ></li>'; 
+        document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(group_spliter_html));
+  
+      }
 
+      var group_title_html =  '<li class="actionMenuGroup"  ><a href="#" class="group-title"><span class="group-label">' + g + '</span></a></li>'; 
       document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(group_title_html));
 
       var item = groups[g];
@@ -1515,7 +1520,7 @@ var andflow = {
           icon +
           '" ><a class="item-title">' +
           img +
-          title +
+          '<span class="item-label">'+title+'</span>'+
           '</a></li>';
 
         document.getElementById('actionMenu').appendChild(andflow_util.parseHtml(element_html));

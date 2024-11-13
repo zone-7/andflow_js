@@ -1,33 +1,33 @@
-div{
-    box-sizing:  border-box;
+div {
+    box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width : 8px;  /*高宽分别对应横竖滚动条的尺寸*/
+    width: 8px;
+    /*高宽分别对应横竖滚动条的尺寸*/
     height: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
-    border-radius   : 3px;
+    border-radius: 3px;
     background-color: rgba(220, 220, 220, 0.5);
-    background-image: -webkit-linear-gradient(
-            45deg,
+    background-image: -webkit-linear-gradient(45deg,
             rgba(255, 255, 255, 0.2) 25%,
             transparent 25%,
             transparent 50%,
             rgba(255, 255, 255, 0.2) 50%,
             rgba(255, 255, 255, 0.2) 75%,
             transparent 75%,
-            transparent
-    );
+            transparent);
 }
 
-.hide{
+.hide {
     display: none;
 }
 
-.ico{
+.ico {
     display: block;
     padding: 0px;
     margin: 0px;
@@ -40,10 +40,12 @@ div{
     overflow: hidden;
     color: inherit;
 }
-.ico-white{
+
+.ico-white {
     color: #ffffff;
 }
-.ico-black{
+
+.ico-black {
     color: #000000;
 }
 
@@ -52,12 +54,14 @@ div{
 .column {
     overflow: hidden;
 }
+
 .column-left {
     height: 400px;
     background-color: #fff;
     position: relative;
     float: left;
 }
+
 .column-right {
     height: 400px;
     padding: 16px;
@@ -65,15 +69,21 @@ div{
     box-sizing: border-box;
     overflow: hidden;
 }
+
 .resize-save {
     position: absolute;
-    top: 0; right: 5px; bottom: 0; left: 0;
+    top: 0;
+    right: 5px;
+    bottom: 0;
+    left: 0;
     padding: 16px;
     overflow-x: hidden;
 
 }
+
 .resize-bar {
-    width: 200px; height: inherit;
+    width: 200px;
+    height: inherit;
     resize: horizontal;
     cursor: ew-resize;
     opacity: 0;
@@ -83,41 +93,52 @@ div{
     min-width: 200px;
     /*设定最小宽度*/
 }
+
 /* 拖拽线 */
 .resize-line {
     position: absolute;
-    right: 0; top: 0; bottom: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     border-right: 2px solid #eee;
     border-left: 1px solid #bbb;
     pointer-events: none;
 }
-.resize-bar:hover ~ .resize-line,
-.resize-bar:active ~ .resize-line {
+
+.resize-bar:hover~.resize-line,
+.resize-bar:active~.resize-line {
     border-left: 1px dashed skyblue;
 }
+
 .resize-bar::-webkit-scrollbar {
-    width: 200px; height: inherit;
+    width: 200px;
+    height: inherit;
 }
 
 /* Firefox只有下面一小块区域可以拉伸 */
 @supports (-moz-user-select: none) {
-    .resize-bar:hover ~ .resize-line,
-    .resize-bar:active ~ .resize-line {
+
+    .resize-bar:hover~.resize-line,
+    .resize-bar:active~.resize-line {
         border-left: 1px solid #bbb;
     }
-    .resize-bar:hover ~ .resize-line::after,
-    .resize-bar:active ~ .resize-line::after {
+
+    .resize-bar:hover~.resize-line::after,
+    .resize-bar:active~.resize-line::after {
         content: '';
         position: absolute;
-        width: 16px; height: 16px;
-        bottom: 0; right: -8px;
+        width: 16px;
+        height: 16px;
+        bottom: 0;
+        right: -8px;
         background: red;
         background-size: 100% 100%;
     }
 }
+
 /*end column*/
 
-.andflow{
+.andflow {
     position: relative;
     display: inline-block;
     width: 100%;
@@ -126,17 +147,21 @@ div{
     border: 1px solid #E3E3E3;
     border-radius: 0.25rem;
 
-    -moz-user-select: none; /*火狐*/
-    -webkit-user-select: none; /*webkit浏览器*/
-    -ms-user-select: none; /*IE10*/
-    -khtml-user-select: none; /*早期浏览器*/
+    -moz-user-select: none;
+    /*火狐*/
+    -webkit-user-select: none;
+    /*webkit浏览器*/
+    -ms-user-select: none;
+    /*IE10*/
+    -khtml-user-select: none;
+    /*早期浏览器*/
     user-select: none;
-    color:#333333 ;
+    color: #333333;
     text-align: left;
 }
 
 
-.andflow .metadata{
+.andflow .metadata {
     position: relative;
     display: inline-block;
 
@@ -151,31 +176,32 @@ div{
     padding-top: 0px;
 }
 
-.andflow .metadata .tags{
+.andflow .metadata .tags {
     display: flex;
     padding: 0px;
     align-items: center;
-     
+
     border: 0px;
     height: 25px;
     background-color: #E3E3E3;
     overflow: hidden;
 }
 
-.andflow .metadata .tags>label{
+.andflow .metadata .tags>label {
     display: inline-block;
     width: 50px;
     height: 100%;
     font-size: 12px;
     background-color: #E3E3E3;
-    color:#333333 ;
+    color: #333333;
     line-height: 25px;
     text-align: center;
-    margin:0px;
+    margin: 0px;
 
 
 }
-.andflow .metadata .tags>select{
+
+.andflow .metadata .tags>select {
     display: inline-block;
 
     /*width: calc(100% - 50px);*/
@@ -184,14 +210,14 @@ div{
 
     font-size: 12px;
 
-    margin:0px;
+    margin: 0px;
     border: 0px;
-    outline:0px;
+    outline: 0px;
     border-radius: 0px;
 
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
-    -webkit-appearance: none ;
+    -webkit-appearance: none;
     appearance: none;
 
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGVJREFUOE9jZKAQMFKon2HUAAbahEEDAwPDVQYGhtVoMRTKwMCgzcDAAJKHA2yxAFK4ioGBIQzJEGxiYENwRSOyBpA6dAPxugAmCTMExEd2DYrPCCUkGajqJ7hSLCEDCKb0YWAAAPWaDREoXWNBAAAAAElFTkSuQmCC");
@@ -205,7 +231,7 @@ div{
 
 }
 
-.andflow .metadata .actions{
+.andflow .metadata .actions {
     border-top: 1px solid #E3E3E3;
     padding: 5px;
     height: calc(100% - 25px);
@@ -213,40 +239,41 @@ div{
 }
 
 
-.andflow .metadata .actionMenu{
+.andflow .metadata .actionMenu {
     list-style-type: none;
     padding: 0px;
-    margin:0px;
+    margin: 0px;
 }
 
 
-.andflow .metadata .actionMenuSpliter{
+.andflow .metadata .actionMenuSpliter {
     border-top: 1px solid #E3E3E3;
     margin-top: 10px;
     height: 10px;
 }
 
-.andflow .metadata .actionMenuGroup{ 
-    text-align: left; 
+.andflow .metadata .actionMenuGroup {
+    text-align: left;
 }
 
-.andflow .metadata .actionMenuGroup .group-title{
-    cursor:default;
+.andflow .metadata .actionMenuGroup .group-title {
+    cursor: default;
     text-decoration: none;
     color: #333333;
     font-size: 14px;
 }
-.andflow .metadata .actionMenuGroup .group-title .group-label{
+
+.andflow .metadata .actionMenuGroup .group-title .group-label {
 
     color: #8e8e8e;
     font-size: 12px;
 }
 
-.andflow .metadata .actionMenuGroupBody{
+.andflow .metadata .actionMenuGroupBody {
     padding: 0px;
 }
 
-.andflow .metadata .actionMenuItem{
+.andflow .metadata .actionMenuItem {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -258,23 +285,26 @@ div{
     font-size: 12px;
     cursor: pointer;
 }
-.andflow .metadata .actionMenuItem .item-title{
+
+.andflow .metadata .actionMenuItem .item-title {
     display: flex;
     align-content: center;
     align-items: center;
     height: 100%;
 }
-.andflow .metadata .actionMenuItem .item-title >img{
-    height: 16px;width: 16px;
+
+.andflow .metadata .actionMenuItem .item-title>img {
+    height: 16px;
+    width: 16px;
 }
 
 
-.andflow .metadata .actionMenuItem:hover{
-    background-color: rgba(233,233,233,0.21);
+.andflow .metadata .actionMenuItem:hover {
+    background-color: rgba(233, 233, 233, 0.21);
 }
 
 
-.andflow .metadata .actionMenuItem .item-title{
+.andflow .metadata .actionMenuItem .item-title {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -283,20 +313,21 @@ div{
     color: #333333;
     font-size: 12px;
 }
-.andflow .metadata .actionMenuItem .item-title .item-label{
+
+.andflow .metadata .actionMenuItem .item-title .item-label {
     color: #333333;
     font-size: 12px;
 }
 
 
 
-.andflow .designer{
-    display: inline-block; 
+.andflow .designer {
+    display: inline-block;
     overflow: hidden;
     width: calc(100% - 200px);
     height: 100%;
     border-right: 5px solid transparent;
-    box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.13);
     position: relative;
     display: -ms-flexbox;
     display: flex;
@@ -306,123 +337,132 @@ div{
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
+    border: 0 solid rgba(0, 0, 0, .125);
     border-radius: .25rem;
     box-sizing: border-box;
 }
-.andflow .designer.max{
+
+.andflow .designer.max {
     width: 100%;
     height: 100%;
 }
-.codeContainer{
+
+.codeContainer {
     display: none;
     position: absolute;
     z-index: 10000;
     top: 25px;
-    left: 0px; 
-    background-color: transparent; 
+    left: 0px;
+    background-color: transparent;
     width: 100%;
     height: calc(100% - 25px);
     padding: 0px;
     overflow: hidden;
     box-sizing: border-box;
-   
+
 }
-.codeContainer textarea{
-    width:100%;
-    height:100%;
+
+.codeContainer textarea {
+    width: 100%;
+    height: 100%;
     border: 0px;
     box-sizing: border-box;
     resize: none;
 }
 
-.canvasContainer{
-    position: relative; 
-    display: block; 
-    background-color: transparent; 
+.canvasContainer {
+    position: relative;
+    display: block;
+    background-color: transparent;
     width: 100%;
     height: calc(100% - 25px);
     padding: 0px;
     background-image: url(data:image/gif;base64,R0lGODlhDAAMAJEAAOrq6v////Hx8QAAACH5BAAHAP8ALAAAAAAMAAwAAAIWjI8hycvonomSPtvkwYlDPQniSApAAQA7);
-    background-size:10px 10px;
+    background-size: 10px 10px;
     overflow: auto;
     box-sizing: border-box;
 }
-  
+
 .canvas {
-    position: relative;
-    display:block; 
+    position: absolute;
+    display: block;
+    transform-origin: center center;
     min-width: 100%;
     min-height: 100%;
-    width:100%;
-    height:100%;
-    padding:0px;
-    margin:0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
     background-color: transparent;
-    overflow:visible; 
+    overflow: visible;
     box-sizing: border-box;
     cursor: move;
     cursor: -moz-grab;
     cursor: -webkit-grab;
 }
 
-.canvas-move{
+.canvas-move {
     cursor: move;
     cursor: -moz-grabbing;
     cursor: -webkit-grabbing;
 }
 
-.flow_tools{
+.flow_tools {
     display: inline-block;
     height: 25px;
     width: 100%;
     background-color: white;
     border-bottom: 1px solid #E3E3E3;
-    color:#333333 ;
+    color: #333333;
     font-size: 12px;
     overflow: hidden;
     margin: 0px;
-    padding:0px;
+    padding: 0px;
     /*background-color: #E3E3E3;*/
 }
-.flow_tools .nav_btn{
+
+.flow_tools .nav_btn {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAPpJREFUWEftVssNwjAMtdUdYIcyBEJIHNMkEptwp5wZgTPntEcWYQiWMIrUogT6ox+5iORUKS/26/OzEwTmhcz5IRCYlwJSyhQRj1P6gohOWZalZQ5PAXYCSZLEiLiYWIFHnuf3SgWmTFwXe14m/AkFlFJ7Ilr1Jet2gI3RWAIp5Q4Rb8aYF25op7ixGgkopc4AcLCgCgLrvgoYYzbu2Q8FhBDLKIquALAtge+s+yavOucR0FoLIroAgDcL/oeAlYi1BG6N2EzokmBtwzqnF4MoLvaticn5bm2QrwZRa7QRAOEy8hRgf5AMvWi6WGLeb8IufzA2JnRBUOAJ7/V1IeDm3+wAAAAASUVORK5CYII=');
 }
-.flow_tools .nav_btn.close{
+
+.flow_tools .nav_btn.close {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAARdJREFUWEftljEOgkAQRXcu4SGw8gTGAxjYwgMYE2srW7G28gLGE/AX4gUs7K1M9AjegYzBYAIK7oqSxQQqir9/Hp+Z3SVh+SHL9UUL0KwEPM/ziWhRZ18w81Ip5T9q5BKwDuC6rkNEnZoTuIZheCpMoM7CZd7NasK/SEBKOWLmblXY7AQkHi+/QErJzNxTSh2Linw7KQByNQsB7mRE4yAIts8QKUC/agIABtm1pQCpaA1gVrWYyTodQOKxF0JMAVxMDD/VmAAc4jieRFF0/tTcRK8D2ACYmBhV1bwDmANY2WrCIYCdlTHURZluRE6qSxLkzLtuudBuRFqHHwvawyiXgPULybcHjUl7NPtOaPIFv9a0U9AmcAOt/n8huWU9DAAAAABJRU5ErkJggg==');
 }
 
-.flow_tools .code_btn{
+.flow_tools .code_btn {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAf5JREFUWEftl79rFEEUx79v4FotQqwsTB1IZWmRNBYai0BiKRF2392hV8RKsDAH/gdy4e7NgmdrSCFoI0LSpEwRCLZerQimOzhunsw5e2zMSbjcJkvITbXszrz5zPf9mLeEggcVvD+mAKcUiKJokYjWAKwR0ax3kXNuKUmSvXHc5e0YY3bDmg6AxDm3/6+dUwDM/ArAm+xmOQAMzKnqlrX2Wdb2KIDvAO6o6vDEqlo/jwJE9DrdjIgWVfWntfbWWQAaaPestUvjyP6/uXEc73oA/11EThx6lAJTgGusQDZ3fRZcRBAS0Xyr1fo2zI5s5DLzWwDPw7sdEVnNIwvK5fI7VV0PtjZFpD4ECJVvxhizrKqPAMyENHxqrW3nARBF0QNjzOdg65iI9p1z26raIWYeBF1mfAWwXSqVdhqNxq88AJj5JoAqgIcA7p0oRIUDFO6CAoKwLiKbI7Og8DT0VGlMZOsAM98H0ALwPqWv1Wo3ut3uR7+m1+uttNvt32G9P92qMeZls9n85N9NfBkx8wffoADoiMicN1qtVhf6/f6hf3bO3U2S5CAAHAGY/3vxSTkXgGDYK+CL05fUf8w88GXWp5VKZdk590REHqfzJlZg0lpwtQDiOP7hm9EiWzLva87KfqlNaQi4DQAvANwOUX55bfmkATfu+umvWeEK/AFYAJFq0iBzXAAAAABJRU5ErkJggg==');
 }
-.flow_tools .code_btn.design{
+
+.flow_tools .code_btn.design {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABBBJREFUWEfFl1mIXUUQhv86CAHBxzwEQXxRXNA4JLhBHBRUhEBccERRBLldDerkQSOCC+OOkkwEdZSuvkpQUDBRRxExuCGJGcVM4oYE9zyYgD4p+OTcLik9Zzj3zFnuBGQaDvfC6e7/66rqqjqEFR60wvroBGBmTinN9/v9+eXAOudOjTF+17WmFYCZlYj2qOoGALeLyEzXhvbeey8ppSuJaDWACRHZ2bSuEcDEATwoIg/0er2zsyz7DMB9IjLdBsHMzwM4S0TOZeZrAbzaBlELUBYvxLz3Z6jqXgDbROSxOghmPkhEFEI4p3jfBbEEoE68AvE+ADHLlCGY+SUA4wD+JKKJEMK3JYibAeyos8QQQJt4BeJtAC8WEM65l4noRBEZd849TkQbR4VYBGBmO9EaEfFlsZTSTIzx4vJpc3dYYO0kotNVdbWIXFI68XYAlzVBiMii7uKfXq+3Lsuy/UR0YQhhLhexANpVNXce6RYTcwC+F5H11Zjw3s+o6ngNxO8ANojIIVtTdQEDeArALQDuaRK3hcxscCeIyBVNt6IKwcz7AcyXrVwXhAbxrKruiDH26tyRix8vIhu78oJzbpqILs8Pu7csvsQCxWb5opuIaFPZHUT0gqqeD2CViGzqEi/FxBEAR+pc1ZaINgO4C8Dd5g4ielhVryGi40IIVy9D/HMAB6onL9a3pmLn3BYi2grAWVSrKsUYLbuNNJj5UwBfNok3uqC8u3NulojsGu4WkYmRlP8L0m8AfNImPhKABZwVlRDCUC7oqAd7AJwJYFpEHm2b21UN7apZ3l3OyT8GcEhVnyOi1+w3xritCaItCI9F/MM8Mf2bTb33F6iq7bNVRCy/LBlN1fBYxK1I/Vj1eQ7xJoD7RSRUCeoS0ZT5b5lm301Eh1X1PVW9taZ2mCXetWttZbQMsQTAe/96SumtGKOVz87BzO8AOArABMxyV4nIbHVhbomPAGwuQ9RZ4Id8k6+71L33c6p6GoCHAGxX1UtjjOaK2pFD7EsprS96zGoxOgnA4XK5bNqMmc2vfwD4CcAUEd0QQnilmG+dUJ07mNni4GhRYYcAnHPWSDwhInaHGwczv0FEf4UQbrRJzGzuusgaEeuEmtqwvOeYqu0H8o3uVVVrp62Fqh3MvAvA3yJyfXlCvrlVUkvd1pAMdcN14ra+aoHZLMs+CCE8bS8nJydXLSwsjA0GgzEiGkspnZJl2W8hhOvq6JjZegjLfHeIyJMld1i3NXTy4l0V4Ncsy7aklNYS0VoA9qwB8AuAL/LCMtSMVkGY+U4Aj6SUzuv3+181nbwWgJn3AThZVa29tufAYDA42O/3f+66ERV33AbgmeKjpi2oOz/NliNcnpv3mOuqiae63/8GMCr4igP8A88tOz9MyKreAAAAAElFTkSuQmCC');
 }
 
-.flow_tools .thumbnail_btn{
+.flow_tools .thumbnail_btn {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAspJREFUWEft1kvoVVUUx/HPHwmCwBrkwHz0Es3EF2I0CQoEwVdOfIyUQs03DoQUlYp8gA4ExYRKJBv4GulARRDDB6IYRBYqJVqaOBBf+AhEkCX7yOl0zr3n/v/8+TtwTS7su/Za3/3ba6192nSxtXVxfs8sQH/cx5XOVqhKgVMYicnY3ZkQVQBf4ouUuAxiGAbiNdzDOfyBf1qFbVQDjSAu4o2SZMexF3twvg5MsyKsgoj1zLqjN97B4Nz6WqzD9UYgzQDexS4ManAd+fhDMREZYKiwCj9WQTQCiOS/p41RiJNqQoTbGKxGAIV9lYP6D0sVwIc4nDw/xdakRCsQryaImSlO/H5fVKIMIJ98LPblNsV1tAIRW9dgSYrxFqKAn1oRYAj2p/aqkq09EN9gDg5hVCOA7ZiKLZhRUTj5zgiXusMqix3d8XkWO69AJA6nh+iLayUAL+NWOwuzH37BS/gIP0WcPEAUXdz/LHxXcfro819xFb3aUZgLsCENq4+LAJswN83+kLXMsta8gDhRWCs1cQLvYyMWFgHeRjj0wHRsKyF4EZE83oCnMtaEWI6vk3ojsisudkEm0R2Mx5ESiNnYnNYvo1sCyrsWC3M4jqb7z+bKE/+yObADU3A2tUzcd9FiFoT0eZuHN7E4LeYh4mWN7jmGD/Kbqibh3+iDg6ktb5ZAvJJexEcI/9vJ5wdMK4GIAj+Nu3UAwife9yi0M1hZcuKKOn2yfACjSyD+t6fZa5iv8JjjAfJXo8zoic8Qsz+KNaxyWDUDiM2RdFkKdCON6hjX8fFxKa2/kJ7seIrziWOcN/qyqv1VPA4r8F7h9NGSDzAAAZHZt1iKAJ6f+r5UiToK5HNGIU1IMyA+UrKkkegkfsNO/FwAXYT1aS06JVOutgJl1x7J4+T/4s8mdRF/Rxu+jk/qdkGNmB13afUKOp6xEOE5QJcr8BhVNZUhAZa4eAAAAABJRU5ErkJggg==');
 }
 
-.flow_tools .thumbnail_btn.open{
+.flow_tools .thumbnail_btn.open {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAjNJREFUWEft1kuoT1EUx/HPzWuiPCZiTCEhlDwmBsiACUKiJAxMiBEDDK6Rx0Apj7yTRwYmihQDQogMPEtGlAkGJK+0ah8du///nnP/Ayd1V51OZ++z1/ru31577d2lYetqOL4+gP9egfH4heed5lJvFViPmZiQnkEp8Fc8xlPcw+G6QHUBInA8U2s6fpggKkGqAGbgQCnwWxzBG7zCi7QEYzAa8V6HUQk0QDbhVjvwngAW4yiGogh8CO8qVBiJDSWQT+n7fKtx7QCCen8acBdrWiTaREzBd9zHyyzAWJzA9NS+BftyiFYAy3Au/XgVq/G+NHApNiOWp2wXE/SdUuMInMbc1LYcfymRAwzEbUzDZSzBj5LDVTiVvq+lHOiH2QhFwibhSWnMAFzCQjzALHwr+nOAbehOnTHDkL+wCHADw7ELO0t90XYcixBg8zN15iHUDNuO3a0AxqXZD8NebM2crMBZPEoz/pL1x8yKbA8FYweU7QxW4kNS4Vl0lhWIGe1IIwbjc+YgkmgPjmFt1ld8XsGClPV5DRiCj+nHPwr2BqDYGQexsQ3ABUSSxq6JHVC2SoCqJQjHEaDOEuSJGCCVSxA/9ZSEk1MSRmHKkzDaTqYkvIk5nSRhjKnahnEeRDUMu47X6J8KUgCG5QnYq20YDhotRIVydUpxnIzx/ERUvziKy9ZxKS6cNHoYFRCNHsdlORu7kOT1prErWZvC559fStuBdNxedSfs2HHdgX0AjSvwG5F4nCH6feA0AAAAAElFTkSuQmCC');
 }
 
 
-.flow_tools .left{
+.flow_tools .left {
     display: inline-block;
 
     float: left;
     height: 100%;
 }
-.flow_tools .right{
+
+.flow_tools .right {
     display: inline-block;
     float: right;
     height: 100%;
 
 }
-.flow_tools a{
+
+.flow_tools a {
     display: inline-block;
-    text-decoration:none;
+    text-decoration: none;
     min-width: 25px;
     height: 25px;
     line-height: 25px;
@@ -440,55 +480,57 @@ div{
     /*background-color: #E3E3E3;*/
     /*border: 1px solid #E3E3E3;*/
 }
-.flow_tools a:hover{
+
+.flow_tools a:hover {
     background-color: #d9d9d9;
 
 }
-.flow_tools .scale_value{
+
+.flow_tools .scale_value {
     font-size: 10px;
 }
 
-.flow_tools .fold_btn{
+.flow_tools .fold_btn {
     color: white;
 }
- 
 
 
-.flow_thumbnail{
+
+.flow_thumbnail {
     display: none;
     position: absolute;
     z-index: 100;
     top: 45px;
     right: 20px;
     padding: 0px;
-    
+
     width: 100px;
-    height:100px;
+    height: 100px;
     border: 1px solid #E3E3E3;
     background-color: rgba(255, 255, 255, 0.5);
     background-size: contain;
     background-repeat: no-repeat;
     overflow: hidden;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 
 }
 
-.flow_thumbnail_mask{ 
+.flow_thumbnail_mask {
     position: absolute;
     z-index: 100;
     top: 0px;
     left: 0px;
-    padding: 0px; 
+    padding: 0px;
     width: 100%;
-    height:100%;
+    height: 100%;
     border: 1px solid #E3E3E3;
     background-color: rgba(0, 0, 0, 0.01);
-    box-sizing: border-box; 
+    box-sizing: border-box;
     cursor: move;
 }
 
 /*流程执行结果列表*/
-.flow_state_list{
+.flow_state_list {
     position: absolute;
     z-index: 99;
     bottom: 0px;
@@ -497,12 +539,12 @@ div{
     height: auto;
     max-height: 50%;
     background-color: white;
-    padding:0px;
-    margin:0px;
+    padding: 0px;
+    margin: 0px;
     overflow: hidden;
 }
 
-.flow_state_list_title{
+.flow_state_list_title {
     height: 20px;
     padding: 2px;
     padding-left: 10px;
@@ -515,49 +557,58 @@ div{
 
 }
 
-.flow_state_list_title .flow_state_list_btn{
+.flow_state_list_title .flow_state_list_btn {
     font-size: 20px;
     color: grey;
-    float:right;
+    float: right;
     cursor: pointer;
     line-height: 12px;
 }
-.flow_state_list_content{
-    width:100%;
+
+.flow_state_list_content {
+    width: 100%;
     height: calc(100% - 20px);
     background-color: white;
     overflow: auto;
     padding: 5px;
 }
-.flow_state_list_content>table{
+
+.flow_state_list_content>table {
     width: 100%;
     margin: 0px;
-    padding:0px;
+    padding: 0px;
 }
-.flow_state_list_content>table>thead th{
+
+.flow_state_list_content>table>thead th {
     text-align: center;
     font-size: 12px;
 }
-.flow_state_list_content>table tr{
+
+.flow_state_list_content>table tr {
     border-bottom: 1px solid #dedede;
 }
-.flow_state_list_content>table tr>td{
-    font-size:12px;
+
+.flow_state_list_content>table tr>td {
+    font-size: 12px;
 }
 
-.flow_state_list_content label.state-execute{
+.flow_state_list_content label.state-execute {
     color: deepskyblue;
 }
-.flow_state_list_content label.state_complete{
+
+.flow_state_list_content label.state_complete {
     color: darkblue;
 }
-.flow_state_list_content label.state_waiting{
+
+.flow_state_list_content label.state_waiting {
     color: gray;
 }
-.flow_state_list_content label.error{
+
+.flow_state_list_content label.error {
     color: red;
 }
-.flow_state_list_content label.success{
+
+.flow_state_list_content label.success {
     color: green;
 }
 
@@ -566,10 +617,11 @@ div{
 /***************************************************/
 
 /*hide toolbar*/
-.andflow.toolbar_hide .flow_tools{
+.andflow.toolbar_hide .flow_tools {
     display: none;
 }
-.andflow.toolbar_hide .canvasContainer{
+
+.andflow.toolbar_hide .canvasContainer {
     height: 100%;
 }
 
@@ -577,7 +629,7 @@ div{
 /***************************************************/
 
 /*float left metadata*/
-.andflow.metadata_float_left .metadata{
+.andflow.metadata_float_left .metadata {
     position: absolute;
     z-index: 100;
     left: 0px;
@@ -592,20 +644,21 @@ div{
     background-clip: border-box;
     padding-top: 0px;
 }
-.andflow.metadata_float_left.toolbar_hide .metadata{
+
+.andflow.metadata_float_left.toolbar_hide .metadata {
     top: 0px;
     height: 100%;
 }
 
 
-.andflow.metadata_float_left .designer{
+.andflow.metadata_float_left .designer {
     display: inline-block;
 
     width: 100%;
     height: 100%;
 
     border-right: 5px solid transparent;
-    box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.13);
     position: relative;
 
 
@@ -613,14 +666,14 @@ div{
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
+    border: 0 solid rgba(0, 0, 0, .125);
 }
 
 
 
 /***************************************************/
 /*float top metadata*/
-.andflow.metadata_float_top .metadata{
+.andflow.metadata_float_top .metadata {
     position: absolute;
     z-index: 1000;
     left: 0px;
@@ -640,26 +693,27 @@ div{
     padding-top: 0px;
 }
 
-.andflow.metadata_float_top.toolbar_hide .metadata{
+.andflow.metadata_float_top.toolbar_hide .metadata {
     top: 0px;
 }
 
-.andflow.metadata_float_top .metadata .tags{
+.andflow.metadata_float_top .metadata .tags {
     width: 100px;
 }
-.andflow.metadata_float_top .metadata .actions{
+
+.andflow.metadata_float_top .metadata .actions {
     border: 0px;
     padding: 0px;
     height: auto;
     width: calc(100% - 100px);
-    overflow-y:hidden;
-    overflow-x:auto;
+    overflow-y: hidden;
+    overflow-x: auto;
     white-space: nowrap;
     box-sizing: border-box;
 }
 
 
-.andflow.metadata_float_top .metadata .actions .actionMenu{
+.andflow.metadata_float_top .metadata .actions .actionMenu {
     display: flex;
     align-items: center;
     align-content: center;
@@ -667,15 +721,17 @@ div{
     height: auto;
     width: 100%;
 }
-.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup{
+
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup {
     display: none;
     height: 25px;
     padding: 0px;
-    margin:0px;
+    margin: 0px;
     padding-left: 5px;
     border-left: 1px solid #E3E3E3;
 }
-.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup>a{
+
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuGroup>a {
     font-size: 10px;
     padding-left: 5px;
 
@@ -683,37 +739,40 @@ div{
     line-height: 25px;
     color: #A3A3A3;
 }
-.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem{
+
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem {
     display: inline-block;
 }
-.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem>a{
+
+.andflow.metadata_float_top .metadata .actions .actionMenu>.actionMenuItem>a {
     display: flex;
 }
-.andflow.metadata_float_top .designer{
+
+.andflow.metadata_float_top .designer {
     /* display: inline-block; */
 
     width: 100%;
     height: calc(100% - 100px);
 
     border-right: 5px solid transparent;
-    box-shadow: 0 0 1px rgba(0, 0, 0 , 0.13);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.13);
     position: relative;
     min-width: 0;
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
+    border: 0 solid rgba(0, 0, 0, .125);
 }
 
 
 /************************************************/
 
 /*close metadata*/
-.andflow.fold .metadata{
+.andflow.fold .metadata {
     display: none;
 }
 
-.andflow.fold .designer{ 
+.andflow.fold .designer {
     width: 100%;
     height: 100%;
 }
@@ -721,103 +780,107 @@ div{
 /************************************************/
 
 /*editable=false static */
-.andflow.state .metadata{
+.andflow.state .metadata {
     display: none;
 }
 
-.andflow.state .designer{ 
+.andflow.state .designer {
     width: 100%;
     height: 100%;
 }
 
-.andflow.state .flow_tools .nav_btn{
+.andflow.state .flow_tools .nav_btn {
     display: none;
 
 }
 
-.andflow.state .action .action-remove-btn{
+.andflow.state .action .action-remove-btn {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .action .action-resize{
+.andflow.state .action .action-resize {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .action .body-resize{
-    display: none;
-    visibility: hidden;
-}
-.andflow.state .action .ep{
+.andflow.state .action .body-resize {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .group .group-remove-btn{
+.andflow.state .action .ep {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .group .group-resize{
-    display: none;
-    visibility: hidden;
-}
-.andflow.state .group .group-ep{
+.andflow.state .group .group-remove-btn {
     display: none;
     visibility: hidden;
 }
 
-
-.andflow.state .list .list-remove-btn{
+.andflow.state .group .group-resize {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .list .list-resize{
-    display: none;
-    visibility: hidden;
-}
-.andflow.state .list .list-ep{
+.andflow.state .group .group-ep {
     display: none;
     visibility: hidden;
 }
 
 
-.andflow.state .tip .tip-remove-btn{
+.andflow.state .list .list-remove-btn {
     display: none;
     visibility: hidden;
 }
 
-.andflow.state .tip .tip-resize{
+.andflow.state .list .list-resize {
     display: none;
     visibility: hidden;
 }
-.andflow.state .tip .tip-ep{
+
+.andflow.state .list .list-ep {
     display: none;
     visibility: hidden;
-} 
+}
+
+
+.andflow.state .tip .tip-remove-btn {
+    display: none;
+    visibility: hidden;
+}
+
+.andflow.state .tip .tip-resize {
+    display: none;
+    visibility: hidden;
+}
+
+.andflow.state .tip .tip-ep {
+    display: none;
+    visibility: hidden;
+}
 
 .jtk-drag-hover {
-    outline:4px solid #ffc107;
+    outline: 4px solid #ffc107;
 }
 
 
 
-.animationLabel{
- background-color: red;
- height: 30px;
- width: 30px;
- border-radius: 15px;
+.animationLabel {
+    background-color: red;
+    height: 30px;
+    width: 30px;
+    border-radius: 15px;
 }
 
-.drag-helper{
+.drag-helper {
     position: absolute;
     z-index: 5;
 }
 
-.action-container{
-    display: absolute; 
+.action-container {
+    display: absolute;
     width: auto;
     height: auto;
 }
@@ -825,13 +888,13 @@ div{
 
 
 /* 小屏幕 */
-@media (max-width: 640px){
-    
-    .andflow .metadata{
+@media (max-width: 640px) {
+
+    .andflow .metadata {
         position: relative;
-        display: inline-block; 
+        display: inline-block;
         width: 50px;
-        height: 100%; 
+        height: 100%;
         border-right: 1px solid #E3E3E3;
         min-width: 0;
         word-wrap: break-word;
@@ -839,35 +902,39 @@ div{
         background-clip: border-box;
         padding-top: 0px;
     }
-    .andflow .metadata .tags>select{ 
+
+    .andflow .metadata .tags>select {
         text-align: center;
         background: white;
         padding: 0px;
         -webkit-appearance: none;
         -moz-appearance: none;
-        appearance: none;      
+        appearance: none;
     }
 
-    .andflow .metadata .tags>select::-ms-expand{ 
+    .andflow .metadata .tags>select::-ms-expand {
         display: none;
     }
-    .andflow .metadata .item-label{
-         display: none;
-    } 
-    .andflow .metadata .actionMenuGroup .group-label{
+
+    .andflow .metadata .item-label {
         display: none;
     }
-    .andflow .designer{
-        display: inline-block; 
+
+    .andflow .metadata .actionMenuGroup .group-label {
+        display: none;
+    }
+
+    .andflow .designer {
+        display: inline-block;
         overflow: hidden;
         width: calc(100% - 50px);
     }
 
-    .andflow.metadata_float_left .metadata{
+    .andflow.metadata_float_left .metadata {
         width: 50px;
     }
 
-    .andflow.metadata_float_left .designer{
+    .andflow.metadata_float_left .designer {
         width: 100%;
     }
 

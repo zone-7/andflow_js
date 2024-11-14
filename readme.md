@@ -20,6 +20,8 @@ VUE 组件使用DEMO: https://github.com/zone-7/andflow_vue_test
 ## JS 压缩工具
 https://closure-compiler.appspot.com/home
 
+简单压缩
+
 ## CSS 压缩工具
 https://www.runoob.com/csspack
 

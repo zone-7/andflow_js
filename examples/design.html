@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow</title>
- 
+
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
-    <script src="../depends/canvg.js"></script> 
+    <script src="../depends/canvg.js"></script>
 
     <script src="../depends/custombox/custombox.min.js"></script>
     <script src="../depends/custombox/custombox.legacy.min.js"></script>
     <link rel="stylesheet" href="../depends/custombox/custombox.min.css">
 
     <link rel="stylesheet" href="../src/css/andflow.css">
-    <link rel="stylesheet" href="../src/css/andflow_themes.css">  
-    <link rel="stylesheet" href="../src/css/andflow_themes_action.css">  
+    <link rel="stylesheet" href="../src/css/andflow_themes.css">
+    <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
 
     <script src="../src/js/andflow.js"></script>
-    <script src="../src/js/andflow_themes.js"></script> 
- 
-    
-    <link  rel="stylesheet"  href="../src/css/demo.css" > 
-    <script  src="../src/js/demo.js" ></script>
+    <script src="../src/js/andflow_themes.js"></script>
+
+
+    <link rel="stylesheet" href="../src/css/demo.css">
+    <script src="../src/js/demo.js"></script>
 
 </head>
-<body> 
+
+<body>
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle"><a href="index.html" >首页</a> > 设计器</div>
-        
+        <div class="title"><a href="index.html">Andflow</a></div>
+        <div class="subtitle"><a href="index.html">首页</a> > 设计器</div>
+
         <div class="menus">
             <a href="index.html">Demos</a>
 
@@ -40,120 +42,141 @@
         </div>
     </div>
 
-<div id="andflow" style="width: 100%;height: 600px;padding:0px;"> 
-</div>
+    <div id="andflow" style="width: 100%;height: 600px;padding:0px;">
+    </div>
 
-<div id="actionDialog" class="dialog">
-    <div class="dialog-header">
-        <div class="dialog-title">节点属性</div>
+    <div id="actionDialog" class="dialog">
+        <div class="dialog-header">
+            <div class="dialog-title">节点属性</div>
+        </div>
+        <div class="dialog-body">
+            <div class="form-item">
+                <label>名称</label>
+                <input name="name" value="" readonly />
+            </div>
+            <div class="form-item">
+                <label>标题</label>
+                <input name="title" value="" />
+            </div>
+            <div class="form-item">
+                <label>样式</label>
+                <select name="theme">
+                    <option value="action_theme_default" selected>默认样式</option>
+                    <option value="action_theme_zone">右置标题</option>
+                    <option value="action_theme_icon">大图标</option>
+                    <option value="action_theme_box">矩形框</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>汇聚模式</label>
+                <select name="collect">
+                    <option value="true">汇聚后执行</option>
+                    <option value="false">到达即执行</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>执行次数</label>
+                <select name="once">
+                    <option value="true">只执行一次</option>
+                    <option value="false">任意次</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>内容</label>
+                <textarea name="content" rows="3"></textarea>
+            </div>
+            <div class="form-item">
+                <label>执行脚本</label>
+                <textarea name="script" rows="5"></textarea>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button onclick="saveActionDialog()">确定</button>
+            <button onclick="closeActionDialog()">关闭</button>
+        </div>
     </div>
-    <div class="dialog-body"> 
-        <div class="form-item">
-            <label>名称</label>
-            <input name="name" value="" readonly />
-        </div>
-        <div class="form-item">
-            <label>标题</label>
-            <input name="title" value="" />
-        </div>
-        <div class="form-item">
-            <label>样式</label>
-            <select name="theme">
-                <option value="action_theme_default"  selected >默认样式</option>
-                <option value="action_theme_zone"  >右置标题</option>
-                <option value="action_theme_icon" >大图标</option>
-                <option value="action_theme_box" >矩形框</option>
-            </select>
-        </div>
-        <div class="form-item">
-            <label>汇聚模式</label>
-            <select name="collect"><option value="true">汇聚后执行</option><option value="false">到达即执行</option></select>
-        </div>
-        <div class="form-item">
-            <label>执行次数</label>
-            <select name="once"><option value="true">只执行一次</option><option value="false">任意次</option></select>
-        </div>
-        <div class="form-item">
-            <label>内容</label>
-            <textarea name="content" rows="3"></textarea>
-        </div>
-        <div class="form-item">
-            <label>执行脚本</label>
-            <textarea name="script" rows="5"></textarea>
-        </div>
-    </div>
-    <div class="dialog-footer">
-        <button onclick="saveActionDialog()">确定</button>
-        <button onclick="closeActionDialog()">关闭</button>
-    </div>
-</div>
 
 
-<div id="linkDialog" class="dialog">
-    <div class="dialog-header">
-        <div class="dialog-title">连接线属性</div>
+    <div id="linkDialog" class="dialog">
+        <div class="dialog-header">
+            <div class="dialog-title">连接线属性</div>
+        </div>
+        <div class="dialog-body">
+            <div class="form-item">
+                <label>源头ID</label>
+                <input name="source_id" value="" readonly />
+            </div>
+            <div class="form-item">
+                <label>目标ID</label>
+                <input name="target_id" value="" readonly />
+            </div>
+            <div class="form-item">
+                <label>标题</label>
+                <input name="title" value="" />
+            </div>
+            <div class="form-item">
+                <label>源头标签</label>
+                <input name="label_source" value="" />
+            </div>
+            <div class="form-item">
+                <label>目标标签</label>
+                <input name="label_target" value="" />
+            </div>
+            <div class="form-item">
+                <label>动画效果</label>
+                <select name="animation">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>左箭头</label>
+                <select name="arrows1">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>中箭头</label>
+                <select name="arrows2">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>右箭头</label>
+                <select name="arrows3">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                </select>
+            </div>
+
+            <div class="form-item">
+                <label>是否可用</label>
+                <select name="active">
+                    <option value="true">可用</option>
+                    <option value="false">禁用</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>过滤脚本</label>
+                <textarea name="filter" rows="5"></textarea>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button onclick="saveLinkDialog()">确定</button>
+            <button onclick="closeLinkDialog()">关闭</button>
+        </div>
     </div>
-    <div class="dialog-body">
-        <div class="form-item">
-            <label>源头ID</label>
-            <input name="source_id" value="" readonly />
-        </div>
-        <div class="form-item">
-            <label>目标ID</label>
-            <input name="target_id" value="" readonly />
-        </div>
-        <div class="form-item">
-            <label>标题</label>
-            <input name="title" value="" />
-        </div> 
-        <div class="form-item">
-            <label>源头标签</label>
-            <input name="label_source" value="" />
-        </div> 
-        <div class="form-item">
-            <label>目标标签</label>
-            <input name="label_target" value="" />
-        </div> 
-        <div class="form-item">
-            <label>动画效果</label>
-            <select name="animation" ><option value="true">是</option><option value="false">否</option></select>
-        </div> 
-        <div class="form-item">
-            <label>左箭头</label>
-            <select name="arrows1"><option value="true">是</option><option value="false">否</option></select>
-        </div>  
-        <div class="form-item">
-            <label>中箭头</label>
-            <select name="arrows2"><option value="true">是</option><option value="false">否</option></select>
-        </div>  
-        <div class="form-item">
-            <label>右箭头</label>
-            <select name="arrows3"><option value="true">是</option><option value="false">否</option></select>
-        </div>  
-        
-        <div class="form-item">
-            <label>是否可用</label>
-            <select name="active"><option value="true">可用</option><option value="false">禁用</option></select>
-        </div>
-        <div class="form-item">
-            <label>过滤脚本</label>
-            <textarea name="filter" rows="5"></textarea>
-        </div>
-    </div>
-    <div class="dialog-footer"> 
-        <button onclick="saveLinkDialog()">确定</button>
-        <button onclick="closeLinkDialog()">关闭</button> 
-    </div>
-</div> 
- 
+
 </body>
 <script>
 
 
 </script>
-<script> 
-    
-    var flowModel= {
+<script>
+
+    var flowModel = {
         "code": "",
         "name": "",
         "show_action_body": "true",
@@ -185,7 +208,7 @@
                 "id": "f558687ca5f34a6c89732eb50749a15a",
                 "left": "550px",
                 "top": "400px",
-                "name": "end", 
+                "name": "end",
                 "params": {},
                 "title": "结束",
                 "icon": "end.png",
@@ -280,33 +303,33 @@
     };
 
 
-    var options={
-        tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素
-        flowModel:flowModel,  //流程模型
+    var options = {
+        tags: tags,            //组件过滤标签列表
+        metadata: metadata,    //组件元素
+        flowModel: flowModel,  //流程模型
         img_path: "../img/meta/",
-        editable:true,   //是否可编辑，默认true
+        editable: true,   //是否可编辑，默认true
         show_toolbar: true,
         metadata_position: 'default', //top,left,default
-        render_action:function(metadata,action,html){ return html; },//节点渲染
-        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
-        render_state_list: function(datas){return null},             //流程状态列表渲染
-        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
-        event_group_click:function(group){
- 
+        render_action: function (metadata, action, html) { return html; },//节点渲染
+        render_action_helper: function (metadata, html) { return null },  //节点拖拉渲染
+        render_state_list: function (datas) { return null },             //流程状态列表渲染
+        render_link: function (conn, linktype, linkdata) { return null },   //连接线渲染
+        event_group_click: function (group) {
+
         },
-        event_group_dblclick: function(group){
-            alert("group doubleclick:"+group.id); 
+        event_group_dblclick: function (group) {
+            alert("group doubleclick:" + group.id);
         },
         //节点单击事件
-        event_action_click:function(metadata,action){
- 
+        event_action_click: function (metadata, action) {
+
 
         },
         //节点双击事件
-        event_action_dblclick:function(metadata,action){
+        event_action_dblclick: function (metadata, action) {
 
-            openActionDialog(action); 
+            openActionDialog(action);
 
         },
         //连线单击事件
@@ -316,20 +339,21 @@
         //连线双击事件
         event_link_dblclick: function (link) {
             openLinkDialog(link);
- 
+
 
         },
         //画图板单击事件
-        event_canvas_click: function(e){ 
+        event_canvas_click: function (e) {
         }
     }
 
 
-    andflow.newInstance("andflow",options);
+    andflow.newInstance("andflow", options);
     andflow.showFlow();
 
 
- 
+
 
 </script>
+
 </html>

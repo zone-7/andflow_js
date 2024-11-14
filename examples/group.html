@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow</title>
- 
+
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -17,17 +18,18 @@
     <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
 
     <script src="../src/js/andflow.js"></script>
-    <script src="../src/js/andflow_themes.js"></script> 
- 
-    <link  rel="stylesheet"  href="../src/css/demo.css" > 
-    <script  src="../src/js/demo.js" ></script>
+    <script src="../src/js/andflow_themes.js"></script>
+
+    <link rel="stylesheet" href="../src/css/demo.css">
+    <script src="../src/js/demo.js"></script>
 </head>
-<body> 
+
+<body>
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle"><a href="index.html" >首页</a> > 分组</div>
-        
+        <div class="title"><a href="index.html">Andflow</a></div>
+        <div class="subtitle"><a href="index.html">首页</a> > 分组</div>
+
         <div class="menus">
             <a href="index.html">Demos</a>
 
@@ -35,46 +37,46 @@
         </div>
     </div>
 
-<div id="andflow" style="width: 100%;height: 600px;padding:0px;"> 
-</div>
+    <div id="andflow" style="width: 100%;height: 600px;padding:0px;">
+    </div>
 
-<br/>
+    <br />
 
 
-<button type="button" onclick="getFlowContent();">获取流程定义内容</button>
-<button type="button" onclick="setFlowContent();">设置流程定义内容</button>
-<button type="button" onclick="snap()">截图</button>
-<br />
-<label>是否可编辑</label>
-<select id="editable_select" onchange="changeEditable()">
-    <option value="true"  selected >是</option>
-    <option value="false"  >否</option>
-</select>
-<label>连线样式</label>
-<select id="link_type_select" onchange="changeLinkType()">
-    <option value="Flowchart" selected>流程</option>
-    <option value="Straight" >直线</option>
-    <option value="Bezier">曲线</option>
-    <option value="StateMachine">状态</option>
-</select>
-<label>风格</label>
-<select id="theme_select" onchange="changeTheme()">
-    <option value="flow_theme_default"  selected >默认样式</option>
-    <option value="flow_theme_zone"  >右置标题</option>
-    <option value="flow_theme_icon" >大图标</option>
-    <option value="flow_theme_box" >方框</option>
-</select>
-<label>是否显示内容</label>
-<select id="showcontent_select" onchange="changeShowContent()">
-    <option value="true"  selected >是</option>
-    <option value="false"  >否</option>
-</select>
+    <button type="button" onclick="getFlowContent();">获取流程定义内容</button>
+    <button type="button" onclick="setFlowContent();">设置流程定义内容</button>
+    <button type="button" onclick="snap()">截图</button>
+    <br />
+    <label>是否可编辑</label>
+    <select id="editable_select" onchange="changeEditable()">
+        <option value="true" selected>是</option>
+        <option value="false">否</option>
+    </select>
+    <label>连线样式</label>
+    <select id="link_type_select" onchange="changeLinkType()">
+        <option value="Flowchart" selected>流程</option>
+        <option value="Straight">直线</option>
+        <option value="Bezier">曲线</option>
+        <option value="StateMachine">状态</option>
+    </select>
+    <label>风格</label>
+    <select id="theme_select" onchange="changeTheme()">
+        <option value="flow_theme_default" selected>默认样式</option>
+        <option value="flow_theme_zone">右置标题</option>
+        <option value="flow_theme_icon">大图标</option>
+        <option value="flow_theme_box">方框</option>
+    </select>
+    <label>是否显示内容</label>
+    <select id="showcontent_select" onchange="changeShowContent()">
+        <option value="true" selected>是</option>
+        <option value="false">否</option>
+    </select>
 
-<label>当前节点ID</label>
-<input id="current_action_id" type="text" value="">
-<br/>
+    <label>当前节点ID</label>
+    <input id="current_action_id" type="text" value="">
+    <br />
 
-<textarea id="flow_content" style="width:800px;height: 400px;">
+    <textarea id="flow_content" style="width:800px;height: 400px;">
 
 </textarea>
 </body>
@@ -82,9 +84,9 @@
 
 
 </script>
-<script> 
- 
-    var flowModel= {
+<script>
+
+    var flowModel = {
         "code": "",
         "name": "",
         "show_action_body": "true",
@@ -127,7 +129,8 @@
                 "top": "280px",
                 "name": "script",
                 "params": {},
-                "title": "执行脚本",
+                "title": "执行脚本1",
+                "theme": "action_theme_default",
                 "icon": "script.png",
                 "width": "120px",
                 "height": "80px"
@@ -136,7 +139,7 @@
                 "id": "f558687ca5f34a6c89732eb50749a15a",
                 "left": "540px",
                 "top": "280px",
-                "name": "end", 
+                "name": "end",
                 "params": {},
                 "title": "结束",
                 "icon": "end.png",
@@ -163,7 +166,7 @@
                 "id": "group1",
                 "title": "组",
                 "name": "group",
-                "theme":"action_theme_icon",
+                "theme": "action_theme_icon",
                 "members": [
                     "793a2a11cf8b40e9afd8bd8f04405e64",
                     "1c53b069bfd34d4da0ac0d74d8e539d5"
@@ -179,40 +182,40 @@
     };
 
 
-    var options={
-        tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素 
-        flowModel:flowModel,  //流程模型
+    var options = {
+        tags: tags,            //组件过滤标签列表
+        metadata: metadata,    //组件元素 
+        flowModel: flowModel,  //流程模型
         img_path: "../img/meta/",
-        editable:true,   //是否可编辑，默认true
+        editable: true,   //是否可编辑，默认true
         show_toolbar: true,
         metadata_position: 'top', //top,left,default
-        render_action:function(metadata,action,html){ return html; },//节点渲染
-        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
-        render_state_list: function(datas){return null},             //流程状态列表渲染
-        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
-        event_group_click:function(group){
- 
+        render_action: function (metadata, action, html) { return html; },//节点渲染
+        render_action_helper: function (metadata, html) { return null },  //节点拖拉渲染
+        render_state_list: function (datas) { return null },             //流程状态列表渲染
+        render_link: function (conn, linktype, linkdata) { return null },   //连接线渲染
+        event_group_click: function (group) {
+
         },
-        event_group_dblclick: function(group){
-            alert("group doubleclick:"+group.id); 
+        event_group_dblclick: function (group) {
+            alert("group doubleclick:" + group.id);
         },
         //节点单击事件
-        event_action_click:function(metadata,action){
+        event_action_click: function (metadata, action) {
 
-            var oldid=document.getElementById("current_action_id").value;
-            andflow.setActionSelected(oldid,false);
+            var oldid = document.getElementById("current_action_id").value;
+            andflow.setActionSelected(oldid, false);
 
             document.getElementById("current_action_id").value = (action.id);
-            andflow.setActionSelected(action.id,true);
+            andflow.setActionSelected(action.id, true);
 
         },
         //节点双击事件
-        event_action_dblclick:function(metadata,action){
+        event_action_dblclick: function (metadata, action) {
 
             var content = prompt("set action content ");
 
-            andflow.setActionContent(action.id,content);
+            andflow.setActionContent(action.id, content);
 
         },
         //连线单击事件
@@ -222,84 +225,85 @@
         //连线双击事件
         event_link_dblclick: function (link) {
             var label = prompt("set link label ");
-            link.title=label;
+            link.title = label;
             andflow.setLinkInfo(link);
 
         },
         //画图板单击事件
-        event_canvas_click: function(e){
-            var oldid=document.getElementById("current_action_id").value;
-            andflow.setActionSelected(oldid,false);
+        event_canvas_click: function (e) {
+            var oldid = document.getElementById("current_action_id").value;
+            andflow.setActionSelected(oldid, false);
             document.getElementById("current_action_id").value = "";
         }
     }
 
 
-    andflow.newInstance("andflow",options);
+    andflow.newInstance("andflow", options);
     andflow.showFlow();
 
 
 
     //方法
-    function getFlowContent(){
+    function getFlowContent() {
         var content = andflow.getFlow();
-        document.getElementById("flow_content").value=JSON.stringify(content,null,'\t');
+        document.getElementById("flow_content").value = JSON.stringify(content, null, '\t');
     }
-    function setFlowContent(){
+    function setFlowContent() {
         var txt = document.getElementById("flow_content").value;
 
-        if(txt.length==0){
+        if (txt.length == 0) {
             return;
         }
-        try{
+        try {
 
             var m = JSON.parse(txt);
             andflow.showFlow(m);
-        }catch (e) {
+        } catch (e) {
             alert(e)
         }
     }
     //截图
-    function snap(){
+    function snap() {
 
         andflow.snap("流程");
     }
 
     //改变样式
-    function changeTheme(obj){
+    function changeTheme(obj) {
         var obj = document.getElementById("theme_select");
 
         var index = obj.selectedIndex; // 选中索引
 
         var theme = obj.options[index].value; // 选中文本
         andflow.setTheme(theme);
-   
+
     }
     //改变连接线类型
-    function changeLinkType(e){
+    function changeLinkType(e) {
         var obj = document.getElementById("link_type_select");
 
         var index = obj.selectedIndex; // 选中索引
 
         var link_type = obj.options[index].value; // 选中文本
         andflow.setLinkType(link_type);
-        
+
     }
     //改变是否可编辑状态
-    function changeEditable(){
+    function changeEditable() {
         var obj = document.getElementById("editable_select");
         var index = obj.selectedIndex; // 选中索引
         var editable = obj.options[index].value; // 选中文本
-        andflow.setEditable(editable=="true"?true:false);
+        andflow.setEditable(editable == "true" ? true : false);
     }
     //改变是否显示节点内容
-    function changeShowContent(){
+    function changeShowContent() {
         var obj = document.getElementById("showcontent_select");
         var index = obj.selectedIndex; // 选中索引
         var visible = obj.options[index].value; // 选中文本
-        andflow.setActionContentVisible(visible=="true"?true:false);
+        andflow.setActionContentVisible(visible == "true" ? true : false);
 
     }
 
 </script>
+
 </html>

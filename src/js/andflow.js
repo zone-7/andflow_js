@@ -1828,9 +1828,9 @@ var andflow = {
           return;
         }
 
-        var editorEl = andflow_util.parseHtml('<input class="content_editor"  />');
+        var editorEl = andflow_util.parseHtml('<input class="content_editor" style="resize: none;border:none;outline: none;"  />');
         andflow_util.setStyle(editorEl, 'position', 'absolute');
-        andflow_util.setStyle(editorEl, 'z-index', '9999');
+        andflow_util.setStyle(editorEl, 'z-index', '10');
         andflow_util.setStyle(editorEl, 'left', '0px');
         andflow_util.setStyle(editorEl, 'top', '0px');
         andflow_util.setStyle(editorEl, 'width', '100%');
@@ -1878,16 +1878,16 @@ var andflow = {
           return;
         }
 
-        var editorEl = andflow_util.parseHtml('<textarea class="content_editor"></textarea>');
+        var editorEl = andflow_util.parseHtml('<textarea class="content_editor" style="resize: none;border:none;outline: none;"></textarea>');
         andflow_util.setStyle(editorEl, 'position', 'absolute');
-        andflow_util.setStyle(editorEl, 'z-index', '9999');
+        andflow_util.setStyle(editorEl, 'z-index', '10');
         andflow_util.setStyle(editorEl, 'left', '0px');
         andflow_util.setStyle(editorEl, 'top', '0px');
         andflow_util.setStyle(editorEl, 'width', '100%');
         andflow_util.setStyle(editorEl, 'height', '100%');
         andflow_util.setStyle(editorEl, 'box-sizing', 'border-box');
 
-        var oldValue = $this._groupInfos[id].des;
+        var oldValue = $this._groupInfos[id].des || '';
 
         andflow_util.setValue(editorEl, oldValue);
 
@@ -2065,9 +2065,9 @@ var andflow = {
           return;
         }
 
-        let editorEl = andflow_util.parseHtml('<input class="content_editor"  />');
+        let editorEl = andflow_util.parseHtml('<input class="content_editor" style="resize: none;border:none;outline: none;" />');
         andflow_util.setStyle(editorEl, 'position', 'absolute');
-        andflow_util.setStyle(editorEl, 'z-index', '9999');
+        andflow_util.setStyle(editorEl, 'z-index', '10');
         andflow_util.setStyle(editorEl, 'left', '0px');
         andflow_util.setStyle(editorEl, 'top', '0px');
         andflow_util.setStyle(editorEl, 'width', '100%');
@@ -2120,11 +2120,11 @@ var andflow = {
           return;
         }
 
-        let editorEl = andflow_util.parseHtml('<textarea></textarea>');
+        let editorEl = andflow_util.parseHtml('<textarea class="content_editor" style="resize: none;border:none;outline: none;"></textarea>');
 
         andflow_util.addClass(editorEl, 'content_editor');
         andflow_util.setStyle(editorEl, 'position', 'absolute');
-        andflow_util.setStyle(editorEl, 'z-index', '9999');
+        andflow_util.setStyle(editorEl, 'z-index', '10');
         andflow_util.setStyle(editorEl, 'left', '0px');
         andflow_util.setStyle(editorEl, 'top', '0px');
         andflow_util.setStyle(editorEl, 'width', '100%');
@@ -2829,9 +2829,9 @@ var andflow = {
           return;
         }
 
-        var editor = andflow_util.parseHtml('<input class="content_editor" />');
+        var editor = andflow_util.parseHtml('<input class="content_editor" style="resize:none;border: none;outline: none;" />');
         andflow_util.setStyle(editor, 'position', 'absolute');
-        andflow_util.setStyle(editor, 'z-index', '9999');
+        andflow_util.setStyle(editor, 'z-index', '10');
         andflow_util.setStyle(editor, 'left', '0px');
         andflow_util.setStyle(editor, 'top', '0px');
         andflow_util.setStyle(editor, 'width', '100%');
@@ -2877,10 +2877,10 @@ var andflow = {
           return;
         }
 
-        var editor = andflow_util.parseHtml('<textarea class="content_editor"></textarea>');
+        var editor = andflow_util.parseHtml('<textarea class="content_editor"  style="resize:none;border: none;outline: none;"></textarea>');
 
         andflow_util.setStyle(editor, 'position', 'absolute');
-        andflow_util.setStyle(editor, 'z-index', '9999');
+        andflow_util.setStyle(editor, 'z-index', '10');
         andflow_util.setStyle(editor, 'left', '0px');
         andflow_util.setStyle(editor, 'top', '0px');
         andflow_util.setStyle(editor, 'width', '100%');
@@ -3603,22 +3603,22 @@ var andflow = {
 
     andflow_util.setAttr(actionElement.querySelector('.action-icon img'), 'src', iconImgPath);
 
-    if (actionElement.querySelector('.action-header')) {
-      actionElement.querySelector('.action-header').innerHTML = title;
-    }
+    //set title
+    this.setActionTitle(action.id, title);
 
-
+    //if show body
     if (this.flowModel.show_action_body == 'false') {
       andflow_util.hide(actionElement.querySelector('.action-body'));
     }
 
+    //if show content 
     if (this.flowModel.show_action_content == 'false') {
       andflow_util.hide(actionElement.querySelector('.action-content'));
     }
 
 
 
-    //color
+    //set color
     if (border_color) {
       actionElement.style.setProperty("--action-border-color", border_color);
     }
@@ -3636,7 +3636,7 @@ var andflow = {
     }
 
 
-    //content
+    //set content
     if (content) {
       if (typeof content === 'string') {
         content = { content_type: "msg", content: content };
@@ -4396,6 +4396,7 @@ var andflow = {
     andflow_util.removeElement(element);
 
   },
+
   //删除节点
   removeAction: function (actionId) {
     var $this = this;
@@ -4463,6 +4464,8 @@ var andflow = {
 
     $this._onCanvasChanged();
   },
+
+  // 通过源头ID删除连接线
   removeLinkBySource: function (sourceId) {
     var $this = this;
     var conns = $this.getConnectionsBySource(sourceId);
@@ -4482,6 +4485,8 @@ var andflow = {
       $this._onCanvasChanged();
     }
   },
+
+  // 通过目标节点ID删除连接线
   removeLinkByTarget: function (targetId) {
     var $this = this;
     var conns = $this.getConnectionsByTarget(targetId);
@@ -4502,6 +4507,7 @@ var andflow = {
     }
   },
 
+  // 设置是否可编辑状态
   setEditable: function (editable) {
     this.editable = editable;
     if (this.editable == true) {
@@ -4510,16 +4516,18 @@ var andflow = {
       andflow_util.addClass('#' + this.containerId + ' .andflow', 'state');
     }
   },
+
+  // 获取是否可编辑状态
   getEditable: function () {
     return this.editable;
   },
 
+  // 设置流程数据
   setFlow: function (flowModel) {
     this.flowModel = flowModel;
   },
-  /**
-   *  显示流程画布
-   */
+
+  //显示流程画布
   showFlow: function (model) {
     var $this = this;
     if (model) {
@@ -4645,6 +4653,7 @@ var andflow = {
     this._plumb.repaintEverything();
   },
 
+  // 获取流程数据
   getFlow: function () {
     var actions = this.getActions();
     var links = this.getLinks();
@@ -4660,6 +4669,8 @@ var andflow = {
 
     return this.flowModel;
   },
+
+  // 清空节点状态
   clearActionState: function () {
     var actionEl = document.querySelector('#' + this.containerId + ' .action');
     andflow_util.removeClass(actionEl, 'error');
@@ -4668,7 +4679,7 @@ var andflow = {
     andflow_util.removeClass(actionEl, 'success');
 
   },
-
+  // 设置节点为选中状态
   setActionSelected: function (actionId, selected) {
     if (actionId == null || actionId == '' || !document.getElementById(actionId)) {
       return;
@@ -4838,12 +4849,13 @@ var andflow = {
     this._plumb.repaintEverything();
   },
 
+  // 设置连接线类型
   setLinkType: function (link_type) {
     this.flowModel.link_type = link_type;
     this.refresh();
   },
 
-  //获取group
+  //获取所有group数据
   getGroups: function () {
     var $this = this;
 
@@ -4888,6 +4900,7 @@ var andflow = {
     return groups;
   },
 
+  // 获取所有列表数据
   getLists: function () {
     var $this = this;
 
@@ -4922,7 +4935,7 @@ var andflow = {
 
   },
 
-
+  // 获取所有Tip数据
   getTips: function () {
     var $this = this;
 
@@ -5036,6 +5049,8 @@ var andflow = {
 
     return links;
   },
+
+  // 通过源头和目标ID获取连接线
   getConnection: function (sourceId, targetId) {
     var conn_list = this._plumb.getAllConnections();
 
@@ -5051,6 +5066,8 @@ var andflow = {
 
     return null;
   },
+
+  // 通过源头获取连接线
   getConnectionsBySource: function (sourceId) {
     var conn_list = this._plumb.getAllConnections();
     var conns = [];
@@ -5065,6 +5082,8 @@ var andflow = {
 
     return conns;
   },
+
+  // 通过目标获取连接线
   getConnectionsByTarget: function (targetId) {
     var conn_list = this._plumb.getAllConnections();
     var conns = [];
@@ -5107,6 +5126,7 @@ var andflow = {
     this.setLinkStates(this._link_states);
   },
 
+  // 垂直对齐
   vertical: function () {
     var minLeft = 999999999;
 
@@ -5130,7 +5150,7 @@ var andflow = {
     this.setActionStates(this._action_states);
     this.setLinkStates(this._link_states);
   },
-
+  // 测试
   test: function () {
     alert(html2canvas);
     alert(jsPlumb.getInstance);
@@ -5217,7 +5237,7 @@ var andflow = {
     );
 
   },
-
+  // 设置所有节点的内容
   setActionContents: function (actioncontentMap) {
     if (actioncontentMap) {
       this._actionContents = actioncontentMap;
@@ -5230,16 +5250,25 @@ var andflow = {
       this.setActionContent(actionId, ac.content, ac.content_type);
     }
   },
+  // 获取标题内容
   getActionTitle: function (action_id) {
     var action = this._actionInfos[action_id];
     return action.title;
   },
 
-
+  // 设置标题内容
   setActionTitle: function (action_id, title) {
+
+    title = title || "";
+
     this._actionInfos[action_id].title = title;
-    document.getElementById(action_id).querySelector(".action-header").innerHTML = (title);
+
+    var title_element = document.getElementById(action_id).querySelector(".action-header, [name='title']");
+    if (title_element) {
+      title_element.innerHTML = title;
+    }
   },
+  // 设置节点样式
   setActionTheme: function (action_id, theme) {
     this._actionInfos[action_id].theme = theme;
 
@@ -5253,11 +5282,13 @@ var andflow = {
     }
 
   },
+  // 获取节点内容
   getActionContent: function (action_id) {
     var actioncontent = this._actionContents[action_id];
     return actioncontent;
   },
 
+  // 设置节点内容
   setActionContent: function (action_id, content, content_type) {
     if (action_id == undefined || action_id == null || action_id == "" || this._actionInfos[action_id] == null) {
       return;
@@ -5273,166 +5304,170 @@ var andflow = {
       return;
     }
 
-    var element = document.getElementById(action_id).querySelector('.action-content');
-    if (!element) {
+    var elements = document.getElementById(action_id).querySelectorAll('.action-content,[name="content"]');
+
+    if (!elements || elements.length == 0) {
       return;
     }
-    switch (content_type) {
-      case 'msg':
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
 
-        element.innerHTML = ("<div class='action-msg'>" + content + '</div>');
+    elements.forEach((element) => {
 
-        break;
-      case 'keyvalue':
-        var data = JSON.parse(content);
-        var grid = andflow_util.parseHtml('<table class="action-result-table" style="width:100%"></table>');
-        for (var k in data) {
-          var row = andflow_util.parseHtml('<tr><td class="action-result-label">' +
-            k +
-            '</td><td class="action-result-value">' +
-            data[k] +
-            '</td></tr>');
-
-          grid.appendChild(row);
-        }
-
-        element.innerHTML = '';
-        element.appendChild(grid);
-        andflow_util.setStyle(element, 'overflow-y', 'auto');
-        break;
-      case 'grid':
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
-
-        var griddata = JSON.parse(content);
-
-        var columns = griddata['columns'];
-        var data = griddata['rows'];
-
-        var datas = [];
-        if (data instanceof Array) {
-          datas = data;
-        } else {
-          datas.push(data);
-        }
-
-        if (columns == null || columns.length == 0) {
-          columns = [];
-          if (datas.length > 0) {
-            for (var k in datas[0]) {
-              columns.push({ name: k, title: k });
-            }
+      switch (content_type) {
+        case 'msg':
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
           }
-        }
 
-        var grid = andflow_util.parseHtml('<table class="table" style="width:100%"></table>');
+          element.innerHTML = ("<div class='action-msg'>" + content + '</div>');
 
-        //header
-        var headerEl = andflow_util.parseHtml('<tr></tr>');
-        for (var j in columns) {
-          var title = columns[j].title || columns[j].name;
-          var colEl = andflow_util.parseHtml('<th>' + title + '</th>');
-          headerEl.appendChild(colEl);
-        }
-        grid.appendChild(headerEl);
+          break;
+        case 'keyvalue':
+          var data = JSON.parse(content);
+          var grid = andflow_util.parseHtml('<table class="action-result-table" style="width:100%"></table>');
+          for (var k in data) {
+            var row = andflow_util.parseHtml('<tr><td class="action-result-label">' +
+              k +
+              '</td><td class="action-result-value">' +
+              data[k] +
+              '</td></tr>');
 
-        //body
-        for (var i in datas) {
-          var row = datas[i];
-          var rowDatas = [];
+            grid.appendChild(row);
+          }
 
-          if (row instanceof Object) {
-            for (var k in columns) {
-              rowDatas.push(row[columns[k].name]);
-            }
+          element.innerHTML = '';
+          element.appendChild(grid);
+          andflow_util.setStyle(element, 'overflow-y', 'auto');
+          break;
+        case 'grid':
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
+          }
+
+          var griddata = JSON.parse(content);
+
+          var columns = griddata['columns'];
+          var data = griddata['rows'];
+
+          var datas = [];
+          if (data instanceof Array) {
+            datas = data;
           } else {
-            rowDatas.push(row);
+            datas.push(data);
           }
-          var rowEl = andflow_util.parseHtml('<tr></tr>');
-          for (var j in rowDatas) {
-            var val = rowDatas[j];
-            if (val instanceof Object) {
-              val = JSON.stringify(val);
+
+          if (columns == null || columns.length == 0) {
+            columns = [];
+            if (datas.length > 0) {
+              for (var k in datas[0]) {
+                columns.push({ name: k, title: k });
+              }
             }
-            var colEl = andflow_util.parseHtml('<td>' + val + '</td>');
-            rowEl.appendChild(colEl);
           }
-          grid.appendChild(rowEl);
-        }
-        element.innerHTML = '';
-        element.appendChild(grid);
-        andflow_util.setStyle(element, 'overflow-y', 'auto');
 
-        break;
-      case 'html':
+          var grid = andflow_util.parseHtml('<table class="table" style="width:100%"></table>');
 
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
+          //header
+          var headerEl = andflow_util.parseHtml('<tr></tr>');
+          for (var j in columns) {
+            var title = columns[j].title || columns[j].name;
+            var colEl = andflow_util.parseHtml('<th>' + title + '</th>');
+            headerEl.appendChild(colEl);
+          }
+          grid.appendChild(headerEl);
 
-        element.innerHTML = ("<div class='action-html'>" + content + '</div>');
+          //body
+          for (var i in datas) {
+            var row = datas[i];
+            var rowDatas = [];
 
-        break;
-      case 'chart':
-        var option = JSON.parse(content);
+            if (row instanceof Object) {
+              for (var k in columns) {
+                rowDatas.push(row[columns[k].name]);
+              }
+            } else {
+              rowDatas.push(row);
+            }
+            var rowEl = andflow_util.parseHtml('<tr></tr>');
+            for (var j in rowDatas) {
+              var val = rowDatas[j];
+              if (val instanceof Object) {
+                val = JSON.stringify(val);
+              }
+              var colEl = andflow_util.parseHtml('<td>' + val + '</td>');
+              rowEl.appendChild(colEl);
+            }
+            grid.appendChild(rowEl);
+          }
+          element.innerHTML = '';
+          element.appendChild(grid);
+          andflow_util.setStyle(element, 'overflow-y', 'auto');
 
-        var id = 'chart_' + action_id;
+          break;
+        case 'html':
 
-        var charDom = element.querySelector('#' + id);
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
+          }
 
-        var actionChart = this._actionCharts[action_id];
-        if (actionChart == null || !charDom) {
-          element.innerHTML = "<div id='" + id + "' class='action-chart'></div>";
-          var w = element.offsetWidth;
-          var h = element.offsetHeight;
-          var charEl = element.querySelector('#' + id);
-          andflow_util.setStyle(charEl, 'width', w + 'px');
-          andflow_util.setStyle(charEl, 'height', h + 'px');
+          element.innerHTML = ("<div class='action-html'>" + content + '</div>');
 
-          actionChart = echarts.init(document.getElementById(id));
+          break;
+        case 'chart':
+          var option = JSON.parse(content);
 
-        }
-        actionChart.setOption(option);
-        this._actionCharts[action_id] = actionChart;
+          var id = 'chart_' + action_id;
 
-        break;
-      case 'form':
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
-        var data = JSON.parse(content);
-        var url = data.url;
+          var charDom = element.querySelector('#' + id);
 
-        element.innerHTML = '<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>';
+          var actionChart = this._actionCharts[action_id];
+          if (actionChart == null || !charDom) {
+            element.innerHTML = "<div id='" + id + "' class='action-chart'></div>";
+            var w = element.offsetWidth;
+            var h = element.offsetHeight;
+            var charEl = element.querySelector('#' + id);
+            andflow_util.setStyle(charEl, 'width', w + 'px');
+            andflow_util.setStyle(charEl, 'height', h + 'px');
 
-        break;
-      case 'web':
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
-        element.innerHTML = '<iframe src="' + content + '" style="width:100%;height: 100%;" frameborder="0"></iframe>';
+            actionChart = echarts.init(document.getElementById(id));
 
-        break;
-      default:
-        if (this._actionCharts[action_id] != null) {
-          this._actionCharts[action_id].dispose();
-          this._actionCharts[action_id] = null;
-        }
+          }
+          actionChart.setOption(option);
+          this._actionCharts[action_id] = actionChart;
 
-        element.innerHTML = content;
+          break;
+        case 'form':
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
+          }
+          var data = JSON.parse(content);
+          var url = data.url;
 
-        break;
-    }
+          element.innerHTML = '<iframe src="' + url + '" style="width:100%;height: 100%;" frameborder="0"></iframe>';
 
+          break;
+        case 'web':
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
+          }
+          element.innerHTML = '<iframe src="' + content + '" style="width:100%;height: 100%;" frameborder="0"></iframe>';
+
+          break;
+        default:
+          if (this._actionCharts[action_id] != null) {
+            this._actionCharts[action_id].dispose();
+            this._actionCharts[action_id] = null;
+          }
+
+          element.innerHTML = content;
+
+          break;
+      }
+    });
   },
 
   //显示所有action内容

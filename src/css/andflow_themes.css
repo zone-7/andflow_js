@@ -39,6 +39,9 @@ flow_theme_default
     --default-tip-body-color: #fff090;
     --default-tip-body-text-color: rgba(128, 128, 128, 0.8);
 
+
+    --default-resize-z-index: 30;
+    --default-remove-z-index: 30;
 }
 
 /* action drag begin */
@@ -335,7 +338,7 @@ flow_theme_default
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--action-border-color, var(--default-action-border-color));
@@ -410,7 +413,7 @@ flow_theme_default
 .flow_theme_default .action-resize {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -674,7 +677,7 @@ flow_theme_default
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--group-header-text-color, var(--default-group-header-text-color));
@@ -713,8 +716,7 @@ flow_theme_default
 .flow_theme_default .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 2;
-
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -835,7 +837,7 @@ flow_theme_default
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--list-header-text-color, var(--default-list-header-text-color));
@@ -855,7 +857,7 @@ flow_theme_default
 .flow_theme_default .list .list-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -963,7 +965,7 @@ flow_theme_default
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     background-color: white;
@@ -1004,7 +1006,7 @@ flow_theme_default
 .flow_theme_default .tip .tip-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -1369,7 +1371,7 @@ flow_theme_icon
 .flow_theme_icon .action-remove-btn {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 0px;
     top: 0px;
     width: 15px;
@@ -1440,7 +1442,7 @@ flow_theme_icon
 .flow_theme_icon .action-resize {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 0px;
@@ -1755,7 +1757,7 @@ flow_theme_icon
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 5px;
     top: 2px;
     color: var(--group-header-text-color, var(--default-group-header-text-color));
@@ -1771,7 +1773,7 @@ flow_theme_icon
 .flow_theme_icon .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 3;
+    z-index: var(--default-resize-z-index, 30);
 
     right: 0px;
     bottom: 0px;
@@ -1898,7 +1900,7 @@ flow_theme_icon
 .flow_theme_icon .list .list-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -1996,7 +1998,7 @@ flow_theme_icon
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     background-color: white;
@@ -2040,7 +2042,7 @@ flow_theme_icon
 .flow_theme_icon .tip .tip-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
 
     right: 0px;
     bottom: 0px;
@@ -2390,7 +2392,7 @@ flow_theme_zone
 .flow_theme_zone .action-remove-btn {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 5px;
     top: 2px;
     color: var(--action-border-color, var(--default-action-border-color));
@@ -2456,7 +2458,7 @@ flow_theme_zone
 .flow_theme_zone .action-resize {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 0px;
@@ -2737,7 +2739,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 5px;
     top: 2px;
     color: var(--group-header-text-color, var(--default-group-header-text-color));
@@ -2774,7 +2776,7 @@ flow_theme_zone
 .flow_theme_zone .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -2882,7 +2884,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--list-border-color, var(--default-list-border-color));
@@ -2902,7 +2904,7 @@ flow_theme_zone
 .flow_theme_zone .list .list-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
 
     right: 0px;
     bottom: 0px;
@@ -2999,7 +3001,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     background-color: white;
@@ -3042,7 +3044,7 @@ flow_theme_zone
 .flow_theme_zone .tip .tip-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
 
     right: 0px;
     bottom: 0px;
@@ -3106,11 +3108,11 @@ flow_theme_zone
 .flow_theme_box .action-drag .action-header {
     position: absolute;
     z-index: 21;
-    left: 30%;
+    left: 0px;
     top: 50%;
     transform: translate(0%, -50%);
     text-align: center;
-    width: 70%;
+    width: 100%;
     height: auto;
     border: 0px;
     overflow: hidden;
@@ -3360,7 +3362,7 @@ flow_theme_zone
 .flow_theme_box .action-header {
     position: absolute;
     z-index: 21;
-    left: 30%;
+    left: 0px;
     top: 50%;
     padding: 0px;
     padding-top: 0px;
@@ -3369,7 +3371,7 @@ flow_theme_zone
     padding-right: 0px;
     transform: translate(0%, -50%);
     text-align: center;
-    width: 70%;
+    width: 100%;
     height: auto;
     overflow: hidden;
     border-radius: 10px;
@@ -3384,7 +3386,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--action-border-color, var(--default-action-border-color));
@@ -3444,8 +3446,8 @@ flow_theme_zone
     top: 50%;
     left: 5px;
     transform: translate(0%, -50%);
-    width: 30%;
-    height: auto;
+    height: calc(100% - 10px);
+    width: auto;
     border-radius: 10px;
     text-align: center;
 }
@@ -3459,7 +3461,7 @@ flow_theme_zone
 .flow_theme_box .action-resize {
     display: none;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 0px;
@@ -3725,7 +3727,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--group-header-text-color, var(--default-group-header-text-color));
@@ -3766,7 +3768,7 @@ flow_theme_zone
 .flow_theme_box .group .group-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -3874,7 +3876,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     color: var(--list-border-color, var(--default-list-border-color));
@@ -3894,7 +3896,7 @@ flow_theme_zone
 .flow_theme_box .list .list-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;
@@ -3992,7 +3994,7 @@ flow_theme_zone
     display: none;
     overflow: hidden;
     position: absolute;
-    z-index: 30;
+    z-index: var(--default-remove-z-index, 30);
     right: 3px;
     top: 2px;
     background-color: white;
@@ -4034,7 +4036,7 @@ flow_theme_zone
 .flow_theme_box .tip .tip-resize {
     display: none;
     position: absolute;
-    z-index: 2;
+    z-index: var(--default-resize-z-index, 30);
     right: 0px;
     bottom: 0px;
     width: 14px;

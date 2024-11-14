@@ -1845,7 +1845,8 @@ var andflow = {
         editorEl.focus();
         andflow_util.addEventListener(editorEl, "blur", function (e) {
 
-          var value = andflow_util.getValue(editorEl);
+
+          const value = e.target.value;
           editorEl.parentElement.innerHTML = value;
 
           $this._groupInfos[id].title = value;
@@ -1886,18 +1887,24 @@ var andflow = {
         andflow_util.setStyle(editorEl, 'height', '100%');
         andflow_util.setStyle(editorEl, 'box-sizing', 'border-box');
 
+        var oldValue = $this._groupInfos[id].des;
 
-
-        andflow_util.setValue(editorEl, groupElement.querySelector('.group-body').innerHTML);
+        andflow_util.setValue(editorEl, oldValue);
 
         groupElement.querySelector('.group-body').appendChild(editorEl);
 
         editorEl.focus();
 
+        //group body blur
         andflow_util.addEventListener(editorEl, "blur", function (e) {
-          var value = andflow_util.getValue(editorEl);
-          editorEl.parentElement.innerHTML = value;
+
+          var value = e.target.value;
+
           $this._groupInfos[id].des = value;
+
+          value = value.replaceAll("\n", "<br/>");
+
+          editorEl.parentElement.innerHTML = value;
 
           andflow_util.removeElement(editorEl);
 
@@ -2072,9 +2079,9 @@ var andflow = {
         listElement.querySelector('.list-header').appendChild(editorEl);
 
         editorEl.focus();
-        andflow_util.addEventListener(editorEl, "blur", function (e) {
-          var value = andflow_util.getValue(editorEl);
 
+        andflow_util.addEventListener(editorEl, "blur", function (e) {
+          const value = e.target.value;
           editorEl.parentElement.innerHTML = value;
           $this._listInfos[id].title = value;
 
@@ -2141,8 +2148,8 @@ var andflow = {
         editorEl.focus();
         andflow_util.addEventListener(editorEl, "blur", function (e) {
 
-          var value = andflow_util.getValue(this);
 
+          const value = e.target.value;
 
           var rows = value.split("\n");
 
@@ -2837,7 +2844,9 @@ var andflow = {
         editor.focus();
 
         andflow_util.addEventListener(editor, "blur", function (e) {
-          var value = andflow_util.getValue(editor);
+
+          const value = e.target.value;
+
           editor.parentElement.innerHTML = value;
           $this._tipInfos[id].title = value;
 
@@ -2847,7 +2856,8 @@ var andflow = {
         });
         andflow_util.addEventListener(editor, "keydown", function (e) {
           if (e.code == "Enter") {
-            var value = andflow_util.getValue(editor);
+            const value = e.target.value;
+
             editor.parentElement.innerHtml = value;
             $this._tipInfos[id].title = value;
 
@@ -2886,7 +2896,8 @@ var andflow = {
         editor.focus();
 
         andflow_util.addEventListener(editor, "blur", function (e) {
-          var value = andflow_util.getValue(editor);
+
+          var value = e.target.value;
           $this._tipInfos[id].content = value;
 
           value = value.replaceAll("\n", "<br/>");

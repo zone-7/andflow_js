@@ -440,33 +440,40 @@ var andflow_util = {
 
 
 var andflow = {
-  containerId: null, //DOM
-  img_path: '', //图谱跟路径
+  containerId: null, //DOM ID
+
+  img_path: '', //图片的根路径
+
   editable: true, //是否可编辑
 
   tags: null, //标签
   metadata: null, //控件信息
   flowModel: null, //流程数据
 
-  show_grid: true,
+  show_rulers: true,  //显示标尺
+  show_thumbnail: true, // 显示缩略图 
+  show_multi_select: false, // 显示多选状态
+  show_grid: true,    //显示方格
   show_toolbar: true, //是否显示工具栏 
-  show_code_btn: true,
-  show_scale_btn: true,
-  show_small_btn: true, //缩略图
+
+  show_btn_rulers: true, //是否显示标尺按钮
+  show_btn_horizontal: true, //是否显示水平对齐
+  show_btn_vertical: true, //是否显示垂直对齐
+  show_btn_code: true, //是否显示代码按钮
+
+  show_btn_scale: true, //是否显示缩小放大工具按钮
+  show_btn_thumbnail: true, //是否显示缩略图按钮
 
 
-  metadata_style: '',
-  metadata_position: '',
+  metadata_style: '',  //组件栏样式
+  metadata_position: 'left', //组件栏位置
 
   drag_step: 10, //拖拉步进，<=1表示可以任意拖拉
 
-  isMobile: false,
+  isMobile: false, //是否是移动端应用
 
-  mousedown_event_name: 'mousedown',//touchstart
-  mouseup_event_name: 'mouseup',  //touchend
-  mousemove_event_name: 'mousemove', //touchmove
-  click_event_name: 'click',//touchend
-  dblclick_event_name: 'dblclick',
+  multi_select_mode: false,//是否处于选择模式
+
   //渲染器
   render_action: null,
   render_action_helper: null,
@@ -492,7 +499,7 @@ var andflow = {
   event_canvas_dblclick: null,
   event_canvas_changed: null,
 
-  animation_timer: null,
+
   //语言
   lang: {
     metadata_tag_all: '所有组件',
@@ -514,12 +521,33 @@ var andflow = {
   _listInfos: {},
   _tipInfos: {},
 
+  //用于记录双击的延时对象
   _timer_link: null,
   _timer_group: null,
   _timer_action: null,
   _timer_thumbnail: null,
 
+  //正在拖拉的对象名
   _drag_name: null,
+  //动画对象
+  _animation_timer: null,
+
+  // 事件名
+  _event_name_mousedown: 'mousedown',//touchstart
+  _event_name_mouseup: 'mouseup',  //touchend
+  _event_name_mousemove: 'mousemove', //touchmove
+  _event_name_mouseover: 'mouseover',
+  _event_name_mouseout: 'mouseout',
+  _event_name_click: 'click',//touchend
+  _event_name_dblclick: 'dblclick',
+  _event_name_scroll: 'scroll',
+
+  // 选择状态
+  _selecting: false,
+  //选中的对象
+  _selecting_objs: [],
+
+  // 连线类型
   _connectionTypes: {
     Flowchart: {
       anchor: 'Continuous',
@@ -545,6 +573,7 @@ var andflow = {
     },
   },
 
+  // 初始化HTML
   _initHtml: function (containerId) {
     var $this = this;
     var css_state = '';
@@ -592,15 +621,32 @@ var andflow = {
     html += '<a class="nav_btn">&nbsp;</a>';
     html += '</div>';
     html += '<div class="right">';
-    if ($this.show_code_btn) {
+
+
+
+    if ($this.show_btn_code) {
       html += '<a class="code_btn" title="code">&nbsp;</a>';
     }
-    if ($this.show_scale_btn) {
+
+    if ($this.show_btn_rulers) {
+      html += '<a class="ruler_btn" title="rule">&nbsp;</a>';
+    }
+
+    if ($this.show_btn_vertical) {
+      html += '<a class="vertical_btn" title="vertical">&nbsp;</a>';
+    }
+    if ($this.show_btn_horizontal) {
+      html += '<a class="horizontal_btn" title="horizontal">&nbsp;</a>';
+    }
+
+
+    if ($this.show_btn_scale) {
       html += '<a class="scale_down_btn" title="缩小">-</a>';
       html += '<a class="scale_info" title="还原"><span class="scale_value">100</span><span>%</span></a>';
       html += '<a class="scale_up_btn"  title="放大">+</a>';
     }
-    if ($this.show_small_btn) {
+
+    if ($this.show_btn_thumbnail) {
       html += '<a class="thumbnail_btn"  title="缩略图">&nbsp;</a>';
     }
     html += '</div>';
@@ -608,11 +654,7 @@ var andflow = {
     html += '</div>';
     //end tools
 
-    //begin flow_thumbnail
-    html += '<div class="flow_thumbnail">';
-    html += '<div class="flow_thumbnail_mask"></div>';
-    html += '</div>';
-    //end flow_thumbnail
+
 
     //begin canvasContainer
     var bgstyle = "";
@@ -620,8 +662,29 @@ var andflow = {
       bgstyle = "background:none";
     }
 
-    html += '<div id="canvasContainer" class="canvasContainer" style="' + bgstyle + '">';
-    html += '<div id="canvas" class="canvas" ></div>';
+    html += '<div id="canvasContainer" class="canvasContainer" >';
+    //begin ruler
+    html += '<div  class="ruler_h"><canvas></canvas><div class="scope"></div></div>';
+    html += '<div  class="ruler_v"><canvas></canvas><div class="scope"></div></div>';
+    //end ruler
+
+    //begin flow_thumbnail
+    html += '<div class="flow_thumbnail">';
+    html += '<div class="flow_thumbnail_mask"></div>';
+    html += '</div>';
+    //end flow_thumbnail
+
+
+
+    html += '<div id="canvasBox" class="canvasBox"  style="' + bgstyle + '">';
+    //begin multi mask
+    html += '<div class="multi_select_box"></div>';
+    html += '<div class="multi_select_dragging"></div>';
+    //end multi mask
+    html += '<div id="canvas" class="canvas canvas_move" ></div>';
+    html += '</div>';
+
+
     html += '</div>';
     //end canvasContainer
 
@@ -648,16 +711,35 @@ var andflow = {
     andflow_util.setAttr('#' + containerId + ' .thumbnail_btn', 'state', 'close');
 
 
+
+    //显示标尺
+    if ($this.show_rulers) {
+      $this._showRulers();
+    } else {
+      $this._hideRulers();
+    }
+
+    //显示缩略图
+    if ($this.show_thumbnail) {
+      $this._showThumbnail();
+    } else {
+      $this._hideThumbnail();
+    }
+
+
   },
 
+  _getContainer: function () {
+    return document.getElementById(this.containerId);
+  },
 
   //定时动画
   _initAnimaction: function () {
     var $this = this;
     var dashstyle = ['0 1 1', '1 1 1'];
 
-    this.animation_timer && clearInterval(this.animation_timer);
-    this.animation_timer = setInterval(function () {
+    this._animation_timer && clearInterval(this._animation_timer);
+    this._animation_timer = setInterval(function () {
 
       var conn_list = $this._plumb.getAllConnections();
       for (var i in conn_list) {
@@ -715,11 +797,25 @@ var andflow = {
 
   },
 
-
+  // 初始化事件
   _initEvents: function () {
     var $this = this;
     var containerId = $this.containerId;
-    var containerEl = document.getElementById(containerId);
+    var containerEl = $this._getContainer();
+
+    // 键盘 按下
+    document.addEventListener('keydown', function (event) {
+      if (event.shiftKey) {
+        $this._openSelectState();
+      }
+    });
+
+    // 键盘 up
+    document.addEventListener('keyup', function (event) {
+      if (event.key === 'Shift') {
+        $this._closeSelectState();
+      }
+    });
 
     //nav btn
     andflow_util.addEventListener(containerEl.querySelector('.nav_btn'), 'click', function (e) {
@@ -735,14 +831,13 @@ var andflow = {
         andflow_util.setAttr('#' + containerId + ' .nav_btn', 'state', 'open');
         andflow_util.removeClass('#' + containerId + ' .andflow', 'fold');
         andflow_util.removeClass('#' + containerId + ' .nav_btn', 'close');
-
       }
     });
 
     //scale 
     andflow_util.addEventListener(containerEl.querySelector('.scale_up_btn'), 'click', function (e) {
 
-      var value = document.querySelector('#' + containerId + ' .scale_value').innerHTML * 1.0;
+      var value = $this._getContainer().querySelector('.scale_value').innerHTML * 1.0;
 
 
       value = value + 1;
@@ -750,41 +845,253 @@ var andflow = {
 
       andflow_util.setStyle('#' + containerId + ' .canvas', 'transform', 'scale(' + v + ')');
 
-
-      document.querySelector('#' + containerId + ' .scale_value').innerHTML = value;
+      $this._getContainer().querySelector('.scale_value').innerHTML = value;
 
     });
+
     //scale down
     andflow_util.addEventListener(containerEl.querySelector('.scale_down_btn'), 'click', function (e) {
 
-      var value = document.querySelector('#' + containerId + ' .scale_value').innerHTML * 1.0;
-
+      var value = containerEl.querySelector('.scale_value').innerHTML * 1.0;
 
       value = value - 1;
       var v = value / 100.0;
 
       andflow_util.setStyle('#' + containerId + ' .canvas', 'transform', 'scale(' + v + ')');
 
-      document.querySelector('#' + containerId + ' .scale_value').innerHTML = value;
+      $this._getContainer().querySelector('.scale_value').innerHTML = value;
 
     });
+
     //scale info  
     andflow_util.addEventListener(containerEl.querySelector('.scale_info'), 'click', function (e) {
 
       andflow_util.setStyle('#' + containerId + ' .canvas', 'transform', 'scale(1)');
 
-      document.querySelector('#' + containerId + ' .scale_value').innerHTML = '100';
+      $this._getContainer().querySelector('.scale_value').innerHTML = '100';
 
     });
 
 
-    //drag and move start, canvas mouse down
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousedown_event_name, function (e) {
+    //水平对齐
+    andflow_util.addEventListener(containerEl.querySelector('.horizontal_btn'), 'click', function (e) {
 
+      $this.horizontal();
+
+    });
+    //垂直对齐
+    andflow_util.addEventListener(containerEl.querySelector('.vertical_btn'), 'click', function (e) {
+
+      $this.vertical();
+
+    });
+
+
+
+
+    //select_box: mousedown
+    andflow_util.addEventListener(containerEl.querySelector('.multi_select_box'), $this._event_name_mousedown, function (e) {
+      const pageX = e.pageX;
+      const pageY = e.pageY;
+
+      const offsetLeft = e.target.offsetLeft;
+      const offsetTop = e.target.offsetTop;
+
+      const offsetX = e.offsetX;
+      const offsetY = e.offsetY;
+
+
+      // 处理多个对象的移动  
+      var item_points = {};
+      $this._selecting_objs.forEach((value, index) => {
+
+        var item_offsetLeft = value.offsetLeft;
+        var item_offsetTop = value.offsetTop;
+        var id = value.id;
+
+        item_points[value.id] = { x: item_offsetLeft, y: item_offsetTop };
+
+      });
+
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e_move) {
+
+        var selectElement = $this._getContainer().querySelector('.multi_select_box');
+        var canvasElement = $this._getContainer().querySelector('.canvas');
+
+        var x = (e_move.pageX - pageX) + offsetLeft;
+        var y = (e_move.pageY - pageY) + offsetTop;
+
+        if (x >= 0) {
+          andflow_util.setStyle(selectElement, 'left', x + 'px');
+          $this._selecting_objs.forEach((value, index) => {
+            var id = value.id;
+            var item_x = (e_move.pageX - pageX) + item_points[id].x;
+            andflow_util.setStyle(value, 'left', item_x + 'px');
+          });
+
+        }
+        if (y >= 0) {
+          andflow_util.setStyle(selectElement, 'top', y + 'px');
+          $this._selecting_objs.forEach((value, index) => {
+            var id = value.id;
+            var item_y = (e_move.pageY - pageY) + item_points[id].y;
+            andflow_util.setStyle(value, 'top', item_y + 'px');
+          });
+        }
+
+        $this._plumb.repaintEverything();
+
+
+      });
+
+
+    });
+
+
+
+    // canvasBox: mousedown
+    andflow_util.addEventListener(containerEl.querySelector('.canvasBox'), $this._event_name_mousedown, function (e) {
+      const rect = containerEl.querySelector('.canvasBox').getBoundingClientRect();
+      // 计算鼠标相对于容器的坐标
+      const x = e.clientX - rect.left + containerEl.querySelector('.canvasBox').scrollLeft;
+      const y = e.clientY - rect.top + containerEl.querySelector('.canvasBox').scrollTop;
+
+      // 如果处于选择状态。
+      if ($this._selecting) {
+
+        if (e.target.classList.contains("canvas")) {
+          //如果鼠标点击到canvas空白区域，就启动范围拖拉选择
+          var div_dragging = $this._getContainer().querySelector(".multi_select_dragging");
+
+          andflow_util.setStyle(div_dragging, "left", x + "px");
+          andflow_util.setStyle(div_dragging, "top", y + "px");
+          andflow_util.setAttr(div_dragging, "dragging", "true");
+          andflow_util.setAttr(div_dragging, "begin_x", x);
+          andflow_util.setAttr(div_dragging, "begin_y", y);
+
+        } else {
+
+          //如果鼠标点击到canvas内容对象。
+          $this._getContainer().querySelectorAll(".andflow_meta").forEach((value, index) => {
+            var item_offsetLeft = value.offsetLeft;
+            var item_offsetTop = value.offsetTop;
+            var item_offsetWidth = value.offsetWidth;
+            var item_offsetHeight = value.offsetHeight;
+
+            if (x > item_offsetLeft && x < item_offsetLeft + item_offsetWidth &&
+              y > item_offsetTop && y < item_offsetTop + item_offsetHeight
+            ) {
+              //选中或者取消选中
+              $this._postSelectObject(value);
+            }
+
+          });
+        }
+
+      } else {
+        // 如果不是选择状态，并且点击canvas，就清空选中对象
+        if (e.target.classList.contains("canvas")) {
+          $this._clearSelectObject();
+        }
+      }
+
+    });
+    // canvasBox: mouseMove
+    andflow_util.addEventListener(containerEl.querySelector('.canvasBox'), $this._event_name_mousemove, function (e) {
+
+      var div_dragging = $this._getContainer().querySelector(".multi_select_dragging");
+
+      var dragging = andflow_util.getAttr(div_dragging, "dragging");
+
+      //处理选择状态，并且处于拖拉范围选择模式
+      if ($this._selecting && dragging == "true") {
+
+
+        const begin_x = andflow_util.getAttr(div_dragging, "begin_x");
+        const begin_y = andflow_util.getAttr(div_dragging, "begin_y");
+
+        var rect = containerEl.querySelector('.canvasBox').getBoundingClientRect();
+
+        // 计算鼠标相对于容器的坐标
+        var end_x = e.clientX - rect.left + containerEl.querySelector('.canvasBox').scrollLeft;
+        var end_y = e.clientY - rect.top + containerEl.querySelector('.canvasBox').scrollTop;
+
+
+        var x = begin_x;
+        if (begin_x > end_x) {
+          x = end_x;
+        }
+        var y = begin_y;
+        if (begin_y > end_y) {
+          y = end_y;
+        }
+
+        var w = Math.abs(end_x - begin_x);
+        var h = Math.abs(end_y - begin_y);
+
+        andflow_util.setStyle(div_dragging, "left", x + "px");
+        andflow_util.setStyle(div_dragging, "top", y + "px");
+        andflow_util.setStyle(div_dragging, "width", w + "px");
+        andflow_util.setStyle(div_dragging, "height", h + "px");
+
+        andflow_util.setStyle(div_dragging, "display", "block");
+      }
+
+
+    });
+
+    // canvasBox:mouseUp
+    andflow_util.addEventListener(containerEl.querySelector('.canvasBox'), $this._event_name_mouseup, function (e) {
+
+      //拖拉范围选中
+      var div_dragging = $this._getContainer().querySelector(".multi_select_dragging");
+      var dragging = andflow_util.getAttr(div_dragging, "dragging");
+      var offsetLeft = div_dragging.offsetLeft;
+      var offsetTop = div_dragging.offsetTop;
+      var offsetWidth = div_dragging.offsetWidth;
+      var offsetHeight = div_dragging.offsetHeight;
+
+      if ($this._selecting && dragging == "true") {
+        //选择对象
+        $this._getContainer().querySelectorAll(".andflow_meta").forEach((value, index) => {
+          var x = value.offsetLeft + value.offsetWidth / 2;
+          var y = value.offsetTop + value.offsetHeight / 2;
+
+          if (x >= offsetLeft && x <= offsetLeft + offsetWidth && y >= offsetTop && y <= offsetTop + offsetHeight) {
+            $this._postSelectObject(value);
+          }
+
+        });
+      }
+
+      andflow_util.setAttr(div_dragging, "dragging", "false");
+      andflow_util.setStyle(div_dragging, "display", "none");
+
+
+    });
+
+    // canvasBox 监听滚动事件
+    andflow_util.addEventListener(containerEl.querySelector('.canvasBox'), $this._event_name_scroll, function () {
+
+      //设置标尺位置
+      $this._posRulers();
+    });
+
+
+
+
+    // canvas: drag and move start, canvas mouse down，处理拖拉画布，选择对象等
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this._event_name_mousedown, function (e) {
+
+      //如果对象不是canvas就返回
       if (!e.target || !e.target.className || !e.target.className.indexOf || e.target.className.indexOf('canvas') < 0) {
         return;
       }
 
+
+
+
+      //处理拖拉画布
       var pageX = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
       var pageY = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
 
@@ -803,14 +1110,14 @@ var andflow = {
       andflow_util.setAttr('#' + containerId + ' .canvas', 'offset_y', offsetY);
       andflow_util.setAttr('#' + containerId + ' .canvas', 'page_x', pageX);
       andflow_util.setAttr('#' + containerId + ' .canvas', 'page_y', pageY);
-      andflow_util.addClass('#' + containerId + ' .canvas', 'canvas-move');
+      andflow_util.addClass('#' + containerId + ' .canvas', 'canvas_moveing');
 
       $this._resizeCanvas();
 
     });
 
-    //canvas mouseup
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mouseup_event_name, function (e) {
+    // canvas: mouseup，处理拖拉画布
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this._event_name_mouseup, function (e) {
 
       var drag = andflow_util.getAttr('#' + containerId + ' .canvas', 'drag');
       if (drag == "true") {
@@ -818,7 +1125,7 @@ var andflow = {
       }
 
       andflow_util.setAttr('#' + containerId + ' .canvas', 'drag', 'false');
-      andflow_util.removeClass('#' + containerId + ' .canvas', 'canvas-move');
+      andflow_util.removeClass('#' + containerId + ' .canvas', 'canvas_moveing');
 
       //click
       if ($this.event_canvas_click) {
@@ -832,17 +1139,22 @@ var andflow = {
           $this.event_canvas_click(e);
         }
       }
-      e.preventDefault();
+
     });
-    //canvas mouse out
+
+    // canvas: mouse out，处理拖拉画布
     andflow_util.addEventListener(containerEl.querySelector('.canvas'), 'mouseout', function (e) {
 
       andflow_util.setAttr('#' + containerId + ' .canvas', 'drag', 'false');
 
     });
-    //canvas mousemove
-    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this.mousemove_event_name, function (e) {
 
+    // canvas: mousemove，处理拖拉画布、处理多选
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this._event_name_mousemove, function (e) {
+
+
+
+      //处理画布拖拉
       var drag = andflow_util.getAttr('#' + containerId + ' .canvas', 'drag');
 
       if (drag == "true") {
@@ -871,15 +1183,16 @@ var andflow = {
         let offsetY = endOffsetY - startOffsetY;
 
 
-        var scrollLeft = document.querySelector('#' + containerId + ' .canvasContainer').scrollLeft - offsetX;
-        var scrollTop = document.querySelector('#' + containerId + ' .canvasContainer').scrollTop - offsetY;
-        document.querySelector('#' + containerId + ' .canvasContainer').scrollLeft = scrollLeft;
-        document.querySelector('#' + containerId + ' .canvasContainer').scrollTop = scrollTop;
+        var scrollLeft = $this._getContainer().querySelector('.canvasBox').scrollLeft - offsetX;
+        var scrollTop = $this._getContainer().querySelector('.canvasBox').scrollTop - offsetY;
+        $this._getContainer().querySelector('.canvasBox').scrollLeft = scrollLeft;
+        $this._getContainer().querySelector(' .canvasBox').scrollTop = scrollTop;
+
       }
     });
 
-    // bind a double click listener to "canvas"; add new node when this occurs.
-    andflow_util.addEventListener(document.querySelector('.canvas'), $this.dblclick_event_name, function (e) {
+    // canvas: bind a double click listener to "canvas"; add new node when this occurs,鼠标双击
+    andflow_util.addEventListener(containerEl.querySelector('.canvas'), $this._event_name_dblclick, function (e) {
 
       if ($this.event_canvas_dblclick) {
         $this._timer_action && clearTimeout($this._timer_action);
@@ -887,30 +1200,22 @@ var andflow = {
       }
     });
 
+
+
     //show code 
     andflow_util.addEventListener(containerEl.querySelector('.code_btn'), 'click', function (e) {
 
       try {
 
         if (andflow_util.isVisible('#codeContainer')) {
-          if ($this.editable) {
-            var txt = andflow_util.getValue('#codeContainer textarea') || "{}";
-
-            var m = JSON.parse(txt);
-
-            $this.showFlow(m);
-          }
+          $this._showDesigner();
 
 
-          andflow_util.hide('#codeContainer');
-          andflow_util.removeClass('#' + containerId + ' .code_btn', 'design');
         } else {
-          var code = $this.getFlow();
-          var content = JSON.stringify(code, null, '\t');
-          andflow_util.setValue('#codeContainer textarea', content);
 
-          andflow_util.show('#codeContainer');
-          andflow_util.addClass('#' + containerId + ' .code_btn', 'design');
+
+
+          $this._showCode();
 
         }
 
@@ -920,6 +1225,20 @@ var andflow = {
 
     });
 
+    //show ruler 
+    andflow_util.addEventListener(containerEl.querySelector('.ruler_btn'), 'click', function (e) {
+
+      if ($this.show_rulers) {
+        $this._hideRulers();
+
+      } else {
+
+        $this._showRulers();
+      }
+
+    });
+
+
     //thumbnail
     //thumbnail_btn click
     andflow_util.addEventListener(containerEl.querySelector('.thumbnail_btn'), 'click', function (e) {
@@ -927,20 +1246,10 @@ var andflow = {
       var state = andflow_util.getAttr('#' + containerId + ' .thumbnail_btn', 'state');
 
       if (state == 'open') {
-        andflow_util.setAttr('#' + containerId + ' .thumbnail_btn', 'state', 'close');
 
-        andflow_util.hide('#' + containerId + ' .flow_thumbnail');
-
-        andflow_util.removeClass('#' + containerId + ' .thumbnail_btn', 'open');
+        $this._hideThumbnail();
 
       } else {
-        andflow_util.setAttr('#' + containerId + ' .thumbnail_btn', 'state', 'open');
-
-
-        andflow_util.show('#' + containerId + ' .flow_thumbnail');
-
-        andflow_util.addClass('#' + containerId + ' .thumbnail_btn', 'open');
-
 
         $this._showThumbnail();
 
@@ -948,21 +1257,25 @@ var andflow = {
     });
 
     //thumbnail_mask
-    andflow_util.addEventListener(containerEl.querySelector('.flow_thumbnail_mask'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(containerEl.querySelector('.flow_thumbnail_mask'), $this._event_name_mousedown, function (e) {
 
-      var xx = e.pageX;
-      var yy = e.pageY;
+      const pageX = e.pageX;
+      const pageY = e.pageY;
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e) {
+      const thumbLeft = e.target.offsetLeft;
+      const thumbTop = e.target.offsetTop;
 
-        var elSel = '#' + containerId + ' .flow_thumbnail_mask';
 
-        var el = document.querySelector(elSel);
-        var parentEl = el.parentElement;
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e_move) {
+
+        var el = $this._getContainer().querySelector('.flow_thumbnail_mask');
 
         if (el) {
-          var x = e.pageX - xx;
-          var y = e.pageY - yy;
+
+          var parentEl = el.parentElement;
+          var x = (e_move.pageX - pageX) + thumbLeft;
+          var y = (e_move.pageY - pageY) + thumbTop;
+
 
           if (x < 0) {
             x = 0;
@@ -978,18 +1291,20 @@ var andflow = {
             y = (parentEl.offsetHeight - el.offsetHeight);
           }
 
-          andflow_util.setStyle(elSel, 'left', x + 'px');
-          andflow_util.setStyle(elSel, 'top', y + 'px');
+          //设置蒙版位置
+          andflow_util.setStyle(el, 'left', x + 'px');
+          andflow_util.setStyle(el, 'top', y + 'px');
 
-          var canvasEl = document.querySelector('#' + containerId + ' .canvas');
+
+          //计算canvas滚动位置
+          var canvasEl = $this._getContainer().querySelector('.canvas');
           var canvasContainerEl = canvasEl.parentElement;
 
           var sca = canvasContainerEl.offsetWidth / el.offsetWidth;
 
-
           var l = el.offsetLeft * sca;
           var t = el.offsetTop * sca;
-
+          // 设置Canvas滚动位置
           canvasContainerEl.scrollLeft = l;
           canvasContainerEl.scrollTop = t;
 
@@ -999,11 +1314,13 @@ var andflow = {
       });
     });
 
+    // 容器鼠标UP，删除所有move事件
+    andflow_util.addEventListener(containerEl, $this._event_name_mouseup, function (e) {
 
-    andflow_util.addEventListener(document.getElementById(containerId), $this.mouseup_event_name, function (e) {
+      $this._hideScope();
 
       if (e.target && e.target.className && e.target.className.indexOf && e.target.className.indexOf('canvas') >= 0) {
-        document.querySelectorAll('.canvas .focus').forEach(function (e) {
+        containerEl.querySelectorAll('.canvas .focus').forEach(function (e) {
           andflow_util.removeClass(e, 'focus');
         });
       }
@@ -1035,7 +1352,7 @@ var andflow = {
 
 
       //move event
-      andflow_util.removeEventListener(this, $this.mousemove_event_name);
+      andflow_util.removeEventListener(this, $this._event_name_mousemove);
 
       andflow_util.setStyle('#' + $this.containerId, 'cursor', 'default');
 
@@ -1046,7 +1363,11 @@ var andflow = {
 
 
 
+
+
+
   },
+
   //初始化样式
   _initTheme: function (theme) {
     this.setTheme(theme);
@@ -1101,8 +1422,8 @@ var andflow = {
         }
         tag_selectEl.appendChild(andflow_util.parseHtml('<option value="' + t + '">' + t + '</option>'));
 
-
       }
+
       andflow_util.addEventListener(document.getElementById('tag_select'), 'change', function (e) {
 
 
@@ -1533,7 +1854,7 @@ var andflow = {
 
     document.querySelectorAll('#actionMenu .actionMenuItem').forEach(function (item, index) {
 
-      andflow_util.addEventListener(item, $this.mousedown_event_name, function (e) {
+      andflow_util.addEventListener(item, $this._event_name_mousedown, function (e) {
 
         //如果是编码状态不可拖动 
         if (andflow_util.isVisible('#codeContainer')) {
@@ -1543,7 +1864,7 @@ var andflow = {
         var name = this.getAttribute("action_name");
 
         $this._drag_name = name;
-        andflow_util.addEventListener(document.querySelector('#' + $this.containerId + " .andflow"), $this.mousemove_event_name, function (e) {
+        andflow_util.addEventListener(document.querySelector('#' + $this.containerId + " .andflow"), $this._event_name_mousemove, function (e) {
           if ($this._drag_name == null) {
             return;
           }
@@ -1666,7 +1987,7 @@ var andflow = {
     var groupElement = document.getElementById(group.id);
 
     if (!groupElement) {
-      var groupHtml = '<div id="' + group.id + '" class="group group-container" > </div>';
+      var groupHtml = '<div id="' + group.id + '" class="group group-container andflow_meta" > </div>';
       groupElement = andflow_util.parseHtml(groupHtml);
 
       var group_main_html = '<div class="group-main group-master"><div class="group-header"></div><div class="group-body"></div></div>';
@@ -1728,11 +2049,12 @@ var andflow = {
 
       dragOptions: {
         start: function (params) {
-          // console.log("start");
+          $this._showScope(groupElement);
 
         },
         drag: function (params) {
-          // console.log("drag");
+          $this._showScope(groupElement);
+
           // 判断条件，例如拖动超出某个范围时停止拖动
           if (params.pos[0] < 0) { //  X 轴坐标<0 
             params.pos[0] = 0;
@@ -1745,7 +2067,7 @@ var andflow = {
 
         },
         stop: function (params) {
-          // console.log("stop");
+          $this._hideScope();
 
           if ($this.drag_step > 1) {
             var x = Math.round(params.pos[0] / $this.drag_step) * $this.drag_step;
@@ -1762,8 +2084,6 @@ var andflow = {
 
     });
 
-
-
     $this._plumb.makeSource(groupElement, {
       filter: '.group-ep',
       anchor: 'Continuous',
@@ -1779,25 +2099,40 @@ var andflow = {
       allowLoopback: true,
     });
 
-
     // add menmbers
     if (members && members.length > 0) {
       var actionElements = [];
       for (var i in members) {
         actionElements.push(document.getElementById(members[i]));
       }
-
       $this._plumb.addToGroup(id, actionElements);
-
     }
 
+    //mouse enter
+    andflow_util.addEventListener(groupElement, $this._event_name_mouseover, function (event) {
+      $this._showScope(groupElement);
+    });
+
+    //mouse leave
+    andflow_util.addEventListener(groupElement, $this._event_name_mouseout, function (event) {
+      $this._hideScope();
+    });
+
+    //group mouse down
+    andflow_util.addEventListener(groupElement, $this._event_name_mousedown, function (el) {
+
+      if ($this._selecting) {
+        if (groupElement.parentElement.classList.contains("canvas")) {
+          $this._postSelectObject(groupElement);
+        }
+      }
+
+    });
 
     //group mouse up event
-    andflow_util.addEventListener(groupElement, $this.mouseup_event_name, function (el) {
+    andflow_util.addEventListener(groupElement, $this._event_name_mouseup, function (el) {
 
-
-
-      //如果是移动就根据点击来显示编辑
+      //如果是移动端就根据点击来显示编辑
       if ($this.editable && $this.isMobile) {
         document.querySelectorAll(".canvas .group.focus").forEach(function (e, index) {
           andflow_util.removeClass(e, 'focus');
@@ -1812,7 +2147,7 @@ var andflow = {
 
 
     //group remove button click
-    andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), $this.click_event_name, function () {
+    andflow_util.addEventListener(groupElement.querySelector('.group-remove-btn'), $this._event_name_click, function () {
       andflow_util.confirm('确定删除分组?', function () {
         $this.removeGroup(id);
       });
@@ -1820,7 +2155,7 @@ var andflow = {
     });
 
     //group header dblclick
-    andflow_util.addEventListener(groupElement.querySelector('.group-header'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(groupElement.querySelector('.group-header'), $this._event_name_dblclick, function (event) {
       if ($this.editable) {
         event.preventDefault();
 
@@ -1870,7 +2205,7 @@ var andflow = {
     });
 
     //group body dblclick
-    andflow_util.addEventListener(groupElement.querySelector('.group-body'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(groupElement.querySelector('.group-body'), $this._event_name_dblclick, function (event) {
       if ($this.editable) {
         event.preventDefault();
 
@@ -1915,13 +2250,15 @@ var andflow = {
 
 
     //group resize event
-    andflow_util.addEventListener(groupElement.querySelector('.group-resize'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(groupElement.querySelector('.group-resize'), $this._event_name_mousedown, function (e) {
+      $this._showScope(groupElement);
+
+
       var containerEl = document.querySelector('#' + $this.containerId);
+
       containerEl.style.cursor = 'nwse-resize';
 
       var group_main = groupElement.querySelector(".group-master");
-      // var x1 = e.pageX;
-      // var y1 = e.pageY;
 
       var x1 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
       var y1 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -1930,9 +2267,9 @@ var andflow = {
       var width = group_main.offsetWidth;
       var height = group_main.offsetHeight;
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e) {
-        // var x2 = e.pageX;
-        // var y2 = e.pageY;
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e) {
+
+        $this._showScope(groupElement);
 
         var x2 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
         var y2 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -1959,18 +2296,17 @@ var andflow = {
     });
 
 
-
-
-
-
     $this._onCanvasChanged();
 
   }, //end createGroup
 
   //添加列表
   _createList: function (list) {
+
     var $this = this;
+
     var id = list.id;
+
     if (id == null) {
       return;
     }
@@ -1978,8 +2314,10 @@ var andflow = {
     var meta = this.getMetadata(name) || {};
 
     var listElement = document.querySelector('#' + $this.containerId + ' #' + list.id);
+
     if (!listElement) {
-      var html = '<div id="' + list.id + '" class="list list-container">';
+
+      var html = '<div id="' + list.id + '" class="list list-container andflow_meta">';
       html += '<div class="list-remove-btn">X</div>';
       html += '<div class="list-resize"></div>';
       html += '<div class="list-main">';//begin main
@@ -1987,6 +2325,7 @@ var andflow = {
       html += '<div class="list-body"></div>';
       html += '</div>'; //end main 
       html += '</div>'; //end list 
+
       listElement = andflow_util.parseHtml(html);
 
       var canvasElement = document.querySelector('#' + $this.containerId + ' #canvas');
@@ -1997,8 +2336,27 @@ var andflow = {
 
     $this.setListInfo(list);
 
-    //event
-    andflow_util.addEventListener(listElement, $this.mouseup_event_name, function () {
+
+    //mouse enter
+    andflow_util.addEventListener(listElement, $this._event_name_mouseover, function (event) {
+      $this._showScope(listElement);
+    });
+    //mouse leave
+    andflow_util.addEventListener(listElement, $this._event_name_mouseout, function (event) {
+      $this._hideScope();
+    });
+
+    //mouse down
+    andflow_util.addEventListener(listElement, $this._event_name_mousedown, function () {
+      if ($this._selecting) {
+        if (listElement.parentElement.classList.contains("canvas")) {
+          $this._postSelectObject(listElement);
+        }
+      }
+    });
+
+    //mouse up
+    andflow_util.addEventListener(listElement, $this._event_name_mouseup, function () {
       if ($this.editable && $this.isMobile) {
         document.querySelectorAll('.focus').forEach(function (e) {
           andflow_util.removeClass(e, 'focus');
@@ -2008,7 +2366,8 @@ var andflow = {
 
       $this._onCanvasChanged();
     });
-    andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), $this.click_event_name, function () {
+
+    andflow_util.addEventListener(listElement.querySelector('.list-remove-btn'), $this._event_name_click, function () {
       andflow_util.confirm('确定删除?', function () {
         $this.removeList(id);
       });
@@ -2018,7 +2377,9 @@ var andflow = {
     //resize
     var list_main = listElement.querySelector(".list-main");
 
-    andflow_util.addEventListener(listElement.querySelector('.list-resize'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(listElement.querySelector('.list-resize'), $this._event_name_mousedown, function (e) {
+
+      $this._showScope(listElement);
 
       var containerEl = document.getElementById($this.containerId);
       containerEl.style.cursor = 'nwse-resize';
@@ -2030,8 +2391,9 @@ var andflow = {
       var width = list_main.offsetWidth;
       var height = list_main.offsetHeight;
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e) {
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e) {
 
+        $this._showScope(listElement);
 
         var x2 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
         var y2 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2055,7 +2417,7 @@ var andflow = {
       e.preventDefault();
     });
 
-    andflow_util.addEventListener(listElement.querySelector('.list-header'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(listElement.querySelector('.list-header'), $this._event_name_dblclick, function (event) {
 
       if ($this.editable) {
 
@@ -2110,7 +2472,7 @@ var andflow = {
 
     });
 
-    andflow_util.addEventListener(listElement.querySelector('.list-body'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(listElement.querySelector('.list-body'), $this._event_name_dblclick, function (event) {
 
       if ($this.editable) {
 
@@ -2176,10 +2538,10 @@ var andflow = {
 
     $this._plumb.draggable(listElement, {
       start: function (params) {
-        // console.log("开始拖动:", params);
+        $this._showScope(listElement);
       },
       drag: function (params) {
-
+        $this._showScope(listElement);
         // 判断条件，例如拖动超出某个范围时停止拖动
         if (params.pos[0] < 0) { //  X 轴坐标<0 
           params.pos[0] = 0;
@@ -2192,6 +2554,7 @@ var andflow = {
 
       },
       stop: function (params) {
+        $this._hideScope();
         if ($this.drag_step > 1) {
           var x = Math.round(params.pos[0] / $this.drag_step) * $this.drag_step;
           var y = Math.round(params.pos[1] / $this.drag_step) * $this.drag_step;
@@ -2348,7 +2711,7 @@ var andflow = {
     var actionElement = document.getElementById(action.id);
     if (!actionElement) {
 
-      var actionHtml = '<div id="' + id + '"  draggable="true" ondragend="" class="action-container" ><div  class="action" ></div></div>';
+      var actionHtml = '<div id="' + id + '"  draggable="true" ondragend="" class="action-container andflow_meta" ><div  class="action" ></div></div>';
 
       actionElement = andflow_util.parseHtml(actionHtml);
 
@@ -2435,28 +2798,39 @@ var andflow = {
         }
       }
     });
-    //mouseup
-    andflow_util.addEventListener(actionElement, $this.mouseup_event_name, function () {
-      $this._onCanvasChanged();
+
+    //mouse enter
+    andflow_util.addEventListener(actionElement, $this._event_name_mouseover, function (event) {
+      $this._showScope(actionElement);
+    });
+    //mouse leave
+    andflow_util.addEventListener(actionElement, $this._event_name_mouseout, function (event) {
+      $this._hideScope();
     });
 
-    andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), $this.click_event_name, function () {
-      andflow_util.confirm('确定删除该节点?', function () {
-        $this.removeAction(id);
-      });
+    //mouse down
+    andflow_util.addEventListener(actionElement, $this._event_name_mousedown, function (event) {
+      if ($this._selecting) {
+        if (actionElement.parentElement.classList.contains("canvas")) {
+          $this._postSelectObject(actionElement);
+        }
+      }
 
-    });
 
-    andflow_util.addEventListener(actionElement, $this.mousedown_event_name, function (event) {
       andflow_util.setAttr(actionElement, 'mousedown', 'true');
       andflow_util.setAttr(actionElement, 'mousedown_time', new Date().getTime());
 
-
     });
-    //双击打开配置事件,在设计模式和步进模式下才可以用
-    andflow_util.addEventListener(actionElement, $this.mouseup_event_name, function (event) {
+
+    //mouse up 双击打开配置事件,在设计模式和步进模式下才可以用
+    andflow_util.addEventListener(actionElement, $this._event_name_mouseup, function (event) {
+
+
+      $this._onCanvasChanged();
+
       andflow_util.setAttr(actionElement, 'mousedown', 'false');
-      //如果是移动就根据点击来显示编辑
+
+      //如果是移动端就根据点击来显示编辑
       if ($this.editable && $this.isMobile) {
         document.querySelectorAll(".canvas .focus").forEach(function (e, index) {
           andflow_util.removeClass(e, 'focus');
@@ -2489,8 +2863,9 @@ var andflow = {
     });
 
 
+    //dblclick
+    andflow_util.addEventListener(actionElement, $this._event_name_dblclick, function (event) {
 
-    andflow_util.addEventListener(actionElement, $this.dblclick_event_name, function (event) {
 
       if ($this.editable) {
         if ($this.event_action_dblclick) {
@@ -2503,15 +2878,21 @@ var andflow = {
     });
 
 
+    // remove button click
+    andflow_util.addEventListener(actionElement.querySelector('.action-remove-btn'), $this._event_name_click, function () {
+      andflow_util.confirm('确定删除该节点?', function () {
+        $this.removeAction(id);
+      });
+    });
     //改变大小事件，鼠标按下去
-    andflow_util.addEventListener(actionElement.querySelector('.action-resize'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(actionElement.querySelector('.action-resize'), $this._event_name_mousedown, function (e) {
+
+      $this._showScope(actionElement);
 
       var containerEl = document.getElementById($this.containerId);
 
       containerEl.style.cursor = 'nwse-resize';
 
-      // var x1 = e.pageX;
-      // var y1 = e.pageY;
 
       var x1 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
       var y1 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2519,9 +2900,10 @@ var andflow = {
       var width = actionElement.querySelector(".action-master").offsetWidth;
       var height = actionElement.querySelector(".action-master").offsetHeight;
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e2) {
-        // var x2 = e2.pageX;
-        // var y2 = e2.pageY;
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e2) {
+
+        $this._showScope(actionElement);
+
 
         var x2 = e2.targetTouches ? e2.targetTouches[0].pageX : e2.pageX;
         var y2 = e2.targetTouches ? e2.targetTouches[0].pageY : e2.pageY;
@@ -2575,13 +2957,11 @@ var andflow = {
     });
 
     //改变Body大小事件，鼠标按下去
-    andflow_util.addEventListener(actionElement.querySelector('.body-resize'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(actionElement.querySelector('.body-resize'), $this._event_name_mousedown, function (e) {
+      $this._showScope(actionElement);
 
       var containerEl = document.getElementById($this.containerId);
       containerEl.style.cursor = 'nwse-resize';
-
-      // var x1 = e.pageX;
-      // var y1 = e.pageY;
 
       var x1 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
       var y1 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2589,9 +2969,8 @@ var andflow = {
       var width = actionElement.querySelector('.action-body').offsetWidth;
       var height = actionElement.querySelector('.action-body').offsetHeight;
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e) {
-        // var x2 = e.pageX;
-        // var y2 = e.pageY; 
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e) {
+        $this._showScope(actionElement);
 
         var x2 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
         var y2 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2641,10 +3020,10 @@ var andflow = {
     // initialise draggable elements.
     $this._plumb.draggable(el, {
       start: function (params) {
-        // console.log("开始拖动:", params);
+        $this._showScope(el);
       },
       drag: function (params) {
-
+        $this._showScope(el);
         // 判断条件，例如拖动超出某个范围时停止拖动
         if (params.pos[0] < 0) { //  X 轴坐标<0 
           params.pos[0] = 0;
@@ -2657,6 +3036,8 @@ var andflow = {
 
       },
       stop: function (params) {
+        $this._hideScope();
+
         if ($this.drag_step > 1) {
           var x = Math.round(params.pos[0] / $this.drag_step) * $this.drag_step;
           var y = Math.round(params.pos[1] / $this.drag_step) * $this.drag_step;
@@ -2691,6 +3072,7 @@ var andflow = {
     }
   },
 
+  // create Tip
   _createTip: function (tip) {
     var $this = this;
 
@@ -2705,7 +3087,7 @@ var andflow = {
 
     var tipElement = document.querySelector('#' + this.containerId + ' #' + tip.id);
     if (!tipElement) {
-      var html = '<div id="' + tip.id + '" class="tip tip-container">';
+      var html = '<div id="' + tip.id + '" class="tip tip-container andflow_meta">';
       html += '<div class="tip-remove-btn">X</div>';
       html += '<div class="tip-resize"></div>';
       html += '</div>';
@@ -2758,13 +3140,14 @@ var andflow = {
 
     //draggable
     $this._plumb.getContainer().appendChild(tipElement);
+
     // initialise draggable elements.
     $this._plumb.draggable(tipElement, {
       start: function (params) {
-        // console.log("开始拖动:", params);
+        $this._showScope(tipElement);
       },
       drag: function (params) {
-
+        $this._showScope(tipElement);
         // 判断条件，例如拖动超出某个范围时停止拖动
         if (params.pos[0] < 0) { //  X 轴坐标<0 
           params.pos[0] = 0;
@@ -2777,6 +3160,8 @@ var andflow = {
 
       },
       stop: function (params) {
+        $this._hideScope();
+
         if ($this.drag_step > 1) {
           var x = Math.round(params.pos[0] / $this.drag_step) * $this.drag_step;
           var y = Math.round(params.pos[1] / $this.drag_step) * $this.drag_step;
@@ -2800,8 +3185,27 @@ var andflow = {
       allowLoopback: true,
     });
 
-    //event
-    andflow_util.addEventListener(tipElement, $this.mouseup_event_name, function () {
+    //mouse enter
+    andflow_util.addEventListener(tipElement, $this._event_name_mouseover, function (event) {
+      $this._showScope(tipElement);
+    });
+
+    //mouse leave
+    andflow_util.addEventListener(tipElement, $this._event_name_mouseout, function (event) {
+      $this._hideScope();
+    });
+
+    //mouse down
+    andflow_util.addEventListener(tipElement, $this._event_name_mousedown, function () {
+      if ($this._selecting) {
+        if (tipElement.parentElement.classList.contains("canvas")) {
+          $this._postSelectObject(tipElement);
+        }
+      }
+    });
+
+    //mouse up
+    andflow_util.addEventListener(tipElement, $this._event_name_mouseup, function () {
 
       if ($this.editable && $this.isMobile) {
         document.querySelectorAll('.focus').forEach(function (e) {
@@ -2813,7 +3217,7 @@ var andflow = {
       $this._onCanvasChanged();
     });
 
-    andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'), $this.click_event_name, function () {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-remove-btn'), $this._event_name_click, function () {
       andflow_util.confirm('确定删除?', function () {
         $this.removeTip(id);
 
@@ -2821,7 +3225,7 @@ var andflow = {
 
     });
 
-    andflow_util.addEventListener(tipElement.querySelector('.tip-header'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-header'), $this._event_name_dblclick, function (event) {
 
       if ($this.editable) {
 
@@ -2869,7 +3273,7 @@ var andflow = {
         });
       }
     });
-    andflow_util.addEventListener(tipElement.querySelector('.tip-body'), $this.dblclick_event_name, function (event) {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-body'), $this._event_name_dblclick, function (event) {
 
       if ($this.editable) {
 
@@ -2914,7 +3318,8 @@ var andflow = {
 
 
     //event
-    andflow_util.addEventListener(tipElement.querySelector('.tip-resize'), $this.mousedown_event_name, function (e) {
+    andflow_util.addEventListener(tipElement.querySelector('.tip-resize'), $this._event_name_mousedown, function (e) {
+      $this._showScope(tipElement);
 
       var containerEl = document.getElementById($this.containerId);
 
@@ -2922,8 +3327,6 @@ var andflow = {
 
       var tip_main = tipElement.querySelector(".tip-master");
 
-      // var x1 = e.pageX;
-      // var y1 = e.pageY;
 
       var x1 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
       var y1 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2932,10 +3335,8 @@ var andflow = {
       var height = tip_main.offsetHeight;
 
 
-      andflow_util.addEventListener(containerEl, $this.mousemove_event_name, function (e) {
-        // var x2 = e.pageX;
-        // var y2 = e.pageY;
-
+      andflow_util.addEventListener(containerEl, $this._event_name_mousemove, function (e) {
+        $this._showScope(tipElement);
 
         var x2 = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
         var y2 = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
@@ -2961,15 +3362,275 @@ var andflow = {
 
   }, //end createTip
 
-  // 显示缩略图-图片
-  _showThumbnailImage: function () {
+
+  // 显示对象在标尺中的范围
+  _showScope: function (obj) {
+
+    var parent = obj.parentElement;
+
+    if (parent.className.indexOf("canvas") < 0) {
+      return;
+    }
+
+
 
     var $this = this;
 
+
+    var top = obj.offsetTop;
+    var left = obj.offsetLeft;
+    var width = obj.offsetWidth;
+    var height = obj.offsetHeight;
+
+    var canvasBox = $this._getContainer().querySelector(".canvasBox")
+
+    top = top - canvasBox.scrollTop;
+    left = left - canvasBox.scrollLeft;
+
+    var scope_h = $this._getContainer().querySelector(".ruler_h>.scope");
+    var scope_v = $this._getContainer().querySelector(".ruler_v>.scope");
+
+    scope_h.style.display = "block";
+    scope_h.style.width = width + "px";
+    scope_h.style.left = left + "px";
+
+    scope_v.style.display = "block";
+    scope_v.style.height = height + "px";
+    scope_v.style.top = top + "px";
+
+  },
+
+  _hideScope: function () {
+    var $this = this;
+
+    var scope_h = $this._getContainer().querySelector(".ruler_h>.scope");
+    var scope_v = $this._getContainer().querySelector(".ruler_v>.scope");
+
+    scope_h.style.display = "none";
+    scope_v.style.display = "none";
+
+  },
+  // 隐藏标尺
+  _hideRulers: function () {
+    var canvasContainer = document.getElementById("canvasContainer");
+    andflow_util.setStyle(canvasContainer, "padding-left", "0px");
+    andflow_util.setStyle(canvasContainer, "padding-top", "0px");
+    var ruler_h = canvasContainer.querySelector(".ruler_h");
+    ruler_h.style.display = "none";
+    var ruler_v = canvasContainer.querySelector(".ruler_v");
+    ruler_v.style.display = "none";
+
+    this.show_rulers = false;
+    andflow_util.removeClass('#' + this.containerId + ' .ruler_btn', 'close');
+  },
+  // 显示标尺
+  _showRulers: function () {
+    var $self = this;
+
+    var canvasContainer = document.getElementById("canvasContainer");
+    andflow_util.setStyle(canvasContainer, "padding-left", "20px");
+    andflow_util.setStyle(canvasContainer, "padding-top", "20px");
+
+    var ruler_h = canvasContainer.querySelector(".ruler_h");
+    ruler_h.style.display = "block";
+    var ruler_v = canvasContainer.querySelector(".ruler_v");
+    ruler_v.style.display = "block";
+
+    $self.show_rulers = true;
+    andflow_util.addClass('#' + $self.containerId + ' .ruler_btn', 'close');
+
+    //画标尺
+    $self._drawRulers();
+
+  },
+
+  //画标尺刻度
+  _drawRulers: function () {
+
+
+    var $self = this;
+
+    const rule_size = 40;
+    const rule_length = 4000;
+
+    // 刻度间隔和刻度高度
+    const tickSpacing = 20;  // 刻度间距 
+    const tickSize1 = 15;   // 刻度高度
+    const tickSize2 = 35;   // 刻度高度 
+
+    // 横坐标
+    var canvas_h = document.querySelector(".ruler_h").querySelector("canvas");
+    canvas_h.height = rule_size;
+    // 通过这种设置宽度的方式可以进行缩小，让线条看起来更细
+
+    canvas_h.style.width = rule_length + "px";
+    canvas_h.width = rule_length * 2;
+
+    const ctx_h = canvas_h.getContext("2d");
+
+
+    ctx_h.lineWidth = 0.5;
+    ctx_h.strokeStyle = 'black';
+
+    // 绘制顶部刻度
+    ctx_h.fillStyle = "black"; // 设置文本颜色
+    ctx_h.font = "12px Arial"; // 设置文本字体和大小
+
+    for (let x = tickSpacing; x <= canvas_h.width; x += tickSpacing) {
+
+      var tickSize = tickSize1
+      if (x % (tickSpacing * 2) == 0) {
+        tickSize = tickSize2;
+      }
+
+      ctx_h.beginPath();
+      ctx_h.moveTo(x, rule_size);
+      ctx_h.lineTo(x, rule_size - tickSize);
+      ctx_h.stroke();
+
+      if (x % (tickSpacing * 2) == 0) {
+        var value = x / (tickSpacing * 2);
+        ctx_h.fillText(value, x + 2, 12);
+      }
+
+    }
+
+    //纵坐标
+    var canvas_v = document.querySelector(".ruler_v").querySelector("canvas");
+    canvas_v.width = rule_size;
+    // 通过这种设置宽度的方式可以进行缩小，让线条看起来更细 
+    canvas_v.style.height = rule_length + "px";
+    canvas_v.height = rule_length * 2;
+
+    const ctx_v = canvas_v.getContext("2d");
+
+
+    ctx_v.lineWidth = 0.5;
+    ctx_v.strokeStyle = 'black';
+
+    // 绘制顶部刻度
+    ctx_v.fillStyle = "black"; // 设置文本颜色
+    ctx_v.font = "12px Arial"; // 设置文本字体和大小
+
+    for (let y = tickSpacing; y <= canvas_v.height; y += tickSpacing) {
+
+      var tickSize = tickSize1
+      if (y % (tickSpacing * 2) == 0) {
+        tickSize = tickSize2;
+      }
+
+      ctx_v.beginPath();
+      ctx_v.moveTo(rule_size, y);
+      ctx_v.lineTo(rule_size - tickSize, y);
+      ctx_v.stroke();
+
+      if (y % (tickSpacing * 2) == 0) {
+        var value = y / (tickSpacing * 2);
+        ctx_v.fillText(value, rule_size - tickSize, y - 2);
+      }
+
+    }
+
+    $self._posRulers();
+
+  },
+  // 调整标尺位置
+  _posRulers: function () {
+    var canvasBox = document.getElementById(this.containerId).querySelector(".canvasBox");
+    var scrollLeft = canvasBox.scrollLeft;     // 获取水平滚动位置 
+    var scrollTop = canvasBox.scrollTop;       // 获取垂直滚动位置
+
+    var canvas_h = document.querySelector(".ruler_h").querySelector("canvas");
+    andflow_util.setStyle(canvas_h, "left", - scrollLeft + "px");
+
+    var canvas_v = document.querySelector(".ruler_v").querySelector("canvas");
+    andflow_util.setStyle(canvas_v, "top", - scrollTop + "px");
+
+  },
+
+
+  //显示缩略图
+  _showThumbnail: function () {
+    var $this = this;
+
+
+    andflow_util.setAttr('#' + $this.containerId + ' .thumbnail_btn', 'state', 'open');
+    andflow_util.show('#' + $this.containerId + ' .flow_thumbnail');
+    andflow_util.removeClass('#' + $this.containerId + ' .thumbnail_btn', 'open');
+
+    $this._drawThumbnail();
+
+  },
+  //隐藏缩略图
+  _hideThumbnail: function () {
+    var $this = this;
+    andflow_util.setAttr('#' + $this.containerId + ' .thumbnail_btn', 'state', 'close');
+    andflow_util.hide('#' + $this.containerId + ' .flow_thumbnail');
+    andflow_util.addClass('#' + $this.containerId + ' .thumbnail_btn', 'open');
+
+
+  },
+  //重画缩略图
+  _drawThumbnail: function () {
+    var $this = this;
+
+    var isvisible = andflow_util.isVisible('#' + $this.containerId + ' .flow_thumbnail');
+    if (!isvisible) {
+      return;
+    }
+
+
+    //视觉框
+    var canvasCantainer = document.getElementById($this.containerId).querySelector(".canvasContainer");
+
+    var canvas = document.getElementById($this.containerId).querySelector(".canvas");
+
+    var canvasView = canvas.parentElement;
+    var thumbnail = document.getElementById($this.containerId).querySelector('.flow_thumbnail');
+
+
+    var mask = document.getElementById($this.containerId).querySelector('.flow_thumbnail_mask');
+
+    var container_width = canvasCantainer.offsetWidth;
+    var container_height = canvasCantainer.offsetHeight;
+
+    var full_width = canvas.offsetWidth;
+    var full_height = canvas.offsetHeight;
+
+    var canvas_width = canvasView.offsetWidth;
+    var canvas_height = canvasView.offsetHeight;
+
+
+    //宽度 
+    var thumbnail_width = 150;
+
+    //比例
+    var scale = thumbnail_width * 1.0 / full_width * 1.0;
+
+    // 高度 
+    var thumbnail_height = scale * full_height;
+
+    // 设置预览框大小 
+    andflow_util.setStyle(thumbnail, 'width', thumbnail_width + 'px');
+    andflow_util.setStyle(thumbnail, 'height', thumbnail_height + 'px');
+
+
+    // 设置预览蒙版大小
+    var mask_w = (canvas_width * scale) + "px";
+    var mask_h = (canvas_height * scale) + "px";
+
+    var mask_l = (canvasView.scrollLeft * scale) + "px";
+    var mask_t = (canvasView.scrollTop * scale) + "px";
+
+    andflow_util.setStyle(mask, 'width', mask_w);
+    andflow_util.setStyle(mask, 'height', mask_h);
+    andflow_util.setStyle(mask, 'left', mask_l);
+    andflow_util.setStyle(mask, 'top', mask_t);
+
+    //开始画图
     const cardBox = document.getElementById('canvas');
     const width = cardBox.scrollWidth;
     const height = cardBox.scrollHeight;
-    const scale = 1;
 
     var dist_canvas = document.createElement('canvas');
     dist_canvas.width = width;
@@ -3034,54 +3695,128 @@ var andflow = {
     }
 
   },
-  //缩略图框
-  _showThumbnail: function () {
+  // 显示代码界面
+  _showCode: function () {
     var $this = this;
+    var code = $this.getFlow();
+    var content = JSON.stringify(code, null, '\t');
+    andflow_util.setValue('#codeContainer textarea', content);
 
-    var isvisible = andflow_util.isVisible('#' + $this.containerId + ' .flow_thumbnail');
-    if (!isvisible) {
-      return;
-    }
-
-
-    //视觉框
-    var canvas = document.getElementById($this.containerId).querySelector(".canvas");
-
-    var canvasView = canvas.parentElement;
-    var thumbnail = document.getElementById($this.containerId).querySelector('.flow_thumbnail');
-
-
-    var mask = document.getElementById($this.containerId).querySelector('.flow_thumbnail_mask');
-
-    var full_width = canvas.offsetWidth;
-    var full_height = canvas.offsetHeight;
-
-    var canvas_width = canvasView.offsetWidth;
-    var canvas_height = canvasView.offsetHeight;
-
-    var thumbnail_width = 1 / 5 * full_width;
-
-    var scale = thumbnail_width * 1.0 / full_width * 1.0;
-
-
-    andflow_util.setStyle(thumbnail, 'width', thumbnail_width + 'px');
-    andflow_util.setStyle(thumbnail, 'height', scale * full_height + 'px');
-
-    var mask_w = (canvas_width * scale) + "px";
-    var mask_h = (canvas_height * scale) + "px";
-
-    var mask_l = (canvasView.scrollLeft * scale) + "px";
-    var mask_t = (canvasView.scrollTop * scale) + "px";
-
-    andflow_util.setStyle(mask, 'width', mask_w);
-    andflow_util.setStyle(mask, 'height', mask_h);
-    andflow_util.setStyle(mask, 'left', mask_l);
-    andflow_util.setStyle(mask, 'top', mask_t);
-
-
-    $this._showThumbnailImage();
+    andflow_util.show('#codeContainer');
+    andflow_util.addClass('#' + $this.containerId + ' .code_btn', 'design');
 
   },
+  //显示设计界面
+  _showDesigner: function () {
+    var $this = this;
+
+    if ($this.editable) {
+      var txt = andflow_util.getValue('#codeContainer textarea') || "{}";
+
+      var m = JSON.parse(txt);
+
+      $this.showFlow(m);
+    }
+    andflow_util.hide('#codeContainer');
+    andflow_util.removeClass('#' + $this.containerId + ' .code_btn', 'design');
+
+  },
+
+  _openSelectState: function () {
+    var $this = this;
+
+    var canvas = $this._getContainer().querySelector(".canvas");
+    andflow_util.addClass(canvas, "canvas_select");
+    andflow_util.removeClass(canvas, "canvas_move");
+
+    $this._selecting = true;
+
+  },
+  _closeSelectState: function () {
+    var $this = this;
+
+    var canvas = $this._getContainer().querySelector(".canvas");
+    andflow_util.removeClass(canvas, "canvas_select");
+    andflow_util.addClass(canvas, "canvas_move");
+
+    $this._selecting = false;
+
+  },
+
+  _drawSelectBox: function () {
+    var $this = this;
+
+    if ($this._selecting_objs.length > 0) {
+      //计算所处位置
+      var left = 99999999999;
+      var top = 99999999999;
+      var right = 0;
+      var bottom = 0;
+      $this._selecting_objs.forEach((el, index) => {
+        var offsetLeft = el.offsetLeft;
+        var offsetTop = el.offsetTop;
+        var offsetWidth = el.offsetWidth;
+        var offsetHeight = el.offsetHeight;
+
+        if (offsetLeft < left) {
+          left = offsetLeft;
+        }
+        if (offsetTop < top) {
+          top = offsetTop;
+        }
+        if (right < offsetLeft + offsetWidth) {
+          right = offsetLeft + offsetWidth;
+        }
+        if (bottom < offsetTop + offsetHeight) {
+          bottom = offsetTop + offsetHeight;
+        }
+
+      });
+
+
+      left = left - 4;
+      top = top - 4;
+      right = right + 4;
+      bottom = bottom + 4;
+      var box = $this._getContainer().querySelector(".multi_select_box");
+      andflow_util.setStyle(box, "display", "block");
+      andflow_util.setStyle(box, "left", left + "px");
+      andflow_util.setStyle(box, "top", top + "px");
+      andflow_util.setStyle(box, "width", (right - left) + "px");
+      andflow_util.setStyle(box, "height", (bottom - top) + "px");
+
+
+    } else {
+      var box = $this._getContainer().querySelector(".multi_select_box");
+      andflow_util.setStyle(box, "display", "none");
+
+    }
+  },
+
+  _postSelectObject: function (element) {
+    var $this = this;
+
+    const exists = $this._selecting_objs.some(obj => obj === element);
+    if (exists) {
+      $this._selecting_objs = $this._selecting_objs.filter(obj => obj !== element);
+    } else {
+      $this._selecting_objs.push(element);
+    }
+    $this._drawSelectBox();
+
+  },
+
+  _clearSelectObject: function () {
+    var $this = this;
+    $this._selecting_objs = [];
+
+    var box = $this._getContainer().querySelector(".multi_select_box");
+    andflow_util.setStyle(box, "display", "none");
+  },
+
+
+
+
 
   // 重新调整canvas大小
   _resizeCanvas: function () {
@@ -3123,7 +3858,7 @@ var andflow = {
       }
 
       //显示缩略图
-      $this._showThumbnail();
+      $this._drawThumbnail();
 
 
     }, 10);
@@ -3386,11 +4121,11 @@ var andflow = {
     instance.isMobile = andflow_util.isMobile();
 
     if (instance.isMobile) {
-      instance.mousedown_event_name = 'touchstart';
-      instance.mouseup_event_name = 'touchend';
-      instance.mousemove_event_name = 'touchmove';
-      instance.click_event_name = 'touchend';
-      instance.dblclick_event_name = 'longtap';
+      instance._event_name_mousedown = 'touchstart';
+      instance._event_name_mouseup = 'touchend';
+      instance._event_name_mousemove = 'touchmove';
+      instance._event_name_click = 'touchend';
+      instance._event_name_dblclick = 'longtap';
     }
 
     instance = andflow_util.extend(instance, option);
@@ -3424,6 +4159,8 @@ var andflow = {
     instance._initEvents();
 
     instance._initAnimaction();
+
+
 
     return instance;
   },
@@ -5103,52 +5840,56 @@ var andflow = {
 
   //水平对齐
   horizontal: function () {
-    var minTop = 999999999;
+    var $this = this;
+    var items = $this._selecting_objs;
+    if (items == null || items.length == 0) {
+      items = [];
+      $this._getContainer().querySelectorAll(".andflow_meta").forEach((value, index) => {
+        items.push(value);
+      });
+    }
 
-    var model = this.getFlow();
+    var y = 0;
 
-    for (var k in model.actions) {
-      var top = model.actions[k].top;
-      top = top.replace(/px/gi, '');
-      if (minTop > top) {
-        minTop = top;
+    items.forEach((value, index) => {
+      if (index == 0) {
+        y = value.offsetTop + value.offsetHeight / 2;
       }
-    }
-    if (minTop < 10) {
-      minTop = 10;
-    }
-    for (var k in model.actions) {
-      model.actions[k].top = minTop + 'px';
-    }
 
-    this.showFlow(model);
-    this.setActionStates(this._action_states);
-    this.setLinkStates(this._link_states);
+      var top = y - value.offsetHeight / 2
+
+      andflow_util.setStyle(value, "top", top + "px");
+
+    });
+    this._drawSelectBox();
+    this._plumb.repaintEverything();
   },
 
   // 垂直对齐
   vertical: function () {
-    var minLeft = 999999999;
+    var $this = this;
+    var items = $this._selecting_objs;
+    if (items == null || items.length == 0) {
+      items = [];
+      $this._getContainer().querySelectorAll(".andflow_meta").forEach((value, index) => {
+        items.push(value);
+      });
+    }
 
-    var model = this.getFlow();
+    var x = 0;
 
-    for (var k in model.actions) {
-      var left = model.actions[k].top;
-      left = left.replace(/px/gi, '');
-      if (minLeft > left) {
-        minLeft = left;
+    items.forEach((value, index) => {
+      if (index == 0) {
+        x = value.offsetLeft + value.offsetWidth / 2;
       }
-    }
-    if (minLeft < 10) {
-      minLeft = 10;
-    }
-    for (var k in model.actions) {
-      model.actions[k].left = minLeft + 'px';
-    }
 
-    this.showFlow(model);
-    this.setActionStates(this._action_states);
-    this.setLinkStates(this._link_states);
+      var left = x - value.offsetWidth / 2
+      andflow_util.setStyle(value, "left", left + "px");
+    });
+    this._drawSelectBox();
+
+    this._plumb.repaintEverything();
+
   },
   // 测试
   test: function () {

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow-erd</title>
- 
+
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -16,132 +17,134 @@
     <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
 
     <script src="../src/js/andflow.js"></script>
-    <script src="../src/js/andflow_themes.js"></script> 
- 
-    <link  rel="stylesheet"  href="../src/css/demo.css" > 
-    <script  src="../src/js/demo.js" ></script>
+    <script src="../src/js/andflow_themes.js"></script>
+
+    <link rel="stylesheet" href="../src/css/demo.css">
+    <script src="../src/js/demo.js"></script>
 </head>
+
 <body>
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle"><a href="index.html" >首页</a> > 备注</div>
-        
-        <div class="menus">
-            <a href="index.html">Demos</a>
+        <div class="title"><a href="index.html">Andflow</a></div>
+        <div class="subtitle"><a href="index.html">首页</a> > 备注</div>
 
-            <a href="https://github.com/zone-7/andflow_js">Github</a>
+        <div class="menus">
+            <a href="index.html"><img src="../img/demos.png" />Demos</a>
+            <a href="https://github.com/zone-7/andflow_js" target="_blank"><img src="../img/github.png" />Github</a>
+
         </div>
     </div>
 
-<div id="andflow" style="width: 100%;height: 600px;padding:0px;">
+    <div id="andflow" style="width: 100%;height: 600px;padding:0px;">
 
-</div>
- 
+    </div>
+
 </body>
 <script>
 
 
 </script>
-<script> 
- 
-
-    var flowModel= {
-	"code": "",
-	"name": "",
-	"show_action_body": "true",
-	"show_action_content": "true",
-	"theme": "flow_theme_default",
-	"link_type": "Flowchart",
-	"params": [],
-	"actions": [
-		{
-			"id": "62f260b22867426cbdcde1403a88aa31",
-			"left": "89px",
-			"top": "254px",
-			"name": "script",
-			"params": {},
-			"title": "执行脚本",
-			"icon": "script.png",
-			"width": "120px",
-			"height": "80px"
-		}
-	],
-	"links": [
-		{
-			"source_id": "62f260b22867426cbdcde1403a88aa31",
-			"target_id": "tip_4157ceaf79ac49fd93d39398f506441f"
-		}
-	],
-	"groups": [],
-	"lists": [],
-	"tips": [
-		{
-			"id": "tip_4157ceaf79ac49fd93d39398f506441f",
-			"name": "tip",
-			"left": "340px",
-			"top": "88px",
-			"content": "执行JS脚本",
-			"width": "167px",
-			"height": "74px"
-		}
-	]
-};
+<script>
 
 
-    var options={
-        tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素
-        flowModel:flowModel,  //流程模型
+    var flowModel = {
+        "code": "",
+        "name": "",
+        "show_action_body": "true",
+        "show_action_content": "true",
+        "theme": "flow_theme_default",
+        "link_type": "Flowchart",
+        "params": [],
+        "actions": [
+            {
+                "id": "62f260b22867426cbdcde1403a88aa31",
+                "left": "89px",
+                "top": "254px",
+                "name": "script",
+                "params": {},
+                "title": "执行脚本",
+                "icon": "script.png",
+                "width": "120px",
+                "height": "80px"
+            }
+        ],
+        "links": [
+            {
+                "source_id": "62f260b22867426cbdcde1403a88aa31",
+                "target_id": "tip_4157ceaf79ac49fd93d39398f506441f"
+            }
+        ],
+        "groups": [],
+        "lists": [],
+        "tips": [
+            {
+                "id": "tip_4157ceaf79ac49fd93d39398f506441f",
+                "name": "tip",
+                "left": "340px",
+                "top": "88px",
+                "content": "执行JS脚本",
+                "width": "167px",
+                "height": "74px"
+            }
+        ]
+    };
+
+
+    var options = {
+        tags: tags,            //组件过滤标签列表
+        metadata: metadata,    //组件元素
+        flowModel: flowModel,  //流程模型
         img_path: "../img/meta/",
-        editable:true,   //是否可编辑，默认true
+        editable: true,   //是否可编辑，默认true
         show_toolbar: true,
         metadata_position: 'default', //top,left,default
-        render_action:function(metadata,action,html){ return html; },//节点渲染
-        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
-        render_state_list: function(datas){return null},             //流程状态列表渲染
-        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
-        event_group_click:function(group){
- 
+        render_action: function (metadata, action, html) { return html; },//节点渲染
+        render_action_helper: function (metadata, html) { return null },  //节点拖拉渲染
+        render_state_list: function (datas) { return null },             //流程状态列表渲染
+        render_link: function (conn, linktype, linkdata) { return null },   //连接线渲染
+        event_group_click: function (group) {
+
         },
-        event_group_dblclick: function(group){
-            
+        event_group_dblclick: function (group) {
+
         },
         //节点单击事件
-        event_action_click:function(metadata,action){
- 
+        event_action_click: function (metadata, action) {
+
 
         },
         //节点双击事件
-        event_action_dblclick:function(metadata,action){
- 
+        event_action_dblclick: function (metadata, action) {
+
 
         },
         //连线单击事件
         event_link_click: function (link) {
-			var label = prompt("set link label", (link.label ||'') );
-             
-            link.label=label;
-            
-            andflow.setLinkInfo(link);  
+            var label = prompt("set link label", (link.label || ''));
+
+            link.label = label;
+
+            andflow.setLinkInfo(link);
         },
         //连线双击事件
         event_link_dblclick: function (link) {
-		 
-            
+
+
         },
 
         //画图板单击事件
-        event_canvas_click: function(e){
-            
+        event_canvas_click: function (e) {
+
         }
     }
 
 
-    andflow.newInstance("andflow",options);
+    andflow.newInstance("andflow", options);
     andflow.showFlow();
 
 
- 
+
 </script>
+
 </html>

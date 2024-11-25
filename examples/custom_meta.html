@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>andflow</title>
-    
+
     <script src="../depends/jsplumb.min.js"></script>
     <script src="../depends/html2canvas.min.js"></script>
     <script src="../depends/canvg.js"></script>
@@ -16,231 +17,234 @@
     <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
 
     <script src="../src/js/andflow.js"></script>
-    <script src="../src/js/andflow_themes.js"></script> 
- 
-    <link  rel="stylesheet"  href="../src/css/demo.css" > 
-    <script  src="../src/js/demo.js" ></script>
+    <script src="../src/js/andflow_themes.js"></script>
 
-<style>
-    .rotate90{ 
+    <link rel="stylesheet" href="../src/css/demo.css">
+    <script src="../src/js/demo.js"></script>
 
-        -webkit-transform: rotate(45deg);
-        -moz-transform: rotate(45deg);
-        -o-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
-</style>
+    <style>
+        .rotate90 {
+
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    </style>
 </head>
+
 <body>
     <div class="bander">
         <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle"><a href="index.html" >首页</a> > 自定义图形</div>
+        <div class="title"><a href="index.html">Andflow</a></div>
+        <div class="subtitle"><a href="index.html">首页</a> > 自定义图形</div>
 
         <div class="menus">
-            <a href="index.html">Demos</a> 
-            <a href="https://github.com/zone-7/andflow_js">Github</a>
+            <a href="index.html"><img src="../img/demos.png" />Demos</a>
+            <a href="https://github.com/zone-7/andflow_js" target="_blank"><img src="../img/github.png" />Github</a>
+
         </div>
     </div>
 
-<div id="andflow" style="width: 100%;height: 600px;padding:0px;">
+    <div id="andflow" style="width: 100%;height: 600px;padding:0px;">
 
-</div>
- 
-</body> 
-<script> 
- 
-    var flowModel= {
-	"code": "",
-	"name": "",
-	"show_action_body": "true",
-	"show_action_content": "true",
-	"theme": "flow_theme_default",
-	"link_type": "Flowchart",
-	"params": [],
-	"actions": [
-		{
-			"id": "f7a6ec0031784f5a80d8633a6418fd52",
-			"left": "77px",
-			"top": "101px",
-			"name": "begin",
-			"params": {},
-			"title": "开始",
-			"icon": "begin.png",
-			"width": "120px",
-			"height": "80px",
-			"content": {
-				"content_type": "msg",
-				"content": "yes"
-			}
-		},
-		{
-			"id": "793a2a11cf8b40e9afd8bd8f04405e64",
-			"left": "71px",
-			"top": "254px",
-			"name": "script",
-			"params": {},
-			"title": "执行脚本",
-			"icon": "script.png",
-			"width": "120px",
-			"height": "80px"
-		},
-		{
-			"id": "f558687ca5f34a6c89732eb50749a15a",
-			"left": "68px",
-			"top": "434px",
-			"name": "end",
-			"params": {},
-			"title": "结束",
-			"icon": "end.png",
-			"width": "120px",
-			"height": "80px"
-		},
-		{
-			"id": "1871d470c1e44abfaa291a5a878f9426",
-			"left": "296px",
-			"top": "245px",
-			"name": "custom_action",
-			"params": {},
-			"title": "自定义类型",
-            "content":"自定义类型",
-			"icon": "person.png",
-			"width": "100px",
-			"height": "100px"
-		}
-	],
-	"links": [
-		{
-			"source_id": "f7a6ec0031784f5a80d8633a6418fd52",
-			"target_id": "793a2a11cf8b40e9afd8bd8f04405e64"
-		},
-		{
-			"source_id": "793a2a11cf8b40e9afd8bd8f04405e64",
-			"target_id": "f558687ca5f34a6c89732eb50749a15a"
-		},
-		{
-			"source_id": "793a2a11cf8b40e9afd8bd8f04405e64",
-			"target_id": "1871d470c1e44abfaa291a5a878f9426"
-		},
-		{
-			"source_id": "1871d470c1e44abfaa291a5a878f9426",
-			"target_id": "f558687ca5f34a6c89732eb50749a15a"
-		}
-	],
-	"groups": []
-};
+    </div>
+
+</body>
+<script>
+
+    var flowModel = {
+        "code": "",
+        "name": "",
+        "show_action_body": "true",
+        "show_action_content": "true",
+        "theme": "flow_theme_default",
+        "link_type": "Flowchart",
+        "params": [],
+        "actions": [
+            {
+                "id": "f7a6ec0031784f5a80d8633a6418fd52",
+                "left": "77px",
+                "top": "101px",
+                "name": "begin",
+                "params": {},
+                "title": "开始",
+                "icon": "begin.png",
+                "width": "120px",
+                "height": "80px",
+                "content": {
+                    "content_type": "msg",
+                    "content": "yes"
+                }
+            },
+            {
+                "id": "793a2a11cf8b40e9afd8bd8f04405e64",
+                "left": "71px",
+                "top": "254px",
+                "name": "script",
+                "params": {},
+                "title": "执行脚本",
+                "icon": "script.png",
+                "width": "120px",
+                "height": "80px"
+            },
+            {
+                "id": "f558687ca5f34a6c89732eb50749a15a",
+                "left": "68px",
+                "top": "434px",
+                "name": "end",
+                "params": {},
+                "title": "结束",
+                "icon": "end.png",
+                "width": "120px",
+                "height": "80px"
+            },
+            {
+                "id": "1871d470c1e44abfaa291a5a878f9426",
+                "left": "296px",
+                "top": "245px",
+                "name": "custom_action",
+                "params": {},
+                "title": "自定义类型",
+                "content": "自定义类型",
+                "icon": "person.png",
+                "width": "100px",
+                "height": "100px"
+            }
+        ],
+        "links": [
+            {
+                "source_id": "f7a6ec0031784f5a80d8633a6418fd52",
+                "target_id": "793a2a11cf8b40e9afd8bd8f04405e64"
+            },
+            {
+                "source_id": "793a2a11cf8b40e9afd8bd8f04405e64",
+                "target_id": "f558687ca5f34a6c89732eb50749a15a"
+            },
+            {
+                "source_id": "793a2a11cf8b40e9afd8bd8f04405e64",
+                "target_id": "1871d470c1e44abfaa291a5a878f9426"
+            },
+            {
+                "source_id": "1871d470c1e44abfaa291a5a878f9426",
+                "target_id": "f558687ca5f34a6c89732eb50749a15a"
+            }
+        ],
+        "groups": []
+    };
 
 
-    var options={
-        tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素
-        flowModel:flowModel,  //流程模型
+    var options = {
+        tags: tags,            //组件过滤标签列表
+        metadata: metadata,    //组件元素
+        flowModel: flowModel,  //流程模型
         img_path: "../img/meta/",
-        editable:true,   //是否可编辑，默认true
+        editable: true,   //是否可编辑，默认true
         show_toolbar: true,
         metadata_position: 'default', //top,left,default
-        render_action:function(metadata,action,html){ return html; },//节点渲染
-        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
-        render_state_list: function(datas){return null},             //流程状态列表渲染
-        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
-        event_group_click:function(group){
- 
+        render_action: function (metadata, action, html) { return html; },//节点渲染
+        render_action_helper: function (metadata, html) { return null },  //节点拖拉渲染
+        render_state_list: function (datas) { return null },             //流程状态列表渲染
+        render_link: function (conn, linktype, linkdata) { return null },   //连接线渲染
+        event_group_click: function (group) {
+
         },
-        event_group_dblclick: function(group){
-            
+        event_group_dblclick: function (group) {
+
         },
         //节点单击事件
-        event_action_click:function(metadata,action){
- 
+        event_action_click: function (metadata, action) {
+
 
         },
         //节点双击事件
-        event_action_dblclick:function(metadata,action){
- 
+        event_action_dblclick: function (metadata, action) {
+
 
         },
         //连线单击事件
         event_link_click: function (link) {
-            
+
         },
         //连线双击事件
         event_link_dblclick: function (link) {
-            
+
 
         },
         //画图板单击事件
-        event_canvas_click: function(e){
-            
+        event_canvas_click: function (e) {
+
         }
     }
 
 
-    andflow.newInstance("andflow",options);
+    andflow.newInstance("andflow", options);
     andflow.showFlow();
 
 
 
     //方法
-    function getFlowContent(){
+    function getFlowContent() {
         var content = andflow.getFlow();
-        document.getElementById("flow_content").value=JSON.stringify(content,null,'\t');
+        document.getElementById("flow_content").value = JSON.stringify(content, null, '\t');
     }
-    function setFlowContent(){
+    function setFlowContent() {
         var txt = document.getElementById("flow_content").value;
 
-        if(txt.length==0){
+        if (txt.length == 0) {
             return;
         }
-        try{
+        try {
 
             var m = JSON.parse(txt);
             andflow.showFlow(m);
-        }catch (e) {
+        } catch (e) {
             alert(e)
         }
     }
     //截图
-    function snap(){
+    function snap() {
 
         andflow.snap("流程");
     }
 
     //改变样式
-    function changeTheme(obj){
+    function changeTheme(obj) {
         var obj = document.getElementById("theme_select");
 
         var index = obj.selectedIndex; // 选中索引
 
         var theme = obj.options[index].value; // 选中文本
         andflow.setTheme(theme);
-   
+
     }
     //改变连接线类型
-    function changeLinkType(e){
+    function changeLinkType(e) {
         var obj = document.getElementById("link_type_select");
 
         var index = obj.selectedIndex; // 选中索引
 
         var link_type = obj.options[index].value; // 选中文本
         andflow.setLinkType(link_type);
-        
+
     }
     //改变是否可编辑状态
-    function changeEditable(){
+    function changeEditable() {
         var obj = document.getElementById("editable_select");
         var index = obj.selectedIndex; // 选中索引
         var editable = obj.options[index].value; // 选中文本
-        andflow.setEditable(editable=="true"?true:false);
+        andflow.setEditable(editable == "true" ? true : false);
     }
     //改变是否显示节点内容
-    function changeShowContent(){
+    function changeShowContent() {
         var obj = document.getElementById("showcontent_select");
         var index = obj.selectedIndex; // 选中索引
         var visible = obj.options[index].value; // 选中文本
-        andflow.setActionContentVisible(visible=="true"?true:false);
+        andflow.setActionContentVisible(visible == "true" ? true : false);
 
     }
 
 </script>
+
 </html>

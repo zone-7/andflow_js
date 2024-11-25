@@ -1,210 +1,215 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>andflow</title>
- 
-    <script src="../depends/jsplumb.min.js"></script>
-    <script src="../depends/html2canvas.min.js"></script>
-    <script src="../depends/canvg.js"></script>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<title>andflow</title>
 
-    <link rel="stylesheet" href="../src/css/andflow.css">
-    <link rel="stylesheet" href="../src/css/andflow_themes.css">
-    <link rel="stylesheet" href="../src/css/andflow_themes_action.css">
+	<script src="../depends/jsplumb.min.js"></script>
+	<script src="../depends/html2canvas.min.js"></script>
+	<script src="../depends/canvg.js"></script>
 
-    <script src="../src/js/andflow.js"></script>
-    <script src="../src/js/andflow_themes.js"></script> 
- 
-    <link  rel="stylesheet"  href="../src/css/demo.css" > 
-    <script  src="../src/js/demo.js" ></script>
+	<link rel="stylesheet" href="../src/css/andflow.css">
+	<link rel="stylesheet" href="../src/css/andflow_themes.css">
+	<link rel="stylesheet" href="../src/css/andflow_themes_action.css">
+
+	<script src="../src/js/andflow.js"></script>
+	<script src="../src/js/andflow_themes.js"></script>
+
+	<link rel="stylesheet" href="../src/css/demo.css">
+	<script src="../src/js/demo.js"></script>
 </head>
-<body> 
-    <div class="bander">
-        <div class="logo"><img src="../img/logo.jpeg" /></div>
-        <div class="title"><a href="index.html" >Andflow</a></div>
-        <div class="subtitle"><a href="index.html" >首页</a> > 自定义连接线样式</div>
-        
-        <div class="menus">
-            <a href="index.html">Demos</a>
 
-            <a href="https://github.com/zone-7/andflow_js">Github</a>
-        </div>
-    </div>
+<body>
+	<div class="bander">
+		<div class="logo"><img src="../img/logo.jpeg" /></div>
+		<div class="title"><a href="index.html">Andflow</a></div>
+		<div class="subtitle"><a href="index.html">首页</a> > 自定义连接线样式</div>
 
-<div id="andflow" style="width: 100%;height: 400px;padding:0px;"> 
-</div>
+		<div class="menus">
+			<a href="index.html"><img src="../img/demos.png" />Demos</a>
+			<a href="https://github.com/zone-7/andflow_js" target="_blank"><img src="../img/github.png" />Github</a>
 
-类型:
-<select id="link_type" >
-	<option value="Flowchart">Flowchart</option>
-	<option value="Straight">Straight</option>
-	<option value="Bezier">Bezier</option>
-	<option value="StateMachine">StateMachine</option>
-</select>  
+		</div>
+	</div>
 
-<br/>
-颜色: <input id="stroke" value="gray" />
-宽度:<input id="strokeWidth" value="2" />
-圆角:<input id="radius" value="5" />
-样式:<select id="lineStyle" ><option value="solid">solid</option><option value="dotted">dotted</option></select>
-<br/>
-标签:<input id="label" value="" />
-起点标签:<input id="label_source" value="" />
-终点标签:<input id="label_target" value="" />
+	<div id="andflow" style="width: 100%;height: 400px;padding:0px;">
+	</div>
 
-<br/>
-起点箭头:
-<select id="arrow_source" >
-	<option value="true">true</option>
-	<option value="false"  selected>false</option>
-</select>
-中间箭头:
-<select id="arrow_middle" >
-	<option value="true">true</option>
-	<option value="false"  selected>false</option>
-</select>
-终点箭头:
-<select id="arrow_target" >
-	<option value="true" selected>true</option>
-	<option value="false">false</option>
-</select>
+	类型:
+	<select id="link_type">
+		<option value="Flowchart">Flowchart</option>
+		<option value="Straight">Straight</option>
+		<option value="Bezier">Bezier</option>
+		<option value="StateMachine">StateMachine</option>
+	</select>
+
+	<br />
+	颜色: <input id="stroke" value="gray" />
+	宽度:<input id="strokeWidth" value="2" />
+	圆角:<input id="radius" value="5" />
+	样式:<select id="lineStyle">
+		<option value="solid">solid</option>
+		<option value="dotted">dotted</option>
+	</select>
+	<br />
+	标签:<input id="label" value="" />
+	起点标签:<input id="label_source" value="" />
+	终点标签:<input id="label_target" value="" />
+
+	<br />
+	起点箭头:
+	<select id="arrow_source">
+		<option value="true">true</option>
+		<option value="false" selected>false</option>
+	</select>
+	中间箭头:
+	<select id="arrow_middle">
+		<option value="true">true</option>
+		<option value="false" selected>false</option>
+	</select>
+	终点箭头:
+	<select id="arrow_target">
+		<option value="true" selected>true</option>
+		<option value="false">false</option>
+	</select>
 
 
-<br/>
+	<br />
 
-动画:
-<select id="animation" >
-	<option value="true" >true</option>
-	<option value="false" selected>false</option>
-</select>
-<br/>
+	动画:
+	<select id="animation">
+		<option value="true">true</option>
+		<option value="false" selected>false</option>
+	</select>
+	<br />
 
-<button onclick="setLinkStyle()">设置</button>
+	<button onclick="setLinkStyle()">设置</button>
 </body>
- 
+
 
 <script>
 
 
 </script>
-<script> 
- 
-    var flowModel= {
-	"code": "",
-	"name": "",
-	"show_action_body": "true",
-	"show_action_content": "true",
-	"theme": "flow_theme_default",
-	"link_type": "Flowchart",
-	"params": [],
-	"actions": [
-		{
-			"id": "4e7fed4b5f90466a856cb743294e383c",
-			"left": "51px",
-			"top": "27px",
-			"name": "begin",
-			"params": {},
-			"title": "开始",
-			"theme": "action_theme_icon",
-			"icon": "begin.png",
-			"width": "65px",
-			"height": "49px"
+<script>
+
+	var flowModel = {
+		"code": "",
+		"name": "",
+		"show_action_body": "true",
+		"show_action_content": "true",
+		"theme": "flow_theme_default",
+		"link_type": "Flowchart",
+		"params": [],
+		"actions": [
+			{
+				"id": "4e7fed4b5f90466a856cb743294e383c",
+				"left": "51px",
+				"top": "27px",
+				"name": "begin",
+				"params": {},
+				"title": "开始",
+				"theme": "action_theme_icon",
+				"icon": "begin.png",
+				"width": "65px",
+				"height": "49px"
+			},
+			{
+				"id": "c3747d543b724800ab792de258c9f64e",
+				"left": "420px",
+				"top": "190px",
+				"name": "end",
+				"params": {},
+				"title": "结束",
+				"theme": "action_theme_icon",
+				"icon": "end.png",
+				"width": "60px",
+				"height": "49px"
+			}
+		],
+		"groups": [],
+		"lists": [],
+		"links": [
+			{
+				"source_id": "4e7fed4b5f90466a856cb743294e383c",
+				"target_id": "c3747d543b724800ab792de258c9f64e"
+			}
+		],
+		"tips": []
+	};
+
+
+	var options = {
+		tags: tags,            //组件过滤标签列表
+		metadata: metadata,    //组件元素
+		flowModel: flowModel,  //流程模型
+		img_path: "../img/meta/",
+		editable: true,   //是否可编辑，默认true
+		show_toolbar: true,
+		metadata_position: 'default', //top,left,default
+		render_action: function (metadata, action, html) { return html; },//节点渲染
+		render_action_helper: function (metadata, html) { return null },  //节点拖拉渲染
+		render_state_list: function (datas) { return null },             //流程状态列表渲染
+		render_link: function (conn, linktype, linkdata) { return null },   //连接线渲染
+		event_group_click: function (group) {
+
 		},
-		{
-			"id": "c3747d543b724800ab792de258c9f64e",
-			"left": "420px",
-			"top": "190px",
-			"name": "end",
-			"params": {},
-			"title": "结束",
-			"theme": "action_theme_icon",
-			"icon": "end.png",
-			"width": "60px",
-			"height": "49px"
+		event_group_dblclick: function (group) {
+		},
+		//节点单击事件
+		event_action_click: function (metadata, action) {
+
+
+		},
+		//节点双击事件
+		event_action_dblclick: function (metadata, action) {
+
+
+		},
+		//连线单击事件
+		event_link_click: function (link) {
+
+		},
+		//连线双击事件
+		event_link_dblclick: function (link) {
+
+
+		},
+		//画图板单击事件
+		event_canvas_click: function (e) {
+
 		}
-	],
-	"groups": [],
-	"lists": [],
-	"links": [
-		{
-			"source_id": "4e7fed4b5f90466a856cb743294e383c",
-			"target_id": "c3747d543b724800ab792de258c9f64e"
-		}
-	],
-	"tips": []
-};
+	}
 
 
-    var options={
-        tags:tags,            //组件过滤标签列表
-        metadata:metadata,    //组件元素
-        flowModel:flowModel,  //流程模型
-        img_path: "../img/meta/",
-        editable:true,   //是否可编辑，默认true
-        show_toolbar: true,
-        metadata_position: 'default', //top,left,default
-        render_action:function(metadata,action,html){ return html; },//节点渲染
-        render_action_helper: function(metadata,html){return null},  //节点拖拉渲染
-        render_state_list: function(datas){return null},             //流程状态列表渲染
-        render_link:function(conn,linktype,linkdata){return null},   //连接线渲染
-        event_group_click:function(group){
- 
-        },
-        event_group_dblclick: function(group){ 
-        },
-        //节点单击事件
-        event_action_click:function(metadata,action){
- 
+	andflow.newInstance("andflow", options);
+	andflow.showFlow();
 
-        },
-        //节点双击事件
-        event_action_dblclick:function(metadata,action){
- 
-
-        },
-        //连线单击事件
-        event_link_click: function (link) {
-             
-        },
-        //连线双击事件
-        event_link_dblclick: function (link) {
-            
-
-        },
-        //画图板单击事件
-        event_canvas_click: function(e){
-            
-        }
-    }
-
-
-    andflow.newInstance("andflow",options);
-    andflow.showFlow();
- 
-	function setLinkStyle(){ 
+	function setLinkStyle() {
 		var link_type = document.getElementById("link_type").value;
 
-        var stroke = document.getElementById("stroke").value;
-        var strokeWidth = document.getElementById("strokeWidth").value;
-        var radius = document.getElementById("radius").value;
+		var stroke = document.getElementById("stroke").value;
+		var strokeWidth = document.getElementById("strokeWidth").value;
+		var radius = document.getElementById("radius").value;
 
-        var lineStyle = document.getElementById("lineStyle").value;
+		var lineStyle = document.getElementById("lineStyle").value;
 
-		var label = document.getElementById("label").value; 
-		var label_source = document.getElementById("label_source").value; 
-		var label_target = document.getElementById("label_target").value; 
+		var label = document.getElementById("label").value;
+		var label_source = document.getElementById("label_source").value;
+		var label_target = document.getElementById("label_target").value;
 
-		var arrow_source = document.getElementById("arrow_source").value; 
-		var arrow_middle = document.getElementById("arrow_middle").value; 
-		var arrow_target = document.getElementById("arrow_target").value; 
+		var arrow_source = document.getElementById("arrow_source").value;
+		var arrow_middle = document.getElementById("arrow_middle").value;
+		var arrow_target = document.getElementById("arrow_target").value;
 
-		var animation = document.getElementById("animation").value; 
+		var animation = document.getElementById("animation").value;
 
-		var link = andflow.getLinkInfo("4e7fed4b5f90466a856cb743294e383c","c3747d543b724800ab792de258c9f64e");
- 		
+		var link = andflow.getLinkInfo("4e7fed4b5f90466a856cb743294e383c", "c3747d543b724800ab792de258c9f64e");
+
 		link.link_type = link_type;
 
 		var paintStyle = {
@@ -218,14 +223,15 @@
 		link.label = label;
 		link.label_source = label_source;
 		link.label_target = label_target;
-		
-		link.arrows=[arrow_source=="true",arrow_middle=="true",arrow_target=="true"];
-	  
-		link.animation = animation=="true";
-		 
-        andflow.setLinkInfo(link);
-		
-    }
-	  
+
+		link.arrows = [arrow_source == "true", arrow_middle == "true", arrow_target == "true"];
+
+		link.animation = animation == "true";
+
+		andflow.setLinkInfo(link);
+
+	}
+
 </script>
+
 </html>

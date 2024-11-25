@@ -1,128 +1,163 @@
-body{
+body {
     padding: 0px;
     margin: 0px;
 }
-.bander{
+
+.bander {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 50px;  
-    width:100%;
+    height: 50px;
+    width: 100%;
     padding-left: 10px;
     padding-right: 10px;
     border-bottom: 1px solid #DEDEDE;
     box-sizing: border-box;
     overflow: hidden;
 }
- 
-.bander a{
-    text-decoration-line: none;  
-    color: #333333;
-}
-.bander a:active{
-    text-decoration-line: none;  
+
+.bander a {
+    text-decoration-line: none;
     color: #333333;
 }
 
-.bander .logo{ 
-    height: 40px;  
+.bander a:active {
+    text-decoration-line: none;
+    color: #333333;
 }
-.bander .logo img{
-    height: 40px; 
+
+.bander .logo {
+    height: 40px;
 }
-.bander .title{  
+
+.bander .logo img {
+    height: 40px;
+}
+
+.bander .title {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 100%; 
-    font-size: 30px; 
+    height: 100%;
+    font-size: 30px;
 }
-.bander .subtitle{ 
+
+.bander .subtitle {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-grow: 1;
-    height: 100%; 
-    font-size: 20px; 
+    height: 100%;
+    font-size: 20px;
     padding-left: 20px;
 }
 
-.bander .menus{
-    float: right;
+.bander .menus {
+
     font-size: 14px;
     line-height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: end;
+    gap: 5px;
 }
-.demo-table{
+
+.bander .menus a {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.bander .menus a img {
+    width: 24px;
+    height: 24px;
+}
+
+.demo-table {
     width: 100%;
 }
-.demo-table td{
-    width:50%;
+
+.demo-table td {
+    width: 50%;
     vertical-align: top;
 }
-.demo-table img{
-    width:100%;
+
+.demo-table img {
+    width: 100%;
 }
 
 
-.dialog{
+.dialog {
     display: none;
     background-color: white;
     padding: 0px;
     min-width: 50%;
     border-radius: 5px;
     border: 1px solid gray;
-    
+
 }
-.dialog .dialog-body{
+
+.dialog .dialog-body {
     width: 100%;
     padding: 20px;
 }
-.dialog .dialog-header{
+
+.dialog .dialog-header {
     height: 40px;
     border-bottom: 1px solid gray;
 }
- 
+
 .dialog .dialog-header .dialog-title {
     font-weight: bold;
     line-height: 30px;
     padding-left: 10px;
 }
-.dialog .dialog-footer{
+
+.dialog .dialog-footer {
     display: inline-block;
     width: 100%;
-    height: 40px; 
+    height: 40px;
     text-align: right;
     padding: 10px;
 }
 
-.form-item{
+.form-item {
     display: flex;
     width: 100%;
-    align-items: center; 
-    align-content: center; 
+    align-items: center;
+    align-content: center;
     margin-bottom: 10px;
 
 }
-.form-item *{
+
+.form-item * {
     display: inline-block;
     align-content: center;
-    align-items: center; 
+    align-items: center;
     align-content: center;
 }
-.form-item input:read-only{
+
+.form-item input:read-only {
     background-color: gray;
 }
-.form-item label{
+
+.form-item label {
     width: 80px;
     font-size: 12px;
 }
-.form-item select,.form-item input,.form-item textarea{
-    box-sizing: border-box; 
-    -moz-box-sizing: border-box; 
-    -webkit-box-sizing: border-box; 
+
+.form-item select,
+.form-item input,
+.form-item textarea {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     width: calc(100% - 100px);
     min-height: 30px;
-     
-    border:1px solid gray;
-    border-radius: 3px; 
+
+    border: 1px solid gray;
+    border-radius: 3px;
 }

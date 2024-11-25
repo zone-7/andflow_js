@@ -451,7 +451,7 @@ var andflow = {
   flowModel: null, //流程数据
 
   show_rulers: true,  //显示标尺
-  show_thumbnail: true, // 显示缩略图 
+  show_thumbnail: false, // 显示缩略图 
   show_multi_select: false, // 显示多选状态
   show_grid: true,    //显示方格
   show_toolbar: true, //是否显示工具栏 

@@ -4,6 +4,8 @@ andflow_js是一个H5流程设计前端组件，是作为流程系统前端的�
 目的是共同学习、交流心得。
 在andflow_js可以完成流程设计执行，同时我们还配套了一个基于Golang的流程执行引擎，以及VUE组件。
 
+Demo首页： http://www.andflow.net
+
 golang 流程引擎 : https://github.com/zone-7/andflow_go
 
 VUE 组件使用DEMO: https://github.com/zone-7/andflow_vue_test

@@ -460,7 +460,6 @@ var andflow = {
   show_btn_horizontal: true, //是否显示水平对齐
   show_btn_vertical: true, //是否显示垂直对齐
   show_btn_code: true, //是否显示代码按钮
-
   show_btn_scale: true, //是否显示缩小放大工具按钮
   show_btn_thumbnail: true, //是否显示缩略图按钮
 

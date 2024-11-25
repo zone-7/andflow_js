@@ -241,6 +241,10 @@ var options={
     editable:true,        
     //是否显示工具栏，默认true 
     show_toolbar:true,    
+    //是否显示缩略图
+    show_thumbail:false,
+    //是否显示标尺
+    show_rulers:true,
     //组件栏样式，可选项：固定左边metadata_fix_left、浮在左边metadata_float_left、浮在顶部metadata_float_top
     metadata_style:"",
     render_action:function(metadata,action,html){ return html; },//节点渲染
@@ -306,11 +310,35 @@ andflow.showFlow();
 <td>metadata</td><td>组件定义元数据</td><td>数组</td><td>null</td>
 </tr>
 <tr>
+<td>flowModel</td><td>流程模型</td><td>object</td><td>null</td>
+</tr>
+<tr>
 <td>editable</td><td>是否可设计</td><td>true/false</td><td>true</td>
 </tr>
 <tr>
-<td>flowModel</td><td>流程模型</td><td>object</td><td>null</td>
+<td>show_toolbar</td><td>是否显示工具栏</td><td>true/false</td><td>true</td>
 </tr>
+<tr>
+<td>show_thumbnail</td><td>是否显示缩略图</td><td>true/false</td><td>false</td>
+</tr>
+<tr>
+<td>show_rulers</td><td>是否显示标尺</td><td>true/false</td><td>true</td>
+</tr>
+<tr>
+<td>show_grid</td><td>是否显示背景格子</td><td>true/false</td><td>true</td>
+</tr>
+<tr>
+<td>drag_step</td><td>每次拖动的单步距离</td><td>number</td><td>10</td>
+</tr>
+<tr>
+<td>lang</td><td>一些标题的方言</td><td>json</td><td>
+    {
+    metadata_tag_all: '所有组件',
+    delete_action_confirm: '确定删除该节点?',
+    }
+</td>
+</tr>
+
 <tr>
 <td>render_action</td><td>组件节点渲染函数</td><td>function(metadata,action,html){ return null; }</td><td>null</td>
 </tr>
